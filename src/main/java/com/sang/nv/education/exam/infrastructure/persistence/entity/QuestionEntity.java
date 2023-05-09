@@ -40,7 +40,7 @@ public class QuestionEntity extends AuditableEntity {
     @Column(name = "subjectId", length = ValidateConstraint.LENGTH.ID_MAX_LENGTH, nullable = false)
     private String subjectId;
 
-    @Column(name = "title", length = ValidateConstraint.LENGTH.NAME_MAX_LENGTH, nullable = false)
+    @Column(name = "title", nullable = false)
     private String title;
 
     @Column(name = "deleted", nullable = false)
