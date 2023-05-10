@@ -1,7 +1,7 @@
 spring:
-#  devtools:
-#    restart:
-#      enabled: true
+  #  devtools:
+  #    restart:
+  #      enabled: true
   datasource:
     url: ${POSTGRES_URI:jdbc:postgresql://34.171.66.5:5432/postgres}
     username: ${POSTGRES_USER:admin}

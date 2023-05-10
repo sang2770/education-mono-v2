@@ -35,7 +35,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -52,6 +56,7 @@ public class QuestionServiceImpl implements QuestionService {
     private final AnswerEntityRepository answerEntityRepository;
     private final AnswerEntityMapper answerEntityMapper;
     private final ExamExcelService examExcelService;
+
     public QuestionServiceImpl(QuestionEntityRepository questionEntityRepository,
                                GroupQuestionEntityRepository groupQuestionEntityRepository, ExamAutoMapper examAutoMapper,
                                ExamAutoMapperQuery examAutoMapperQuery, QuestionDomainRepository questionDomainRepository,
@@ -145,8 +150,7 @@ public class QuestionServiceImpl implements QuestionService {
         return this.examExcelService.importQuestions(file, response);
     }
 
-    private void enrichQuestions(List<Question> questions)
-    {
+    private void enrichQuestions(List<Question> questions) {
         List<String> questionIds = questions.stream().map(Question::getId).collect(Collectors.toList());
         List<AnswerEntity> answerEntities = this.answerEntityRepository.findAllByQuestionIds(questionIds);
         questions.forEach(question -> {
@@ -157,6 +161,7 @@ public class QuestionServiceImpl implements QuestionService {
             question.enrichAnswers(answers);
         });
     }
+
     private List<Question> getQuestionByLevel(List<QuestionEntity> questionEntities, QuestionLevel questionLevel, Integer number) {
         List<QuestionEntity> questions = questionEntities.stream().filter(questionEntity ->
                 Objects.equals(questionEntity.getLevel(), questionLevel)).collect(Collectors.toList());

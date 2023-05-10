@@ -1,5 +1,6 @@
 package com.sang.nv.education.exam.domain;
 
+import com.sang.commonmodel.domain.AuditableDomain;
 import com.sang.commonmodel.exception.ResponseException;
 import com.sang.commonutil.IdUtils;
 import com.sang.nv.education.exam.domain.command.RoomCreateOrUpdateCmd;
@@ -25,7 +26,7 @@ import java.util.Optional;
 @SuperBuilder
 @Setter(AccessLevel.PRIVATE)
 @Getter
-public class Room {
+public class Room extends AuditableDomain {
     String id;
     String name;
     String subjectId;
@@ -38,7 +39,7 @@ public class Room {
     List<PeriodRoom> periodRooms;
     Subject subject;
 
-    public Room(RoomCreateOrUpdateCmd cmd){
+    public Room(RoomCreateOrUpdateCmd cmd) {
         this.description = cmd.getDescription();
         this.id = IdUtils.nextId();
         this.name = cmd.getName();
@@ -49,8 +50,7 @@ public class Room {
         this.code = cmd.getCode();
     }
 
-    public void update(RoomCreateOrUpdateCmd cmd)
-    {
+    public void update(RoomCreateOrUpdateCmd cmd) {
         this.subjectId = cmd.getSubjectId();
         this.subjectName = cmd.getSubjectName();
         this.name = cmd.getName();
@@ -58,25 +58,20 @@ public class Room {
         this.description = cmd.getDescription();
     }
 
-    public void enrichUser(List<UserRoom> userRooms)
-    {
+    public void enrichUser(List<UserRoom> userRooms) {
         this.userRooms = userRooms;
     }
 
-    public void enrichExam(List<PeriodRoom> periodRooms)
-    {
+    public void enrichExam(List<PeriodRoom> periodRooms) {
         this.periodRooms = periodRooms;
     }
 
-    public void addUser(List<String> userIds, List<User> userDTOS)
-    {
+    public void addUser(List<String> userIds, List<User> userDTOS) {
         userIds.forEach(userId -> {
             Optional<UserRoom> userRoomOptional = this.userRooms.stream().filter(userRoom -> Objects.equals(userId, userRoom.getUserId())).findFirst();
-            if (userRoomOptional.isEmpty())
-            {
+            if (userRoomOptional.isEmpty()) {
                 Optional<User> optionalUserDTO = userDTOS.stream().filter(userDTO -> Objects.equals(userId, userDTO.getId())).findFirst();
-                if (optionalUserDTO.isEmpty())
-                {
+                if (optionalUserDTO.isEmpty()) {
                     throw new ResponseException(NotFoundError.USER_NOT_FOUND);
                 }
                 this.userRooms.add(new UserRoom(this.id, optionalUserDTO.get()));
@@ -84,38 +79,32 @@ public class Room {
         });
     }
 
-    public void removeUser(List<String> userIds)
-    {
+    public void removeUser(List<String> userIds) {
         userIds.forEach(userId -> {
             Optional<UserRoom> userRoomOptional = this.userRooms.stream().filter(userRoom -> Objects.equals(userId, userRoom.getUserId())).findFirst();
-            if (userRoomOptional.isEmpty())
-            {
+            if (userRoomOptional.isEmpty()) {
                 throw new ResponseException(BadRequestError.USER_IS_NOT_IN_GROUP);
-            }else{
+            } else {
                 this.userRooms.remove(userRoomOptional.get());
             }
         });
     }
 
-    public void addPeriod(List<String> periodIds)
-    {
+    public void addPeriod(List<String> periodIds) {
         periodIds.forEach(periodId -> {
             Optional<PeriodRoom> periodRoomOptional = this.periodRooms.stream().filter(periodRoom ->
                     Objects.equals(periodId, periodRoom.getPeriodId())).findFirst();
-            if (periodRoomOptional.isEmpty())
-            {
+            if (periodRoomOptional.isEmpty()) {
                 this.periodRooms.add(new PeriodRoom(periodId, this.id));
             }
         });
     }
 
-    public void removePeriod(List<String> periodIds)
-    {
+    public void removePeriod(List<String> periodIds) {
         periodIds.forEach(examId -> {
             Optional<PeriodRoom> periodRoomOptional = this.periodRooms.stream().filter(periodRoom ->
                     Objects.equals(examId, periodRoom.getPeriodId())).findFirst();
-            if (periodRoomOptional.isEmpty())
-            {
+            if (periodRoomOptional.isEmpty()) {
                 throw new ResponseException(BadRequestError.USER_IS_NOT_IN_GROUP);
             }
             this.periodRooms.remove(periodRoomOptional.get());
@@ -123,16 +112,15 @@ public class Room {
         });
     }
 
-    public void deleted(){
+    public void deleted() {
         this.deleted = true;
     }
 
-    public void unDelete(){
+    public void unDelete() {
         this.deleted = false;
     }
 
-    public void enrichSubject(Subject subject)
-    {
+    public void enrichSubject(Subject subject) {
         this.subject = subject;
     }
 }

@@ -17,6 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ClassesResourceImpl implements ClassesResource {
     private final ClassesService classesService;
+
     @Override
     public PagingResponse<Classes> search(ClassSearchRequest request) {
         return PagingResponse.of(this.classesService.search(request));

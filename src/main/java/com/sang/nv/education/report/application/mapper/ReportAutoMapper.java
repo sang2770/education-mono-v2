@@ -12,6 +12,7 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface ReportAutoMapper extends BaseAutoMapper {
     List<UserTopResponse> from(List<UserExam> userExams);
+
     List<OutTabTopResponse> fromUserExams(List<UserExam> values);
 
 }

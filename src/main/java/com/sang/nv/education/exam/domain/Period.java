@@ -4,7 +4,12 @@ import com.sang.commonmodel.domain.AuditableDomain;
 import com.sang.commonutil.IdUtils;
 import com.sang.nv.education.exam.domain.command.PeriodCreateOrUpdateCmd;
 import com.sang.nv.education.exam.infrastructure.persistence.entity.PeriodEntity;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
@@ -23,7 +28,7 @@ public class Period extends AuditableDomain {
     LocalDate endDate;
     Boolean deleted;
 
-    public Period(PeriodCreateOrUpdateCmd cmd){
+    public Period(PeriodCreateOrUpdateCmd cmd) {
         this.id = IdUtils.nextId();
         this.name = cmd.getName();
         this.startDate = cmd.getStartDate();
@@ -32,8 +37,7 @@ public class Period extends AuditableDomain {
         this.deleted = Boolean.FALSE;
     }
 
-    public Period(PeriodEntity cmd)
-    {
+    public Period(PeriodEntity cmd) {
         this.id = cmd.getId();
         this.name = cmd.getName();
         this.startDate = cmd.getStartDate();
@@ -42,19 +46,18 @@ public class Period extends AuditableDomain {
         this.deleted = Boolean.FALSE;
     }
 
-    public void update(PeriodCreateOrUpdateCmd cmd)
-    {
+    public void update(PeriodCreateOrUpdateCmd cmd) {
         this.name = cmd.getName();
         this.startDate = cmd.getStartDate();
         this.endDate = cmd.getEndDate();
         this.deleted = Boolean.FALSE;
     }
 
-    public void deleted(){
+    public void deleted() {
         this.deleted = true;
     }
 
-    public void unDelete(){
+    public void unDelete() {
         this.deleted = false;
     }
 }

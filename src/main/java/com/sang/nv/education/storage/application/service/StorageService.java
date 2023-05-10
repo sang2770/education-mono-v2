@@ -14,6 +14,7 @@ public interface StorageService {
     FileDomain firebaseUpload(MultipartFile file) throws Exception;
 
     PageDTO<FileDomain> search(BaseSearchRequest request);
+
     FileDomain getById(String id);
 
     List<FileDomain> uploadMultipleFile(List<MultipartFile> fileList);

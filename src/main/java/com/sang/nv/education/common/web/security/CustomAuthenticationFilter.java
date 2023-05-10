@@ -28,12 +28,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.sang.commonutil.Constants.*;
+import static com.sang.commonutil.Constants.USER_ID;
 
 @Component
 @Slf4j

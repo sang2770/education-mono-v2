@@ -16,9 +16,11 @@ import java.util.Optional;
 public interface UserEntityRepository extends JpaRepository<UserEntity, String>, UserEntityRepositoryCustom {
     @Query("from UserEntity u where u.deleted = false and lower(u.username) = lower(:username)")
     List<UserEntity> findAllByUsername(@Param("username") String username);
+
     default Optional<UserEntity> findByUsername(String username) {
         return findAllByUsername(username).stream().findFirst();
     }
+
     @Query("from UserEntity u where u.deleted = false and u.code in :codes")
     List<UserEntity> findAllByCodes(@Param("codes") List<String> codes);
 

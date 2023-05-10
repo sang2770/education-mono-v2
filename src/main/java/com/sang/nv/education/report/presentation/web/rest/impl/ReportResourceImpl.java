@@ -18,6 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ReportResourceImpl implements ReportResource {
     private final ReportService reportService;
+
     @Override
     public Response<GeneralReport> generalReport(ReportGeneralRequest request) {
         return Response.of(reportService.generalReport(request));

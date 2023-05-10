@@ -37,5 +37,5 @@ public interface DepartmentResource {
     @ApiOperation(value = "AutoComplete department by id")
     @PostMapping("/departments/auto-complete")
     PagingResponse<Department> autoComplete(@ValidatePaging(allowedSorts = {"lastModifiedAt", "createdAt", "code", "name", "phone"})
-                                      BaseSearchRequest request);
+                                            BaseSearchRequest request);
 }

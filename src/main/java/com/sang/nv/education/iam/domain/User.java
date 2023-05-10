@@ -10,7 +10,13 @@ import com.sang.nv.education.iam.infrastructure.support.enums.UserStatus;
 import com.sang.nv.education.iam.infrastructure.support.enums.UserType;
 import com.sang.nv.education.iam.infrastructure.support.exception.BadRequestError;
 import io.jsonwebtoken.lang.Collections;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.util.CollectionUtils;
 
@@ -107,8 +113,7 @@ public class User extends AuditableDomain {
         this.avatarFileId = cmd.getAvatarFileId();
         this.avatarFileViewUrl = cmd.getAvatarFileViewUrl();
         this.userType = cmd.getUserType();
-        if (!CollectionUtils.isEmpty(cmd.getRoleIds()))
-        {
+        if (!CollectionUtils.isEmpty(cmd.getRoleIds())) {
             this.userRoles = new ArrayList<>();
             this.assignRoles(cmd.getRoleIds(), existedRoles);
         }
@@ -122,16 +127,14 @@ public class User extends AuditableDomain {
         this.deleted = false;
     }
 
-    public void update(UserCreateOrUpdateCmd cmd, List<Role> existedRoles)
-    {
+    public void update(UserCreateOrUpdateCmd cmd, List<Role> existedRoles) {
         this.fullName = cmd.getFullName();
         this.email = cmd.getEmail();
         this.phoneNumber = cmd.getPhoneNumber();
         this.status = UserStatus.ACTIVE;
         this.classId = cmd.getClassId();
         this.code = cmd.getCode();
-        if (!CollectionUtils.isEmpty(cmd.getRoleIds()))
-        {
+        if (!CollectionUtils.isEmpty(cmd.getRoleIds())) {
             this.assignRoles(cmd.getRoleIds(), existedRoles);
         }
         this.userType = cmd.getUserType();
@@ -141,8 +144,7 @@ public class User extends AuditableDomain {
 
     }
 
-    public void update(UserCreateOrUpdateCmd cmd)
-    {
+    public void update(UserCreateOrUpdateCmd cmd) {
         this.fullName = cmd.getFullName();
         this.email = cmd.getEmail();
         this.phoneNumber = cmd.getPhoneNumber();
@@ -154,46 +156,42 @@ public class User extends AuditableDomain {
         this.deleted = false;
     }
 
-    private void assignRoles(List<String> roleIds, List<Role> existedRoles)
-    {
-        if (Collections.isEmpty(existedRoles))
-        {
+    private void assignRoles(List<String> roleIds, List<Role> existedRoles) {
+        if (Collections.isEmpty(existedRoles)) {
             throw new ResponseException(BadRequestError.ROLE_INVALID);
         }
         this.userRoles.forEach(UserRole::deleted);
         roleIds.forEach(id -> {
             Optional<Role> roleOptional = existedRoles.stream().filter(existedRole -> existedRole.getId().equals(id)).findFirst();
-            if (roleOptional.isEmpty())
-            {
+            if (roleOptional.isEmpty()) {
                 throw new ResponseException(BadRequestError.ROLE_INVALID);
             }
             Role role = roleOptional.get();
             Optional<UserRole> userRole = this.userRoles.stream().filter(item -> item.getRoleId().equals(role.getId())).findFirst();
-            if (userRole.isEmpty())
-            {
+            if (userRole.isEmpty()) {
                 this.userRoles.add(new UserRole(this.id, role.getId()));
-            }else{
+            } else {
                 userRole.get().unDelete();
             }
         });
     }
 
-    public void enrichRoles(List<Role> userRoles)
-    {
+    public void enrichRoles(List<Role> userRoles) {
         this.roles = userRoles;
     }
-    public void enrichClasses(Classes classes)
-    {
+
+    public void enrichClasses(Classes classes) {
         this.classes = classes;
     }
-    public void enricUserRoles(List<UserRole> userRoles)
-    {
+
+    public void enricUserRoles(List<UserRole> userRoles) {
         this.userRoles = userRoles;
     }
-    public void enrichAvatarFileViewUrl(String avatarFileViewUrl)
-    {
+
+    public void enrichAvatarFileViewUrl(String avatarFileViewUrl) {
         this.avatarFileViewUrl = avatarFileViewUrl;
     }
+
     public void active() {
         this.status = UserStatus.ACTIVE;
         this.lastAuthChangeAt = null;
@@ -219,7 +217,7 @@ public class User extends AuditableDomain {
         this.deleted = true;
     }
 
-    public void enrichViewUrlFile(String avatarFileViewUrl){
+    public void enrichViewUrlFile(String avatarFileViewUrl) {
         this.avatarFileViewUrl = avatarFileViewUrl;
     }
 

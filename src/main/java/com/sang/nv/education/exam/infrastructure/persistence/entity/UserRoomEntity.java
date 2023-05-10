@@ -3,7 +3,11 @@ package com.sang.nv.education.exam.infrastructure.persistence.entity;
 import com.sang.commonmodel.entity.AuditableEntity;
 import com.sang.commonmodel.enums.UserType;
 import com.sang.commonmodel.validator.ValidateConstraint;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.Hibernate;
 
 import javax.persistence.Column;

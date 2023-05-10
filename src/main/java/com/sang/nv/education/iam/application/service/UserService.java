@@ -45,6 +45,7 @@ public interface UserService {
     PageDTO<User> autoComplete(UserSearchRequest request);
 
     void exportUsers(UserExportRequest request, HttpServletResponse response);
+
     void downloadTemplateImportUsers(HttpServletResponse response);
 
     ImportResult importUser(MultipartFile file, HttpServletResponse response);

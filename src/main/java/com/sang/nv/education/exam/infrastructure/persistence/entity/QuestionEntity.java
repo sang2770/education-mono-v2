@@ -3,10 +3,20 @@ package com.sang.nv.education.exam.infrastructure.persistence.entity;
 import com.sang.commonmodel.entity.AuditableEntity;
 import com.sang.commonmodel.validator.ValidateConstraint;
 import com.sang.nv.education.exam.infrastructure.support.enums.QuestionLevel;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.Hibernate;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
+import javax.persistence.Index;
+import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
@@ -30,7 +40,7 @@ public class QuestionEntity extends AuditableEntity {
     @Column(name = "subjectId", length = ValidateConstraint.LENGTH.ID_MAX_LENGTH, nullable = false)
     private String subjectId;
 
-    @Column(name = "title", length = ValidateConstraint.LENGTH.NAME_MAX_LENGTH, nullable = false)
+    @Column(name = "title", nullable = false)
     private String title;
 
     @Column(name = "deleted", nullable = false)

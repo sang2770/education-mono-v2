@@ -85,8 +85,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     public PageDTO<Department> autoComplete(BaseSearchRequest request) {
         Pageable pageable = PageableMapperUtil.toPageable(request);
         Page<DepartmentEntity> departmentEntityPage = this.departmentEntityRepository.autoComplete(request.getKeyword(), pageable);
-        if (departmentEntityPage.getTotalElements() == 0)
-        {
+        if (departmentEntityPage.getTotalElements() == 0) {
             return PageDTO.empty();
         }
         List<Department> departments = this.departmentEntityMapper.toDomain(departmentEntityPage.getContent());

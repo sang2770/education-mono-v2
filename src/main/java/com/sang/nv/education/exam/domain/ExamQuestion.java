@@ -1,8 +1,14 @@
 package com.sang.nv.education.exam.domain;
 
+import com.sang.commonmodel.domain.AuditableDomain;
 import com.sang.commonutil.IdUtils;
 import com.sang.nv.education.exam.domain.command.ExamQuestionCreateOrUpdateCmd;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 @EqualsAndHashCode(callSuper = false)
@@ -11,7 +17,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @Setter(AccessLevel.PRIVATE)
 @Getter
-public class ExamQuestion {
+public class ExamQuestion extends AuditableDomain {
     String id;
     Float point;
     String examId;
@@ -20,7 +26,7 @@ public class ExamQuestion {
     Boolean deleted;
 
 
-    public ExamQuestion(ExamQuestionCreateOrUpdateCmd cmd){
+    public ExamQuestion(ExamQuestionCreateOrUpdateCmd cmd) {
         this.id = IdUtils.nextId();
         this.point = cmd.getPoint();
         this.deleted = Boolean.FALSE;
@@ -28,22 +34,20 @@ public class ExamQuestion {
         this.questionId = cmd.getQuestionId();
     }
 
-    public void updatePoint(Float point)
-    {
+    public void updatePoint(Float point) {
         this.point = point;
     }
 
 
-    public void deleted(){
+    public void deleted() {
         this.deleted = true;
     }
 
-    public void unDelete(){
+    public void unDelete() {
         this.deleted = false;
     }
 
-    public void enrichQuestion(Question question)
-    {
+    public void enrichQuestion(Question question) {
         this.question = question;
     }
 }

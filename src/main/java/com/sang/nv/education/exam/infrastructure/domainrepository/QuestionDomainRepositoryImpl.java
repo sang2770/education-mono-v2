@@ -36,7 +36,7 @@ public class QuestionDomainRepositoryImpl extends AbstractDomainRepository<Quest
     private final AnswerEntityRepository answerEntityRepository;
     private final QuestionFileEntityRepository questionFileEntityRepository;
     private final QuestionFileEntityMapper questionFileEntityMapper;
-    private final StorageService  storageService;
+    private final StorageService storageService;
 
     public QuestionDomainRepositoryImpl(QuestionEntityRepository questionEntityRepository,
                                         QuestionEntityMapper questionEntityMapper, AnswerEntityMapper answerEntityMapper, AnswerEntityRepository answerEntityRepository, QuestionFileEntityRepository questionFileEntityRepository, QuestionFileEntityMapper questionFileEntityMapper, StorageService storageService) {
@@ -79,8 +79,7 @@ public class QuestionDomainRepositoryImpl extends AbstractDomainRepository<Quest
         questionFiles.forEach(questionFile -> {
             FileDomain fileDomain = fileDomains.stream().filter(item ->
                     Objects.equals(item.getId(), questionFile.getFileId())).findFirst().orElse(null);
-            if (Objects.nonNull(fileDomain))
-            {
+            if (Objects.nonNull(fileDomain)) {
                 questionFile.enrichViewUrl(fileDomain.getFilePath());
                 questionFile.enrichFileName(fileDomain.getFileName());
             }
@@ -96,14 +95,12 @@ public class QuestionDomainRepositoryImpl extends AbstractDomainRepository<Quest
     @Override
     public Question save(Question domain) {
         // save answer
-        if (!CollectionUtils.isEmpty(domain.getAnswers()))
-        {
+        if (!CollectionUtils.isEmpty(domain.getAnswers())) {
             List<AnswerEntity> answerEntities = this.answerEntityMapper.toEntity(domain.getAnswers());
             this.answerEntityRepository.saveAll(answerEntities);
         }
         // save question file
-        if (!CollectionUtils.isEmpty(domain.getQuestionFiles()))
-        {
+        if (!CollectionUtils.isEmpty(domain.getQuestionFiles())) {
             List<QuestionFileEntity> questionFileEntities = this.questionFileEntityMapper.toEntity(domain.getQuestionFiles());
             this.questionFileEntityRepository.saveAll(questionFileEntities);
         }
@@ -114,8 +111,7 @@ public class QuestionDomainRepositoryImpl extends AbstractDomainRepository<Quest
     public List<Question> saveAll(List<Question> domains) {
         domains.forEach(question -> {
             // save answer
-            if (!CollectionUtils.isEmpty(question.getAnswers()))
-            {
+            if (!CollectionUtils.isEmpty(question.getAnswers())) {
                 List<AnswerEntity> answerEntities = this.answerEntityMapper.toEntity(question.getAnswers());
                 this.answerEntityRepository.saveAll(answerEntities);
             }

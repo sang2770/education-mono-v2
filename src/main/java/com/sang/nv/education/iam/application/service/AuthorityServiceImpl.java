@@ -23,7 +23,11 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -74,6 +78,7 @@ public class AuthorityServiceImpl implements AuthorityService {
                 .userId(userEntity.getId())
                 .build();
     }
+
     private UserEntity ensureUserExisted(String userId) {
         return this.userEntityRepository.findById(userId).orElseThrow(() ->
                 new ResponseException(NotFoundError.USER_NOT_FOUND));

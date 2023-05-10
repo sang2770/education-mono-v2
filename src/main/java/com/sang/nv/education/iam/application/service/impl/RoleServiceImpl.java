@@ -48,6 +48,7 @@ public class RoleServiceImpl implements RoleService {
     private final UserRoleEntityRepository userRoleEntityRepository;
     private final UserRoleEntityMapper userRoleEntityMapper;
     private final SeqRepository seqRepository;
+
     @Override
     public PageDTO<Role> search(RoleSearchRequest request) {
 
@@ -89,6 +90,7 @@ public class RoleServiceImpl implements RoleService {
         role.deleted();
         this.roleDomainRepository.save(role);
     }
+
     @Override
     @Transactional
     public void active(String id) {

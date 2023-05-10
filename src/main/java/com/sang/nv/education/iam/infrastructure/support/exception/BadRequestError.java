@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 public enum BadRequestError implements ResponseError {
-//    Login, authentication
+    //    Login, authentication
     LOGIN_FAIL_DUE_INACTIVE_ACCOUNT(400, " Login Fail"),
     LOGIN_FAIL_BLOCK_ACCOUNT(400, "Login fail due account was block!"),
     USER_NOT_PERMISSION_FAIL_ACCOUNT(400, "Login fail!"),
@@ -35,9 +35,9 @@ public enum BadRequestError implements ResponseError {
     ACCOUNT_NOT_PERMISSION_ON_WEB(400, "Account not permission on web"),
     FILE_NOT_EXISTED(400, "Avatar file not existed"),
 
-//    Department
+    //    Department
     DEPARTMENT_NOT_EXISTED(400, "Department not existed"),
-//    Classes
+    //    Classes
     CLASSES_NOT_EXISTED(400, "Classes not existed"),
     IO_EXCEPTION(400, "IO Exception"),
 

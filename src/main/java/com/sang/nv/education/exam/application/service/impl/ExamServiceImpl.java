@@ -61,6 +61,7 @@ public class ExamServiceImpl implements ExamService {
     private final RoomDomainRepository roomDomainRepository;
     private final SubjectEntityRepository subjectEntityRepository;
     private final SeqRepository seqRepository;
+
     public ExamServiceImpl(ExamEntityRepository ExamEntityRepository,
                            GroupQuestionEntityRepository GroupQuestionEntityRepository,
                            QuestionEntityRepository questionEntityRepository,

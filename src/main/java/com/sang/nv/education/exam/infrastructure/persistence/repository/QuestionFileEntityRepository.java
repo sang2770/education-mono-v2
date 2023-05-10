@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface QuestionFileEntityRepository extends JpaRepository<QuestionFileEntity, String>{
+public interface QuestionFileEntityRepository extends JpaRepository<QuestionFileEntity, String> {
     @Query("from QuestionFileEntity u where u.questionId in :ids and u.deleted = false ")
     List<QuestionFileEntity> findAllByQuestionIds(@Param("ids") List<String> ids);
 }

@@ -31,12 +31,11 @@ public class UserExportDTO {
         this.email = user.getEmail();
         this.fullName = user.getFullName();
         this.phoneNumber = user.getPhoneNumber();
-        if (Objects.nonNull(user.getClasses()))
-        {
+        if (Objects.nonNull(user.getClasses())) {
             Classes classes = user.getClasses();
             this.className = user.getClasses().getName();
-            this.departmentName = Objects.nonNull(user.getClasses().getDepartment())? classes.getDepartment().getName() : "";
-            this.courseName = Objects.nonNull(user.getClasses().getKey())? classes.getKey().getName() : "";
+            this.departmentName = Objects.nonNull(user.getClasses().getDepartment()) ? classes.getDepartment().getName() : "";
+            this.courseName = Objects.nonNull(user.getClasses().getKey()) ? classes.getKey().getName() : "";
         }
         this.code = user.getCode();
         this.dayOfBirth = user.getDayOfBirth();

@@ -1,7 +1,13 @@
 package com.sang.nv.education.exam.domain;
 
+import com.sang.commonmodel.domain.AuditableDomain;
 import com.sang.commonutil.IdUtils;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 @EqualsAndHashCode(callSuper = false)
@@ -10,7 +16,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @Setter(AccessLevel.PRIVATE)
 @Getter
-public class PeriodRoom {
+public class PeriodRoom extends AuditableDomain {
     String id;
     String roomId;
     String periodId;
@@ -18,8 +24,7 @@ public class PeriodRoom {
     Period period;
     Boolean isSendExam;
 
-    public PeriodRoom(String periodId, String roomId)
-    {
+    public PeriodRoom(String periodId, String roomId) {
         this.id = IdUtils.nextId();
         this.periodId = periodId;
         this.roomId = roomId;
@@ -27,18 +32,19 @@ public class PeriodRoom {
         this.deleted = false;
     }
 
-    public void deleted(){
+    public void deleted() {
         this.deleted = true;
     }
 
-    public void unDelete(){
+    public void unDelete() {
         this.deleted = false;
     }
-    public void enrichPeriod(Period period){
+
+    public void enrichPeriod(Period period) {
         this.period = period;
     }
 
-    public void updateIsSendExam(Boolean isSendExam){
+    public void updateIsSendExam(Boolean isSendExam) {
         this.isSendExam = isSendExam;
     }
 }

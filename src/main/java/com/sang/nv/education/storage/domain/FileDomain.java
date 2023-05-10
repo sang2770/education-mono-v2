@@ -26,8 +26,7 @@ public class FileDomain extends AuditableDomain {
     private String ownerId;
     private Boolean deleted;
 
-    public FileDomain(FileCmd cmd)
-    {
+    public FileDomain(FileCmd cmd) {
         this.id = UUID.randomUUID().toString();
 //        File name firebase
         this.fileName = cmd.getFileName();
@@ -39,12 +38,11 @@ public class FileDomain extends AuditableDomain {
         this.deleted = false;
     }
 
-    public void delete()
-    {
+    public void delete() {
         this.deleted = true;
     }
-    public void unDelete()
-    {
+
+    public void unDelete() {
         this.deleted = false;
     }
 }

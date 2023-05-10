@@ -3,7 +3,6 @@ package com.sang.nv.education.exam.infrastructure.persistence.repository;
 
 import com.sang.nv.education.exam.infrastructure.persistence.entity.QuestionEntity;
 import com.sang.nv.education.exam.infrastructure.persistence.repository.custom.QuestionEntityRepositoryCustom;
-import com.sang.nv.education.iam.infrastructure.persistence.entity.UserEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,9 +13,10 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface QuestionEntityRepository extends JpaRepository<QuestionEntity, String>, QuestionEntityRepositoryCustom{
+public interface QuestionEntityRepository extends JpaRepository<QuestionEntity, String>, QuestionEntityRepositoryCustom {
     @Query("from QuestionEntity u where u.deleted = false and ( :keyword is null or ( u.title like :keyword))")
     Page<QuestionEntity> search(@Param("keyword") String keyword, Pageable pageable);
+
     @Query("from QuestionEntity u where  u.groupId = :groupId ")
     List<QuestionEntity> findByGroupId(@Param("groupId") String groupId);
 

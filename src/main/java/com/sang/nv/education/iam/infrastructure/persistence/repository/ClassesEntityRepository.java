@@ -28,14 +28,13 @@ public interface ClassesEntityRepository extends JpaRepository<ClassEntity, Stri
     List<ClassEntity> findAll();
 
     @Query("from ClassEntity e where e.deleted = false and (:ids is null or e.id in :ids) and (:departmentIds is null or e.departmentId in :departmentIds) and (:keyIds is null or e.id in :keyIds)")
-    List<ClassEntity> findAll(@Param("ids") List<String> ids, @Param("departmentIds") List<String> departmentIds, @Param("keyIds") List<String> keyIds );
+    List<ClassEntity> findAll(@Param("ids") List<String> ids, @Param("departmentIds") List<String> departmentIds, @Param("keyIds") List<String> keyIds);
 
     @Query("from ClassEntity u where u.deleted = false and "
             + " (:keyword is null or ( u.name like :keyword or"
             + " u.code like :keyword))")
     Page<ClassEntity> autoComplete(
             @Param("keyword") String keyword, Pageable pageable);
-
 
 
 }

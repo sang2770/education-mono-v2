@@ -7,8 +7,11 @@ import com.sang.nv.education.exam.domain.GroupQuestion;
 
 public interface GroupQuestionService {
     GroupQuestion create(GroupQuestionCreateOrUpdateRequest request);
+
     GroupQuestion update(String id, GroupQuestionCreateOrUpdateRequest request);
+
     PageDTO<GroupQuestion> search(BaseSearchRequest request);
+
     GroupQuestion getById(String id);
 
     void delete(String id);

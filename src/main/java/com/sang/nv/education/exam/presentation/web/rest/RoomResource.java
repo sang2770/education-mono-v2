@@ -3,7 +3,10 @@ package com.sang.nv.education.exam.presentation.web.rest;
 
 import com.sang.commonmodel.dto.response.PagingResponse;
 import com.sang.commonmodel.dto.response.Response;
-import com.sang.nv.education.exam.application.dto.request.*;
+import com.sang.nv.education.exam.application.dto.request.UpdateMemberInRoomRequest;
+import com.sang.nv.education.exam.application.dto.request.UpdatePeriodInRoomRequest;
+import com.sang.nv.education.exam.application.dto.request.UserExamCreateRequest;
+import com.sang.nv.education.exam.application.dto.request.UserRoomSearchRequest;
 import com.sang.nv.education.exam.application.dto.request.room.PeriodRoomSearchRequest;
 import com.sang.nv.education.exam.application.dto.request.room.RoomCreateOrUpdateRequest;
 import com.sang.nv.education.exam.application.dto.request.room.RoomSearchRequest;
@@ -45,8 +48,6 @@ public interface RoomResource {
 
 
     @ApiOperation(value = "remove Member Room")
-
-
     Response<Room> removeMember(@PathVariable String id, @RequestBody UpdateMemberInRoomRequest request);
 
 
@@ -74,7 +75,7 @@ public interface RoomResource {
     @PreAuthorize("hasPermission(null, 'room:send_exam')")
     Response<Void> sendExamToUser(@PathVariable String id, @RequestBody UserExamCreateRequest request);
 
-//    For client
+    //    For client
     @ApiOperation(value = "Get My Room")
     @GetMapping("/rooms/my-room")
     PagingResponse<Room> getMyRoom(RoomSearchRequest request);

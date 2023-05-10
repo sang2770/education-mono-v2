@@ -15,6 +15,7 @@ import org.springframework.messaging.MessagingException;
 public interface AccountService {
 
     AuthToken login(LoginRequest request);
+
     AuthToken loginClient(LoginRequest request);
 
     AuthToken refreshToken(RefreshTokenRequest request);

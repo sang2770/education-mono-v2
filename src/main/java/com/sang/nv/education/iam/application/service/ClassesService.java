@@ -10,9 +10,13 @@ import java.util.List;
 
 public interface ClassesService {
     Classes create(ClassesCreateOrUpdateRequest request);
+
     Classes update(String id, ClassesCreateOrUpdateRequest request);
+
     PageDTO<Classes> search(ClassSearchRequest request);
+
     Classes getById(String id);
+
     List<Classes> findByDepartmentId(String departmentId);
 
     PageDTO<Classes> autoComplete(BaseSearchRequest request);

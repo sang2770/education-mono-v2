@@ -36,10 +36,10 @@ public class Permission extends AuditableDomain {
         this.priority = priority;
         this.deleted = false;
     }
+
     public void update(PermissionUpdateCmd cmd) {
         this.name = cmd.getName();
     }
-
 
 
     public void deleted() {

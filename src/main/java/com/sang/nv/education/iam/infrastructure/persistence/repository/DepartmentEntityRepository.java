@@ -22,8 +22,8 @@ public interface DepartmentEntityRepository extends JpaRepository<DepartmentEnti
     List<DepartmentEntity> findByIds(@Param("departmentIds") List<String> departmentIds);
 
     @Query("from DepartmentEntity u where u.deleted = false and "
-                    + " (:keyword is null or ( u.name like :keyword or"
-                    + " u.code like :keyword))")
+            + " (:keyword is null or ( u.name like :keyword or"
+            + " u.code like :keyword))")
     Page<DepartmentEntity> autoComplete(
             @Param("keyword") String keyword, Pageable pageable);
 

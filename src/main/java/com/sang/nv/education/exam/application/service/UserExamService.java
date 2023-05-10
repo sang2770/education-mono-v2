@@ -26,12 +26,14 @@ public interface UserExamService {
      * @return UserExam
      */
     UserExam getById(String id);
+
     UserExam
     testingExam(String id);
 
     UserExam getByExamIdAndPeriodId(String examId, String periodId);
 
     PageDTO<UserExam> searchByRoomAndPeriod(String roomId, String periodId, UserRoomSearchRequest request);
+
     PageDTO<UserExam> getMyExamByRoomAndPeriod(String roomId, String periodId, UserRoomSearchRequest request);
 
     List<UserExamResult> statisticResult(UserExamReportRequest request);

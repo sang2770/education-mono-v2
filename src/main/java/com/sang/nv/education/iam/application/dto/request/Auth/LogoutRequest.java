@@ -1,7 +1,11 @@
 package com.sang.nv.education.iam.application.dto.request.Auth;
 
 import com.sang.commonmodel.dto.request.Request;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @EqualsAndHashCode(callSuper = true)
 @Data

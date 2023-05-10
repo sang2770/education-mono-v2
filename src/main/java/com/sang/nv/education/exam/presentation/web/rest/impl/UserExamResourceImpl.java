@@ -28,7 +28,7 @@ public class UserExamResourceImpl implements UserExamResource {
     }
 
     @Override
-    public Response<UserExam> getByExamIdAndPeriodId(String examId, String periodId){
+    public Response<UserExam> getByExamIdAndPeriodId(String examId, String periodId) {
         return Response.of(this.userExamService.getByExamIdAndPeriodId(examId, periodId));
     }
 

@@ -20,10 +20,15 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface IamAutoMapper extends BaseAutoMapper {
     DepartmentCreateOrUpdateCmd from(DepartmentCreateOrUpdateRequest request);
+
     ClassesCreateOrUpdateCmd from(ClassesCreateOrUpdateRequest request);
+
     KeyCreateOrUpdateCmd from(KeyCreateOrUpdateRequest request);
+
     RoleCreateOrUpdateCmd from(RoleCreateOrUpdateRequest request);
+
     UserCreateOrUpdateCmd from(UserUpdateRequest request);
+
     UserCreateOrUpdateCmd from(UserCreateRequest request);
 
     PermissionUpdateCmd from(PermissionUpdateRequest request);

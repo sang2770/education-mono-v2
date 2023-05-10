@@ -13,12 +13,19 @@ import java.util.List;
 public interface RoleService {
 
     Role getById(String id);
+
     PageDTO<Role> search(RoleSearchRequest request);
+
     Role create(RoleCreateOrUpdateRequest request);
+
     Role update(String userId, RoleCreateOrUpdateRequest request);
+
     void delete(String id);
+
     void active(String id);
+
     void inactive(String id);
+
     List<UserRole> findUserRoleByRoleIds(FindByIdsRequest request);
 
     List<Role> findByUserId(String userId);

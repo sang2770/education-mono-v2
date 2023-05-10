@@ -29,7 +29,7 @@ public interface FileBaseService {
     }
 
     default String generateFileName(String originalFileName) {
-        return UUID.randomUUID()+ Constant.DOT + getExtension(originalFileName);
+        return UUID.randomUUID() + Constant.DOT + getExtension(originalFileName);
     }
 
     default byte[] getByteArrays(BufferedImage bufferedImage, String format) throws IOException {

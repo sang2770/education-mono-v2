@@ -23,25 +23,27 @@ public class QuestionFile extends AuditableDomain {
     String viewUrl;
     String fileName;
     Boolean deleted;
-    public QuestionFile(String questionId, String fileId){
+
+    public QuestionFile(String questionId, String fileId) {
         this.id = IdUtils.nextId();
         this.questionId = questionId;
         this.fileId = fileId;
         this.deleted = false;
     }
-    public void deleted(){
+
+    public void deleted() {
         this.deleted = true;
     }
 
-    public void unDelete(){
+    public void unDelete() {
         this.deleted = false;
     }
 
-    public void enrichViewUrl(String viewUrl){
+    public void enrichViewUrl(String viewUrl) {
         this.viewUrl = viewUrl;
     }
 
-    public void enrichFileName(String fileName){
+    public void enrichFileName(String fileName) {
         this.fileName = fileName;
     }
 }

@@ -22,6 +22,7 @@ public class UserExamCreateCmd {
     String userId;
     String roomId;
     Float maxPoint;
+    Long timeDelay;
     List<UserExamInfoCreateRequest> userExamInfoCreateRequests;
 
     Integer numberOutTab;

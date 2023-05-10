@@ -21,5 +21,4 @@ public class NumberUserAndPeriod extends AuditableDomain {
     Integer month;
 
 
-
 }

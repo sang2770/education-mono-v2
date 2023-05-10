@@ -52,7 +52,6 @@ public interface AccountResource {
     Response<Boolean> logout(@RequestBody(required = false) LogoutRequest request);
 
 
-
     @ApiOperation(value = "Init reset password")
     @PostMapping("/account/reset-password/init")
     Response<Boolean> initResetPassword(@RequestBody @Valid EmailForgotPasswordRequest request)

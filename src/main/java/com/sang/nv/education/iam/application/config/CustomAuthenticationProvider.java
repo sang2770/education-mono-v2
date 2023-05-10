@@ -30,7 +30,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     public CustomAuthenticationProvider(UserEntityRepository userEntityRepository,
                                         PasswordEncoder passwordEncoder,
                                         AuthFailCacheService authFailCacheService
-                                        ) {
+    ) {
         this.userEntityRepository = userEntityRepository;
         this.passwordEncoder = passwordEncoder;
         this.authFailCacheService = authFailCacheService;

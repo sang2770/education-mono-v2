@@ -3,7 +3,12 @@ package com.sang.nv.education.iam.domain;
 import com.sang.commonmodel.domain.AuditableDomain;
 import com.sang.commonutil.IdUtils;
 import com.sang.nv.education.iam.domain.command.DepartmentCreateOrUpdateCmd;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;
@@ -38,8 +43,8 @@ public class Department extends AuditableDomain {
         this.address = cmd.getAddress();
         this.code = cmd.getCode();
     }
-    public void enrichClasses(List<Classes> classes)
-    {
+
+    public void enrichClasses(List<Classes> classes) {
         this.classes = classes;
     }
 }

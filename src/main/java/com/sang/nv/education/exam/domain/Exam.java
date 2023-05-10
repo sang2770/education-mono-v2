@@ -1,12 +1,18 @@
 package com.sang.nv.education.exam.domain;
 
+import com.sang.commonmodel.domain.AuditableDomain;
 import com.sang.commonmodel.exception.ResponseException;
 import com.sang.commonutil.IdUtils;
 import com.sang.nv.education.exam.domain.command.ExamCreateCmd;
 import com.sang.nv.education.exam.domain.command.ExamQuestionCreateOrUpdateCmd;
 import com.sang.nv.education.exam.domain.command.ExamUpdateCmd;
 import com.sang.nv.education.exam.infrastructure.support.exception.NotFoundError;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.util.CollectionUtils;
 
@@ -21,7 +27,7 @@ import java.util.Optional;
 @SuperBuilder
 @Setter(AccessLevel.PRIVATE)
 @Getter
-public class Exam {
+public class Exam extends AuditableDomain {
     String id;
     Float totalPoint;
     Integer numberQuestion;
@@ -32,7 +38,7 @@ public class Exam {
     String name;
     String code;
     Boolean deleted;
-//  Thời gian làm bài tính bằng phút
+    //  Thời gian làm bài tính bằng phút
     Long time;
 
     Long timeDelay;
@@ -91,8 +97,7 @@ public class Exam {
         }
     }
 
-    public void updateQuestion(List<String> questionIds, List<Question> questions)
-    {
+    public void updateQuestion(List<String> questionIds, List<Question> questions) {
         this.examQuestions.forEach(ExamQuestion::deleted);
         questionIds.forEach(questionId -> {
             Optional<Question> question = questions.stream().filter(item -> Objects.equals(item.getId(), questionId) && Objects.equals(this.subjectId, item.subjectId)).findFirst();
@@ -103,8 +108,8 @@ public class Exam {
                     .filter(item -> Objects.equals(item.getQuestionId(), questionId)).findFirst();
             if (optionalExamQuestion.isEmpty()) {
                 this.examQuestions.add(new ExamQuestion(
-                        ExamQuestionCreateOrUpdateCmd.builder().examId(this.id).questionId(questionId ).build()));
-            }else{
+                        ExamQuestionCreateOrUpdateCmd.builder().examId(this.id).questionId(questionId).build()));
+            } else {
                 optionalExamQuestion.get().unDelete();
             }
         });
@@ -121,6 +126,7 @@ public class Exam {
     public void enrichQuestions(List<Question> questions) {
         this.questions = questions;
     }
+
     public void enrichExamQuestions(List<ExamQuestion> examQuestions) {
         this.examQuestions = examQuestions;
     }

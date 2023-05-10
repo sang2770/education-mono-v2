@@ -7,8 +7,11 @@ import com.sang.nv.education.exam.domain.Subject;
 
 public interface SubjectService {
     Subject create(BaseCreateOrUpdateRequest request);
+
     Subject update(String id, BaseCreateOrUpdateRequest request);
+
     PageDTO<Subject> search(BaseSearchRequest request);
+
     Subject getById(String id);
 
     void delete(String id);

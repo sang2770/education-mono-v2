@@ -52,13 +52,11 @@ public class ClassesEntityRepositoryImpl implements ClassesEntityRepositoryCusto
             sql.append(" and ( U.name like :keyword )");
             values.put("keyword", SqlUtils.encodeKeyword(querySearch.getKeyword()));
         }
-        if (!CollectionUtils.isEmpty(querySearch.getDepartmentIds()))
-        {
+        if (!CollectionUtils.isEmpty(querySearch.getDepartmentIds())) {
             sql.append(" and U.departmentId in :departmentIds ");
             values.put("departmentIds", querySearch.getDepartmentIds());
         }
-        if (!CollectionUtils.isEmpty(querySearch.getKeyIds()))
-        {
+        if (!CollectionUtils.isEmpty(querySearch.getKeyIds())) {
             sql.append(" and U.keyId in :keyIds ");
             values.put("keyIds", querySearch.getKeyIds());
         }

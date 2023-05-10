@@ -1,7 +1,10 @@
 package com.sang.nv.education.exam.application.service;
 
 import com.sang.commonmodel.dto.PageDTO;
-import com.sang.nv.education.exam.application.dto.request.*;
+import com.sang.nv.education.exam.application.dto.request.UpdateMemberInRoomRequest;
+import com.sang.nv.education.exam.application.dto.request.UpdatePeriodInRoomRequest;
+import com.sang.nv.education.exam.application.dto.request.UserExamCreateRequest;
+import com.sang.nv.education.exam.application.dto.request.UserRoomSearchRequest;
 import com.sang.nv.education.exam.application.dto.request.room.PeriodRoomSearchRequest;
 import com.sang.nv.education.exam.application.dto.request.room.RoomCreateOrUpdateRequest;
 import com.sang.nv.education.exam.application.dto.request.room.RoomSearchRequest;
@@ -46,11 +49,15 @@ public interface RoomService {
     Room getById(String id);
 
     Room addMemberInRoom(String id, UpdateMemberInRoomRequest request);
+
     Room removeMemberInRoom(String id, UpdateMemberInRoomRequest request);
 
     Room addPeriodInRoom(String id, UpdatePeriodInRoomRequest request);
+
     Room removePeriodInRoom(String id, UpdatePeriodInRoomRequest request);
+
     PageDTO<UserRoom> getUserInRoom(String id, UserRoomSearchRequest request);
+
     PageDTO<PeriodRoom> getPeriodInRoom(String id, PeriodRoomSearchRequest request);
 
     void sendExamToUser(String id, UserExamCreateRequest request);

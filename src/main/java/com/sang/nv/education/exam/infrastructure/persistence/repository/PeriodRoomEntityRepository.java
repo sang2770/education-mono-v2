@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface PeriodRoomEntityRepository extends JpaRepository<PeriodRoomEntity, String>{
+public interface PeriodRoomEntityRepository extends JpaRepository<PeriodRoomEntity, String> {
     @Query("from PeriodRoomEntity u where u.deleted = false and u.roomId = :roomId and u.periodId = :periodId")
     Optional<PeriodRoomEntity> findByRoomIdAndPeriodId(@Param("roomId") String roomId, @Param("periodId") String periodId);
 

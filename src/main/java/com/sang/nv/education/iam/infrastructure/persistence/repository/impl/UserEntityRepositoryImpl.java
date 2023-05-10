@@ -28,12 +28,10 @@ public class UserEntityRepositoryImpl implements UserEntityRepositoryCustom {
         Map<String, Object> values = new HashMap<>();
         StringBuilder sql = new StringBuilder();
         sql.append("select U from UserEntity U  ");
-        if (!CollectionUtils.isEmpty(querySearch.getRoleIds()))
-        {
+        if (!CollectionUtils.isEmpty(querySearch.getRoleIds())) {
             sql.append("left join UserRoleEntity UR on UR.userId = U.id ");
         }
-        if (!CollectionUtils.isEmpty(querySearch.getRoomIds()))
-        {
+        if (!CollectionUtils.isEmpty(querySearch.getRoomIds())) {
             sql.append(" left join UserRoomEntity UB on UB.userId = U.id ");
         }
         sql.append(createWhereQuery(querySearch, values));
@@ -50,12 +48,10 @@ public class UserEntityRepositoryImpl implements UserEntityRepositoryCustom {
         Map<String, Object> values = new HashMap<>();
         StringBuilder sql = new StringBuilder();
         sql.append("select count(U) from UserEntity U ");
-        if (!CollectionUtils.isEmpty(querySearch.getRoleIds()))
-        {
+        if (!CollectionUtils.isEmpty(querySearch.getRoleIds())) {
             sql.append(" left join UserRoleEntity UR on UR.userId = U.id ");
         }
-        if (!CollectionUtils.isEmpty(querySearch.getRoomIds()))
-        {
+        if (!CollectionUtils.isEmpty(querySearch.getRoomIds())) {
             sql.append(" left join UserRoomEntity UB on UB.userId = U.id ");
         }
         sql.append(createWhereQuery(querySearch, values));
@@ -83,18 +79,15 @@ public class UserEntityRepositoryImpl implements UserEntityRepositoryCustom {
             sql.append(" and UR.roleId IN :roleIds ");
             values.put("roleIds", querySearch.getRoleIds());
         }
-        if (!CollectionUtils.isEmpty(querySearch.getUserTypes()))
-        {
+        if (!CollectionUtils.isEmpty(querySearch.getUserTypes())) {
             sql.append(" and U.userType IN :userTypes ");
             values.put("userTypes", querySearch.getUserTypes());
         }
-        if (!CollectionUtils.isEmpty(querySearch.getClassIds()))
-        {
+        if (!CollectionUtils.isEmpty(querySearch.getClassIds())) {
             sql.append(" and U.classId IN :classIds ");
             values.put("classIds", querySearch.getClassIds());
         }
-        if (!CollectionUtils.isEmpty(querySearch.getRoomIds()))
-        {
+        if (!CollectionUtils.isEmpty(querySearch.getRoomIds())) {
             sql.append(" and UB.roomId IN :roomIds ");
             values.put("roomIds", querySearch.getRoomIds());
         }

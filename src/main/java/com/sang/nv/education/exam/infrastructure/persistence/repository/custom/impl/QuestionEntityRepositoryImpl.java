@@ -26,8 +26,7 @@ public class QuestionEntityRepositoryImpl implements QuestionEntityRepositoryCus
         Map<String, Object> values = new HashMap<>();
         StringBuilder sql = new StringBuilder();
         sql.append("select EN from ").append(this.getClassName().getSimpleName()).append(" EN");
-        if (!StrUtils.isBlank(query.getExamId()))
-        {
+        if (!StrUtils.isBlank(query.getExamId())) {
             sql.append(" left join ExamQuestionEntity EQ on EQ.questionId = EN.id ");
         }
         sql.append(createWhereQuery(query, values));
@@ -44,8 +43,7 @@ public class QuestionEntityRepositoryImpl implements QuestionEntityRepositoryCus
         Map<String, Object> values = new HashMap<>();
         StringBuilder sql = new StringBuilder();
         sql.append("select count(EN) from ").append(this.getClassName().getSimpleName()).append(" EN");
-        if (!StrUtils.isBlank(query.getExamId()))
-        {
+        if (!StrUtils.isBlank(query.getExamId())) {
             sql.append(" left join ExamQuestionEntity EQ on EQ.questionId = EN.id ");
         }
         sql.append(createWhereQuery(query, values));
@@ -66,8 +64,7 @@ public class QuestionEntityRepositoryImpl implements QuestionEntityRepositoryCus
             sql.append(" and ( EN.questionLevel in :questionLevels )");
             values.put("questionLevels", query.getQuestionLevels());
         }
-        if (!StrUtils.isBlank(query.getExamId()))
-        {
+        if (!StrUtils.isBlank(query.getExamId())) {
             sql.append(" and ( EQ.examId = :examId )");
             values.put("examId", query.getExamId());
         }
@@ -92,7 +89,7 @@ public class QuestionEntityRepositoryImpl implements QuestionEntityRepositoryCus
         return hql;
     }
 
-    private Class getClassName(){
+    private Class getClassName() {
         return QuestionEntity.class;
     }
 }

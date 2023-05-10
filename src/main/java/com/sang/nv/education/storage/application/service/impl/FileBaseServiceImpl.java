@@ -91,8 +91,7 @@ public class FileBaseServiceImpl implements FileBaseService {
     @Override
     public List<FileFirebaseResponse> saveAll(List<MultipartFile> fileList) {
         List<FileFirebaseResponse> fileFirebaseResponses = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(fileList))
-        {
+        if (!CollectionUtils.isEmpty(fileList)) {
             fileList.forEach(multipartFile -> {
                 try {
                     fileFirebaseResponses.add(this.save(multipartFile));

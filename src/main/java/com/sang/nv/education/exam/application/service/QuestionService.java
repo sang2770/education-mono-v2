@@ -28,6 +28,7 @@ public interface QuestionService {
      * @return Question
      */
     Question update(String id, QuestionUpdateRequest request);
+
     void delete(String id);
 
     /**

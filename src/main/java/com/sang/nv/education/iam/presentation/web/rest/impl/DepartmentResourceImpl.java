@@ -7,7 +7,6 @@ import com.sang.nv.education.iam.application.dto.request.DepartmentCreateOrUpdat
 import com.sang.nv.education.iam.application.service.DepartmentService;
 import com.sang.nv.education.iam.domain.Department;
 import com.sang.nv.education.iam.presentation.web.rest.DepartmentResource;
-
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 public class DepartmentResourceImpl implements DepartmentResource {
     private final DepartmentService departmentService;
+
     @Override
     public PagingResponse<Department> search(BaseSearchRequest request) {
         return PagingResponse.of(this.departmentService.search(request));

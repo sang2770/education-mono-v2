@@ -31,6 +31,7 @@ public class ExamDomainRepositoryImpl extends AbstractDomainRepository<Exam, Exa
     private final ExamQuestionEntityMapper examQuestionEntityMapper;
     private final ExamQuestionEntityRepository examQuestionEntityRepository;
     private final QuestionDomainRepository questionDomainRepository;
+
     public ExamDomainRepositoryImpl(ExamEntityRepository ExamEntityRepository,
                                     ExamEntityMapper ExamEntityMapper,
                                     ExamQuestionEntityMapper examQuestionEntityMapper,
@@ -51,8 +52,7 @@ public class ExamDomainRepositoryImpl extends AbstractDomainRepository<Exam, Exa
 
     @Override
     public Exam save(Exam domain) {
-        if (!CollectionUtils.isEmpty(domain.getExamQuestions()))
-        {
+        if (!CollectionUtils.isEmpty(domain.getExamQuestions())) {
             List<ExamQuestionEntity> examQuestionEntities = this.examQuestionEntityMapper.toEntity(domain.getExamQuestions());
             this.examQuestionEntityRepository.saveAll(examQuestionEntities);
         }
@@ -62,8 +62,7 @@ public class ExamDomainRepositoryImpl extends AbstractDomainRepository<Exam, Exa
     @Override
     public List<Exam> saveAll(List<Exam> domains) {
         domains.forEach(exam -> {
-            if (!CollectionUtils.isEmpty(exam.getExamQuestions()))
-            {
+            if (!CollectionUtils.isEmpty(exam.getExamQuestions())) {
                 List<ExamQuestionEntity> examQuestionEntities = this.examQuestionEntityMapper.toEntity(exam.getExamQuestions());
                 this.examQuestionEntityRepository.saveAll(examQuestionEntities);
             }
@@ -78,8 +77,7 @@ public class ExamDomainRepositoryImpl extends AbstractDomainRepository<Exam, Exa
                 this.examQuestionEntityRepository.findByExamId(exam.getId()));
         List<String> questionIds = examQuestions.stream().map(ExamQuestion::getQuestionId).collect(Collectors.toList());
         List<Question> questions = this.questionDomainRepository.getByIds(questionIds);
-        if (!CollectionUtils.isEmpty(examQuestions))
-        {
+        if (!CollectionUtils.isEmpty(examQuestions)) {
             examQuestions.forEach(examQuestion -> {
                 Question question = questions.stream().filter(item -> Objects.equals(examQuestion.getQuestionId(), item.getId())).findFirst().orElse(null);
                 examQuestion.enrichQuestion(question);

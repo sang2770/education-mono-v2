@@ -51,13 +51,11 @@ public class RoomDomainRepositoryImpl extends AbstractDomainRepository<Room, Roo
     @Override
     public Room save(Room domain) {
         // save UserRoom
-        if (!CollectionUtils.isEmpty(domain.getUserRooms()))
-        {
+        if (!CollectionUtils.isEmpty(domain.getUserRooms())) {
             List<UserRoom> userRooms = domain.getUserRooms();
             this.UserRoomEntityRepository.saveAll(this.UserRoomEntityMapper.toEntity(userRooms));
         }
-        if (!CollectionUtils.isEmpty(domain.getPeriodRooms()))
-        {
+        if (!CollectionUtils.isEmpty(domain.getPeriodRooms())) {
             List<PeriodRoom> periodRooms = domain.getPeriodRooms();
             this.periodRoomEntityRepository.saveAll(this.periodRoomEntityMapper.toEntity(periodRooms));
         }

@@ -5,7 +5,7 @@ import com.sang.nv.education.iam.infrastructure.persistence.entity.DepartmentEnt
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class DepartmentEntityRepositoryImpl  extends BaseRepositoryImpl {
+public class DepartmentEntityRepositoryImpl extends BaseRepositoryImpl {
     @Override
     public Class getClassName() {
         return DepartmentEntity.class;

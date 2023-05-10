@@ -100,7 +100,7 @@ public interface UserResource {
 
     @ApiOperation(value = "Update Role User")
     @PostMapping("/users/{id}/update-roles")
-    Response<User> updateRole(@PathVariable String id,  @RequestBody UserUpdateRoleRequest request);
+    Response<User> updateRole(@PathVariable String id, @RequestBody UserUpdateRoleRequest request);
 
 
 }

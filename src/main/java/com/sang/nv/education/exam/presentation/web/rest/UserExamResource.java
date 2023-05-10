@@ -35,7 +35,7 @@ public interface UserExamResource {
     PagingResponse<UserExam> searchByRoomAndPeriod(@PathVariable String roomId, @PathVariable String periodId, UserRoomSearchRequest request);
 
 
-//    For Student
+    //    For Student
     @ApiOperation(value = "Get my Exam by room")
     @GetMapping("/user-exams/{roomId}/get-my-exam/{periodId}")
     PagingResponse<UserExam> getMyExamByRoomAndPeriod(@PathVariable String roomId, @PathVariable String periodId, UserRoomSearchRequest request);

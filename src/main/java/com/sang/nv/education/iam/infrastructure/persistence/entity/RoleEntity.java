@@ -11,16 +11,14 @@ import lombok.ToString;
 import org.hibernate.Hibernate;
 
 import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import java.util.Objects;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.Table;
+import java.util.Objects;
+
 @Entity
 @Table(name = "role", indexes = {
         @Index(name = "role_code_idx", columnList = "code"),

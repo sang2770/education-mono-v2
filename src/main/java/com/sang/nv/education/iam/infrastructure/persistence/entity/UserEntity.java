@@ -39,7 +39,7 @@ public class UserEntity extends AuditableEntity {
     @Column(name = "username", length = ValidateConstraint.LENGTH.CODE_MAX_LENGTH, nullable = false)
     private String username;
 
-    @Column(name = "password", length = ValidateConstraint.LENGTH.VALUE_MAX_LENGTH,nullable = false)
+    @Column(name = "password", length = ValidateConstraint.LENGTH.VALUE_MAX_LENGTH, nullable = false)
     private String password;
 
     @Column(name = "full_name", length = ValidateConstraint.LENGTH.NAME_MAX_LENGTH, nullable = false)
@@ -83,6 +83,7 @@ public class UserEntity extends AuditableEntity {
 
     @Column(name = "classId", length = ValidateConstraint.LENGTH.ID_MAX_LENGTH)
     private String classId;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

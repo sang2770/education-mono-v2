@@ -7,7 +7,12 @@ import com.sang.commonutil.IdUtils;
 import com.sang.nv.education.iam.domain.command.RoleCreateOrUpdateCmd;
 import com.sang.nv.education.iam.domain.command.RolePermissionCreateCmd;
 import com.sang.nv.education.iam.infrastructure.support.enums.RoleStatus;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.util.CollectionUtils;
 

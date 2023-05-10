@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface KeyEntityRepository extends JpaRepository<KeyEntity, String>{
+public interface KeyEntityRepository extends JpaRepository<KeyEntity, String> {
     @Query("from KeyEntity u where u.deleted = false and ( :keyword is null or ( u.name like :keyword))")
     Page<KeyEntity> search(@Param("keyword") String keyword, Pageable pageable);
 

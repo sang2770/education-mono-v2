@@ -6,9 +6,7 @@ import lombok.Getter;
 @Getter
 public enum BadRequestError implements ResponseError {
     FILE_NOT_FOUND(404, "File not found!"),
-    FILE_INVALID(400, "File invalid!")
-
-    ;
+    FILE_INVALID(400, "File invalid!");
 
     private final Integer code;
     private final String message;

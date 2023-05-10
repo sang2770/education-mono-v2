@@ -23,7 +23,7 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class PermissionServiceImpl  implements PermissionService {
+public class PermissionServiceImpl implements PermissionService {
 
     private final PermissionEntityRepository permissionEntityRepository;
     private final PermissionEntityMapper permissionEntityMapper;
@@ -76,7 +76,7 @@ public class PermissionServiceImpl  implements PermissionService {
                         new ResponseException(NotFoundError.PERMISSION_NOT_FOUND)));
         permission.update(cmd);
         this.permissionEntityRepository
-                    .save(this.permissionEntityMapper.toEntity(permission));
+                .save(this.permissionEntityMapper.toEntity(permission));
         return permission;
     }
 

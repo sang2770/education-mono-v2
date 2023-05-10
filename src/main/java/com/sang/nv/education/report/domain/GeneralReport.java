@@ -1,7 +1,6 @@
 package com.sang.nv.education.report.domain;
 
 import com.sang.commonmodel.domain.AuditableDomain;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

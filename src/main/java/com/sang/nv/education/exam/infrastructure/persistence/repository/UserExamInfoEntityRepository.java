@@ -12,5 +12,5 @@ import java.util.List;
 @Repository
 public interface UserExamInfoEntityRepository extends JpaRepository<UserExamInfoEntity, String> {
     @Query("from UserExamInfoEntity u where u.deleted = false and u.userExamId = :userExamId")
-    List<UserExamInfoEntity> findAllByUserExamId(@Param("userExamId") String userExamId );
+    List<UserExamInfoEntity> findAllByUserExamId(@Param("userExamId") String userExamId);
 }

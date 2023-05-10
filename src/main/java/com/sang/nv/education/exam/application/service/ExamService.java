@@ -44,6 +44,7 @@ public interface ExamService {
     PageDTO<Exam> getByRoomId(String roomId, ExamSearchRequest request);
 
     void addQuestionToExam(String examId, String questionId);
+
     void removeQuestionToExam(String examId, String questionId);
 
     Integer countExam(List<String> roomIds);

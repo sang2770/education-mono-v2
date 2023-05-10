@@ -48,8 +48,7 @@ public class GroupQuestionImpl implements GroupQuestionService {
     public GroupQuestion create(GroupQuestionCreateOrUpdateRequest request) {
         GroupQuestionCreateOrUpdateCmd cmd = this.examAutoMapper.from(request);
         Optional<SubjectEntity> subject = this.subjectEntityRepository.findById(cmd.getSubjectId());
-        if (subject.isEmpty())
-        {
+        if (subject.isEmpty()) {
             throw new ResponseException(NotFoundError.SUBJECT_NOT_EXISTED);
         }
         cmd.setCode(this.seqRepository.generateGroupQuestionCode());

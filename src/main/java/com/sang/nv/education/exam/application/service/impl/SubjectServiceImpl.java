@@ -29,6 +29,7 @@ public class SubjectServiceImpl implements SubjectService {
     private final ExamAutoMapper examAutoMapper;
     private final SubjectEntityMapper subjectEntityMapper;
     private final SeqRepository seqRepository;
+
     public SubjectServiceImpl(SubjectEntityRepository SubjectEntityRepository,
                               ExamAutoMapper examAutoMapper,
                               SubjectEntityMapper SubjectEntityMapper, SeqRepository seqRepository) {

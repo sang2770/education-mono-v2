@@ -66,13 +66,11 @@ public class ClassesServiceImpl implements ClassesService {
         ClassesCreateOrUpdateCmd cmd = this.autoMapper.from(request);
         cmd.setCode(this.seqRepository.generateClassesCode());
         Optional<KeyEntity> optionalKeyEntity = this.keyEntityRepository.findById(request.getKeyId());
-        if (optionalKeyEntity.isEmpty())
-        {
+        if (optionalKeyEntity.isEmpty()) {
             throw new ResponseException(BadRequestError.KEYS_NOT_EXISTED);
         }
         Optional<DepartmentEntity> optionalDepartmentEntity = this.departmentEntityRepository.findById(request.getDepartmentId());
-        if (optionalDepartmentEntity.isEmpty())
-        {
+        if (optionalDepartmentEntity.isEmpty()) {
             throw new ResponseException(BadRequestError.DEPARTMENT_NOT_EXISTED);
         }
         Classes classes = new Classes(cmd);
@@ -118,8 +116,7 @@ public class ClassesServiceImpl implements ClassesService {
     public PageDTO<Classes> autoComplete(BaseSearchRequest request) {
         Pageable pageable = PageableMapperUtil.toPageable(request);
         Page<ClassEntity> classEntityPage = this.classesEntityRepository.autoComplete(request.getKeyword(), pageable);
-        if (classEntityPage.getTotalElements() == 0)
-        {
+        if (classEntityPage.getTotalElements() == 0) {
             return PageDTO.empty();
         }
         List<Classes> classes = this.classesEntityMapper.toDomain(classEntityPage.getContent());

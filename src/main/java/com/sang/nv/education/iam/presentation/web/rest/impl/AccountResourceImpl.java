@@ -10,7 +10,6 @@ import com.sang.nv.education.iam.application.dto.request.Auth.RefreshTokenReques
 import com.sang.nv.education.iam.application.dto.request.User.EmailForgotPasswordRequest;
 import com.sang.nv.education.iam.application.dto.request.User.ForgotPasswordRequest;
 import com.sang.nv.education.iam.application.dto.response.AuthToken;
-import com.sang.nv.education.iam.application.dto.response.CaptchaResponse;
 import com.sang.nv.education.iam.application.service.AccountService;
 import com.sang.nv.education.iam.domain.User;
 import com.sang.nv.education.iam.presentation.web.rest.AccountResource;
@@ -20,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AccountResourceImpl implements AccountResource {
     private final AccountService accountService;
+
     public AccountResourceImpl(AccountService accountService) {
         this.accountService = accountService;
     }

@@ -205,8 +205,7 @@ public class ExamExcelServiceImpl implements ExamExcelService {
                                 if (!StrUtils.isBlank(value)) {
                                     answerCreateOrUpdateCmds.add(AnswerCreateOrUpdateCmd.builder().content(value).status(answerIndex == 4).build());
                                 }
-                                if (CollectionUtils.isEmpty(answerCreateOrUpdateCmds))
-                                {
+                                if (CollectionUtils.isEmpty(answerCreateOrUpdateCmds)) {
                                     error.append(Const.COL_ANSWER_QUESTION_NOT_EMPTY).append(StringPool.COMMA);
                                 }
                                 break;

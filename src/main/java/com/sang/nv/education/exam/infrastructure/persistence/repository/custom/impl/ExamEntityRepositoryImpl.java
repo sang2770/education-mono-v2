@@ -76,7 +76,7 @@ public class ExamEntityRepositoryImpl implements ExamEntityRepositoryCustom {
         return hql;
     }
 
-    private Class getClassName(){
+    private Class getClassName() {
         return ExamEntity.class;
     }
 }

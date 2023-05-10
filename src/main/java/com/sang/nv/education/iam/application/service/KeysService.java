@@ -7,7 +7,10 @@ import com.sang.nv.education.iam.domain.Key;
 
 public interface KeysService {
     Key create(KeyCreateOrUpdateRequest request);
+
     Key update(String id, KeyCreateOrUpdateRequest request);
+
     PageDTO<Key> search(BaseSearchRequest request);
+
     Key getById(String id);
 }

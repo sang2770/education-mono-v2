@@ -27,8 +27,7 @@ public class RoomEntityRepositoryImpl implements RoomEntityRepositoryCustom {
         Map<String, Object> values = new HashMap<>();
         StringBuilder sql = new StringBuilder();
         sql.append("select EN from ").append(this.getClassName().getSimpleName()).append(" EN");
-        if (!CollectionUtils.isEmpty(query.getUserIds()))
-        {
+        if (!CollectionUtils.isEmpty(query.getUserIds())) {
             sql.append(" join UserRoomEntity UR on UR.roomId = EN.id and UR.userId in :userIds");
             values.put("userIds", query.getUserIds());
 
@@ -47,8 +46,7 @@ public class RoomEntityRepositoryImpl implements RoomEntityRepositoryCustom {
         Map<String, Object> values = new HashMap<>();
         StringBuilder sql = new StringBuilder();
         sql.append("select count(EN) from ").append(this.getClassName().getSimpleName()).append(" EN");
-        if (!CollectionUtils.isEmpty(query.getUserIds()))
-        {
+        if (!CollectionUtils.isEmpty(query.getUserIds())) {
             sql.append(" join UserRoomEntity UR on UR.roomId = EN.id and UR.userId in :userIds ");
             values.put("userIds", query.getUserIds());
         }
@@ -89,7 +87,7 @@ public class RoomEntityRepositoryImpl implements RoomEntityRepositoryCustom {
         return hql;
     }
 
-    private Class getClassName(){
+    private Class getClassName() {
         return RoomEntity.class;
     }
 }

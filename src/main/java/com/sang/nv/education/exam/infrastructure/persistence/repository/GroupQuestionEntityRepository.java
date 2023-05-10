@@ -15,7 +15,7 @@ import java.util.Optional;
 @Repository
 public interface GroupQuestionEntityRepository extends JpaRepository<GroupQuestionEntity, String> {
     @Query("from GroupQuestionEntity u where u.deleted = false and ( :keyword is null or ( u.name like :keyword)) and ((:subjectIds) is null or u.subjectId in :subjectIds) ")
-    Page<GroupQuestionEntity> search(@Param("keyword") String keyword, @Param("subjectIds")List<String> subjectIds, Pageable pageable);
+    Page<GroupQuestionEntity> search(@Param("keyword") String keyword, @Param("subjectIds") List<String> subjectIds, Pageable pageable);
 
     @Query("from GroupQuestionEntity u where  u.id in :ids")
     List<GroupQuestionEntity> findAllByIds(@Param("ids") List<String> ids);
