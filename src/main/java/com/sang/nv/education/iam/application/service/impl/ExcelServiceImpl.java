@@ -65,7 +65,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ExcelServiceImpl implements ExcelService {
     static int ROW_NUMBER = 1;
-    static int COL_NUMBER = 8;
+    static int COL_NUMBER = 6;
     private final UserEntityRepository userEntityRepository;
     private final UserEntityMapper userEntityMapper;
     private final ClassesEntityRepository classesEntityRepository;
@@ -204,85 +204,81 @@ public class ExcelServiceImpl implements ExcelService {
                 importUserDTO.setRowIndex(rowIndex);
                 UserCreateOrUpdateCmd cmd = new UserCreateOrUpdateCmd();
                 StringBuilder error = new StringBuilder();
-                if (row.getPhysicalNumberOfCells() < COL_NUMBER) {
-                    error.append(Const.INVALID).append(StringPool.COMMA);
-                } else {
-                    for (Cell cell : row) {
-                        String value = ExcelUtils.readCellContent(cell);
+                for (Cell cell : row) {
+                    String value = ExcelUtils.readCellContent(cell);
 
-                        switch (cell.getColumnIndex()) {
-                            case 1:
-                                if (!StrUtils.isBlank(value)) {
-                                    cmd.setCode(value);
-                                    cmd.setUsername(value);
-                                    cmd.setPassword(this.passwordEncoder.encode(value));
-                                } else {
-                                    error.append(Const.COL_USER_CODE_NOT_EMPTY).append(StringPool.COMMA);
-                                }
+                    switch (cell.getColumnIndex()) {
+                        case 1:
+                            if (!StrUtils.isBlank(value)) {
+                                cmd.setCode(value);
+                                cmd.setUsername(value);
+                                cmd.setPassword(this.passwordEncoder.encode(value));
+                            } else {
+                                error.append(Const.COL_USER_CODE_NOT_EMPTY).append(StringPool.COMMA);
+                            }
+                            break;
+                        case 2:
+                            if (!StrUtils.isBlank(value) && value.length() <= 100) {
+                                cmd.setFullName(value);
+                            }
+                            break;
+                        case 3:
+                            String emailRegex = ValidateConstraint.FORMAT.EMAIL_PATTERN;
+                            if (StrUtils.isBlank(value)) {
+                                error.append(Const.COL_EMAIL_NOT_EMPTY).append(StringPool.COMMA);
                                 break;
-                            case 2:
-                                if (!StrUtils.isBlank(value) && value.length() <= 100) {
-                                    cmd.setFullName(value);
-                                }
+                            }
+                            if (!value.matches(emailRegex)) {
+                                error.append(Const.COL_EMAIL_NOT_FORMAT).append(StringPool.COMMA);
                                 break;
-                            case 3:
-                                String emailRegex = ValidateConstraint.FORMAT.EMAIL_PATTERN;
-                                if (StrUtils.isBlank(value)) {
-                                    error.append(Const.COL_EMAIL_NOT_EMPTY).append(StringPool.COMMA);
+                            }
+                            Optional<UserEntity> userEntity = this.userEntityRepository.findByAllEmail(value);
+                            if (userEntity.isPresent()) {
+                                error.append(Const.COL_EMAIL_EXISTED).append(StringPool.COMMA);
+                                break;
+                            } else {
+                                cmd.setEmail(value);
+                            }
+                            break;
+                        case 4:
+                            String phoneRegex = ValidateConstraint.FORMAT.PHONE_NUMBER_PATTERN;
+                            if (StrUtils.isBlank(value)) {
+                                error.append(Const.COL_PHONE_NOT_EMPTY).append(StringPool.COMMA);
+                            }
+                            if (!value.matches(phoneRegex)) {
+                                error.append(Const.COL_PHONE_NOT_EMPTY).append(StringPool.NEW_LINE);
+                                break;
+                            }
+                            cmd.setPhoneNumber(value);
+                            break;
+                        case 5:
+                            if (!StrUtils.isBlank(value)) {
+                                LocalDate localDate = LocalDate.parse(value);
+                                cmd.setDayOfBirth(localDate);
+                            }
+                            break;
+                        case 6:
+                            if (StrUtils.isBlank(value)) {
+                                error.append(Const.TYPE_USER_NOT_EMPTY).append(StringPool.COMMA);
+                            }
+                            if (value.equals(Const.USER_ADMIN)) {
+                                cmd.setUserType(UserType.MANAGER);
+                            } else {
+                                cmd.setUserType(UserType.STUDENT);
+                            }
+                            break;
+                        case 7:
+                            if (!StrUtils.isBlank(value)) {
+                                List<ClassEntity> classes = this.classesEntityRepository.findAllByCode(List.of(value));
+                                if (CollectionUtils.isEmpty(classes)) {
+                                    error.append(Const.CLASS_NOT_FOUND).append(StringPool.COMMA);
                                     break;
                                 }
-                                if (!value.matches(emailRegex)) {
-                                    error.append(Const.COL_EMAIL_NOT_FORMAT).append(StringPool.COMMA);
-                                    break;
-                                }
-                                Optional<UserEntity> userEntity = this.userEntityRepository.findByAllEmail(value);
-                                if (userEntity.isPresent()) {
-                                    error.append(Const.COL_EMAIL_EXISTED).append(StringPool.COMMA);
-                                    break;
-                                } else {
-                                    cmd.setEmail(value);
-                                }
-                                break;
-                            case 4:
-                                String phoneRegex = ValidateConstraint.FORMAT.PHONE_NUMBER_PATTERN;
-                                if (StrUtils.isBlank(value)) {
-                                    error.append(Const.COL_PHONE_NOT_EMPTY).append(StringPool.COMMA);
-                                }
-                                if (!value.matches(phoneRegex)) {
-                                    error.append(Const.COL_PHONE_NOT_EMPTY).append(StringPool.NEW_LINE);
-                                    break;
-                                }
-                                cmd.setPhoneNumber(value);
-                                break;
-                            case 5:
-                                if (!StrUtils.isBlank(value)) {
-                                    LocalDate localDate = LocalDate.parse(value);
-                                    cmd.setDayOfBirth(localDate);
-                                }
-                                break;
-                            case 6:
-                                if (StrUtils.isBlank(value)) {
-                                    error.append(Const.TYPE_USER_NOT_EMPTY).append(StringPool.COMMA);
-                                }
-                                if (value.equals(Const.USER_ADMIN)) {
-                                    cmd.setUserType(UserType.MANAGER);
-                                } else {
-                                    cmd.setUserType(UserType.STUDENT);
-                                }
-                                break;
-                            case 7:
-                                if (!StrUtils.isBlank(value)) {
-                                    List<ClassEntity> classes = this.classesEntityRepository.findAllByCode(List.of(value));
-                                    if (CollectionUtils.isEmpty(classes)) {
-                                        error.append(Const.CLASS_NOT_FOUND).append(StringPool.COMMA);
-                                        break;
-                                    }
-                                    cmd.setClassId(value);
-                                }
-                                break;
-                            default:
-                                break;
-                        }
+                                cmd.setClassId(value);
+                            }
+                            break;
+                        default:
+                            break;
                     }
                 }
 

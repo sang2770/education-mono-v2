@@ -1,10 +1,14 @@
 package com.sang.nv.education.exam.domain.command;
 
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@Getter
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ExamUpdateCmd {
     Float totalPoint;
     String periodId;

@@ -115,6 +115,7 @@ public class ExamServiceImpl implements ExamService {
         Exam exam = this.getById(id);
         List<QuestionEntity> questionEntities = this.questionEntityRepository.findAllById(request.getQuestionIds());
         exam.update(this.examAutoMapper.from(request), this.questionEntityMapper.toDomain(questionEntities));
+        this.examDomainRepository.save(exam);
         return exam;
     }
 

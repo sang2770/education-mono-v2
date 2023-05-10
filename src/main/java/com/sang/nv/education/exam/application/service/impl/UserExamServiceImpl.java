@@ -17,7 +17,6 @@ import com.sang.nv.education.exam.domain.repository.ExamDomainRepository;
 import com.sang.nv.education.exam.domain.repository.UserExamDomainRepository;
 import com.sang.nv.education.exam.infrastructure.persistence.entity.ExamEntity;
 import com.sang.nv.education.exam.infrastructure.persistence.entity.RoomEntity;
-import com.sang.nv.education.exam.infrastructure.persistence.entity.UserExamEntity;
 import com.sang.nv.education.exam.infrastructure.persistence.mapper.UserExamEntityMapper;
 import com.sang.nv.education.exam.infrastructure.persistence.repository.ExamEntityRepository;
 import com.sang.nv.education.exam.infrastructure.persistence.repository.ExamQuestionEntityRepository;
@@ -105,8 +104,7 @@ public class UserExamServiceImpl implements UserExamService {
 
     @Override
     public UserExam testingExam(String id) {
-        UserExamEntity userExamEntity = this.userExamEntityRepository.findById(id).orElseThrow(() -> new ResponseException(NotFoundError.USER_EXAM_NOT_FOUND));
-        UserExam userExam = this.userExamEntityMapper.toDomain(userExamEntity);
+        UserExam userExam = this.userExamDomainRepository.getById(id);
         if (Objects.equals(userExam.getStatus(), UserExamStatus.DONE)) {
             throw new ResponseException(BadRequestError.USER_EXAM_FINISHED);
         }
