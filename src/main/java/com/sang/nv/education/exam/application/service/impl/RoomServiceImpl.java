@@ -51,6 +51,7 @@ import com.sang.nv.education.exam.infrastructure.support.exception.BadRequestErr
 import com.sang.nv.education.exam.infrastructure.support.exception.NotFoundError;
 import com.sang.nv.education.iam.application.service.UserService;
 import com.sang.nv.education.iam.domain.User;
+import com.sang.nv.education.iam.infrastructure.support.enums.UserType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -300,7 +301,8 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public void sendExam(String id, SendExamToUserRequest request) {
         Room room = this.getById(id);
-        PeriodRoom periodRoom = this.periodRoomEntityMapper.toDomain(this.periodRoomEntityRepository.findByRoomIdAndPeriodId(id, request.getPeriodId()).orElseThrow(() -> new ResponseException(NotFoundError.PERIOD_NOT_EXISTED_IN_ROOM)));
+        PeriodRoom periodRoom = this.periodRoomEntityMapper.toDomain(this.periodRoomEntityRepository
+                .findByRoomIdAndPeriodId(id, request.getPeriodId()).orElseThrow(() -> new ResponseException(NotFoundError.PERIOD_NOT_EXISTED_IN_ROOM)));
         periodRoom.updateIsSendExam(true);
         Optional<PeriodRoomEntity> periodRoomEntityOptional = this.periodRoomEntityRepository.findByRoomIdAndPeriodId(id, request.getPeriodId());
         if (periodRoomEntityOptional.isEmpty()) {
@@ -310,7 +312,8 @@ public class RoomServiceImpl implements RoomService {
         if (CollectionUtils.isEmpty(exams)) {
             throw new ResponseException(BadRequestError.PERIOD_NOT_EXAM);
         }
-        List<UserRoom> userRooms = this.userRoomEntityMapper.toDomain(this.userRoomEntityRepository.findByRoomId(id));
+        List<UserRoom> userRooms = this.userRoomEntityMapper.toDomain(this.userRoomEntityRepository.findByRoomId(id))
+                .stream().filter(userRoom -> Objects.equals(userRoom.getUserType(), UserType.STUDENT)).collect(Collectors.toList());
         List<UserExam> userExams = new ArrayList<>();
         AtomicInteger count = new AtomicInteger();
         if (!exams.isEmpty()) {
@@ -380,4 +383,5 @@ public class RoomServiceImpl implements RoomService {
             room1.enrichUser(userRoom);
         });
     }
+
 }
