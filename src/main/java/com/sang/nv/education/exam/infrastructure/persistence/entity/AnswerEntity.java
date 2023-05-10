@@ -34,7 +34,7 @@ public class AnswerEntity extends AuditableEntity {
     @Column(name = "questionId", length = ValidateConstraint.LENGTH.ID_MAX_LENGTH, nullable = false)
     private String questionId;
 
-    @Column(name = "content", length = ValidateConstraint.LENGTH.NAME_MAX_LENGTH, nullable = false)
+    @Column(name = "content", nullable = false)
     private String content;
 
     @Column(name = "status", nullable = false)
