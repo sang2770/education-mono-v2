@@ -44,22 +44,22 @@ public class AuthFailCacheServiceImpl implements AuthFailCacheService {
                 }
 
                 if (loginFailCount > REACH_MAX_LOGIN_FAIL_COUNT) {
-                    Optional.ofNullable(cacheManager.getCache(BLOCKED_USER_LOGIN_CACHE))
-                            .ifPresent(cache -> cache.put(username, 1L));
+//                    Optional.ofNullable(cacheManager.getCache(BLOCKED_USER_LOGIN_CACHE))
+//                            .ifPresent(cache -> cache.put(username, 1L));
                 } else {
-                    final Long newLoginFailCount = loginFailCount + 1;
-                    Optional.ofNullable(cacheManager.getCache(LOGIN_FAIL_COUNT_CACHE))
-                            .ifPresent(cache -> cache.put(username, newLoginFailCount));
-
-                    if (Objects.equals(
-                            newLoginFailCount, Long.valueOf(REACH_MAX_LOGIN_FAIL_COUNT))) {
-                        Optional.ofNullable(cacheManager.getCache(BLOCKED_USER_LOGIN_CACHE))
-                                .ifPresent(cache -> cache.put(username, 1L));
-                        return BadRequestError.LOGIN_FAIL_BLOCK_ACCOUNT;
-                    }
-                    if (newLoginFailCount > REACH_WARNING_BEFORE_BLOCK_LOGIN_FAIL_COUNT) {
-                        return BadRequestError.LOGIN_FAIL_WARNING_BEFORE_BLOCK;
-                    }
+//                    final Long newLoginFailCount = loginFailCount + 1;
+//                    Optional.ofNullable(cacheManager.getCache(LOGIN_FAIL_COUNT_CACHE))
+//                            .ifPresent(cache -> cache.put(username, newLoginFailCount));
+//
+//                    if (Objects.equals(
+//                            newLoginFailCount, Long.valueOf(REACH_MAX_LOGIN_FAIL_COUNT))) {
+//                        Optional.ofNullable(cacheManager.getCache(BLOCKED_USER_LOGIN_CACHE))
+//                                .ifPresent(cache -> cache.put(username, 1L));
+//                        return BadRequestError.LOGIN_FAIL_BLOCK_ACCOUNT;
+//                    }
+//                    if (newLoginFailCount > REACH_WARNING_BEFORE_BLOCK_LOGIN_FAIL_COUNT) {
+//                        return BadRequestError.LOGIN_FAIL_WARNING_BEFORE_BLOCK;
+//                    }
                 }
             }
         } catch (Exception ex) {

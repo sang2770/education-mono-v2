@@ -131,10 +131,10 @@ public class QuestionServiceImpl implements QuestionService {
             questions.addAll(this.getQuestionByLevel(questionEntities, QuestionLevel.HIGH, request.getNumberHighQuestion()));
         }
         if (Objects.nonNull(request.getNumberMediumQuestion()) && request.getNumberMediumQuestion() > 0) {
-            questions.addAll(this.getQuestionByLevel(questionEntities, QuestionLevel.MEDIUM, request.getNumberHighQuestion()));
+            questions.addAll(this.getQuestionByLevel(questionEntities, QuestionLevel.MEDIUM, request.getNumberMediumQuestion()));
         }
         if (Objects.nonNull(request.getNumberLowQuestion()) && request.getNumberLowQuestion() > 0) {
-            questions.addAll(this.getQuestionByLevel(questionEntities, QuestionLevel.LOW, request.getNumberHighQuestion()));
+            questions.addAll(this.getQuestionByLevel(questionEntities, QuestionLevel.LOW, request.getNumberLowQuestion()));
         }
         this.enrichQuestions(questions);
         return questions;
