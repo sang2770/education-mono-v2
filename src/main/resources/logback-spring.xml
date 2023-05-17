@@ -11,7 +11,7 @@
 
     <property name="LOG_ROOT" value="${CATALINA_BASE:-.}"/>
     <property name="LOG_PATH" value="${LOG_ROOT}/logs"/>
-    <property name="LOG_ARCHIVE_PREFIX" value="${LOG_PATH}/mbamc-%d{yyyy-MM-dd}.%i-"/>
+    <property name="LOG_ARCHIVE_PREFIX" value="${LOG_PATH}/edu-%d{yyyy-MM-dd}.%i-"/>
     <property name="LOG_ARCHIVE_DAYS" value="${LOGBACK_ARCHIVE_DAYS:-10}"/>
     <property name="MAX_FILE_SIZE" value="${LOGBACK_MAX_FILE_SIZE:-10MB}"/>
     <property name="MAX_TOTAL_FILE_SIZE" value="${LOGBACK_MAX_TOTAL_FILE_SIZE:-1000MB}"/>

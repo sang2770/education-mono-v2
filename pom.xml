@@ -225,4 +225,18 @@
         </plugins>
     </build>
 
+    <repositories>
+        <repository>
+            <id>snapshots</id>
+            <name>libs-snapshot</name>
+            <url>https://sang2770.jfrog.io/artifactory/libs-snapshot</url>
+        </repository>
+    </repositories>
+    <distributionManagement>
+        <repository>
+            <id>central</id>
+            <name>libs-release</name>
+            <url>https://sang2770.jfrog.io/artifactory/libs-release</url>
+        </repository>
+    </distributionManagement>
 </project>
