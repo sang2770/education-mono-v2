@@ -12,5 +12,5 @@ ENV POSTGRES_USER=admin
 ENV POSTGRES_PASSWORD=admin
 ENV JWK_URI=http://localhost:8080/api/certificate/.well-known/jwks.json
 EXPOSE 80
-
+// ENTRYPOINT
 ENTRYPOINT ["java","-jar","education-0.0.1.jar","--spring.profiles.active=${ENV:dev}"]
