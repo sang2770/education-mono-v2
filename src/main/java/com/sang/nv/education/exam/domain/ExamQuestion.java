@@ -24,6 +24,7 @@ public class ExamQuestion extends AuditableDomain {
     String questionId;
     Question question;
     Boolean deleted;
+    Boolean isStarted;
 
 
     public ExamQuestion(ExamQuestionCreateOrUpdateCmd cmd) {
@@ -49,5 +50,9 @@ public class ExamQuestion extends AuditableDomain {
 
     public void enrichQuestion(Question question) {
         this.question = question;
+    }
+
+    public void enrichIsStarted(Boolean isStarted) {
+        this.isStarted = isStarted;
     }
 }

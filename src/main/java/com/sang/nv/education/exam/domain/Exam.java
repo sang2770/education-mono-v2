@@ -46,6 +46,8 @@ public class Exam extends AuditableDomain {
     List<Question> questions;
     List<ExamQuestion> examQuestions;
 
+    Boolean isStarted;
+
     public Exam(ExamCreateCmd cmd, List<Question> questions) {
         this.id = IdUtils.nextId();
         this.subjectName = cmd.getSubjectName();
@@ -137,5 +139,9 @@ public class Exam extends AuditableDomain {
             examQuestion.updatePoint(point);
         });
         this.numberQuestion = this.examQuestions.size();
+    }
+
+    public void enrichIsStarted(Boolean isStarted) {
+        this.isStarted = isStarted;
     }
 }

@@ -167,7 +167,7 @@ public class UserExamDomainRepositoryImpl extends AbstractDomainRepository<UserE
 
     @Override
     public UserExam findByExamIdAndPeriodId(String examId, String periodId) {
-        Optional<UserExamEntity> optionalUserExam = this.userExamEntityRepository.findAllByExamId(examId, periodId);
+        Optional<UserExamEntity> optionalUserExam = this.userExamEntityRepository.findByExamId(examId, periodId);
         if (optionalUserExam.isEmpty()) {
             throw new ResponseException(NotFoundError.USER_EXAM_NOT_EXISTED);
         }
