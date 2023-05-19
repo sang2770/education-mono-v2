@@ -15,6 +15,9 @@ public interface ExamQuestionEntityRepository extends JpaRepository<ExamQuestion
     @Query("from ExamQuestionEntity u where u.deleted = false and u.examId = :examId ")
     List<ExamQuestionEntity> findByExamId(@Param("examId") String examId);
 
+    @Query("from ExamQuestionEntity u where u.deleted = false and u.questionId in :questionIds ")
+    List<ExamQuestionEntity> findAllByQuestionIds(@Param("questionIds") List<String> questionIds);
+
     @Query("from ExamQuestionEntity u where u.deleted = false and u.examId = :examId and u.questionId = :questionId ")
     Optional<ExamQuestionEntity> findByExamIdAndQuestionId(@Param("examId") String examId, @Param("questionId") String questionId);
 }

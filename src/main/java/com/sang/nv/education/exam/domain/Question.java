@@ -38,6 +38,7 @@ public class Question extends AuditableDomain {
     List<Answer> answers;
     List<String> questionFileIds;
     List<QuestionFile> questionFiles;
+    Boolean isStarted;
 
 
     public Question(QuestionCreateCmd cmd) {
@@ -111,5 +112,9 @@ public class Question extends AuditableDomain {
     public void enrichFile(List<QuestionFile> questionFiles) {
         this.questionFileIds = questionFiles.stream().map(QuestionFile::getFileId).collect(Collectors.toList());
         this.questionFiles = questionFiles;
+    }
+
+    public void enrichIsStarted(Boolean isStarted) {
+        this.isStarted = isStarted;
     }
 }

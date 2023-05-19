@@ -23,6 +23,7 @@ import com.sang.nv.education.exam.infrastructure.persistence.entity.ExamQuestion
 import com.sang.nv.education.exam.infrastructure.persistence.entity.PeriodEntity;
 import com.sang.nv.education.exam.infrastructure.persistence.entity.QuestionEntity;
 import com.sang.nv.education.exam.infrastructure.persistence.entity.SubjectEntity;
+import com.sang.nv.education.exam.infrastructure.persistence.entity.UserExamEntity;
 import com.sang.nv.education.exam.infrastructure.persistence.mapper.ExamEntityMapper;
 import com.sang.nv.education.exam.infrastructure.persistence.mapper.QuestionEntityMapper;
 import com.sang.nv.education.exam.infrastructure.persistence.query.ExamSearchQuery;
@@ -33,6 +34,7 @@ import com.sang.nv.education.exam.infrastructure.persistence.repository.PeriodEn
 import com.sang.nv.education.exam.infrastructure.persistence.repository.PeriodRoomEntityRepository;
 import com.sang.nv.education.exam.infrastructure.persistence.repository.QuestionEntityRepository;
 import com.sang.nv.education.exam.infrastructure.persistence.repository.SubjectEntityRepository;
+import com.sang.nv.education.exam.infrastructure.persistence.repository.UserExamEntityRepository;
 import com.sang.nv.education.exam.infrastructure.support.exception.BadRequestError;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -41,6 +43,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -61,13 +64,14 @@ public class ExamServiceImpl implements ExamService {
     private final RoomDomainRepository roomDomainRepository;
     private final SubjectEntityRepository subjectEntityRepository;
     private final SeqRepository seqRepository;
+    private final UserExamEntityRepository userExamEntityRepository;
 
     public ExamServiceImpl(ExamEntityRepository ExamEntityRepository,
                            GroupQuestionEntityRepository GroupQuestionEntityRepository,
                            QuestionEntityRepository questionEntityRepository,
                            ExamQuestionEntityRepository examQuestionEntityRepository, ExamAutoMapper examAutoMapper,
                            QuestionEntityMapper questionEntityMapper, ExamAutoMapperQuery examAutoMapperQuery, ExamDomainRepository ExamDomainRepository,
-                           com.sang.nv.education.exam.infrastructure.persistence.repository.ExamEntityRepository examEntityRepository, PeriodEntityRepository periodEntityRepository, PeriodRoomEntityRepository periodRoomEntityRepository, ExamEntityMapper ExamEntityMapper, RoomDomainRepository roomDomainRepository, SubjectEntityRepository subjectEntityRepository, SeqRepository seqRepository) {
+                           com.sang.nv.education.exam.infrastructure.persistence.repository.ExamEntityRepository examEntityRepository, PeriodEntityRepository periodEntityRepository, PeriodRoomEntityRepository periodRoomEntityRepository, ExamEntityMapper ExamEntityMapper, RoomDomainRepository roomDomainRepository, SubjectEntityRepository subjectEntityRepository, SeqRepository seqRepository, UserExamEntityRepository userExamEntityRepository) {
         this.ExamEntityRepository = ExamEntityRepository;
         this.groupQuestionEntityRepository = GroupQuestionEntityRepository;
         this.questionEntityRepository = questionEntityRepository;
@@ -83,6 +87,7 @@ public class ExamServiceImpl implements ExamService {
         this.roomDomainRepository = roomDomainRepository;
         this.subjectEntityRepository = subjectEntityRepository;
         this.seqRepository = seqRepository;
+        this.userExamEntityRepository = userExamEntityRepository;
     }
 
     @Override
@@ -126,6 +131,7 @@ public class ExamServiceImpl implements ExamService {
             return PageDTO.empty();
         }
         List<Exam> exams = this.ExamEntityMapper.toDomain(this.ExamEntityRepository.search(query));
+        this.checkExamIsStarted(exams);
         return PageDTO.of(exams, request.getPageIndex(), request.getPageSize(), count);
     }
 
@@ -198,5 +204,18 @@ public class ExamServiceImpl implements ExamService {
         List<PeriodEntity> periodEntities = this.periodEntityRepository.findAllByRoomIds(roomIds);
         List<String> periodIds = periodEntities.stream().map(PeriodEntity::getId).collect(Collectors.toList());
         return this.examEntityRepository.count(ExamSearchQuery.builder().periodIds(periodIds).build()).intValue();
+    }
+
+    private void checkExamIsStarted(List<Exam> exams) {
+        List<String> examIds = exams.stream().map(Exam::getId).collect(Collectors.toList());
+        List<UserExamEntity> userExamEntities = this.userExamEntityRepository.findAllByExamId(examIds);
+        exams.forEach(exam -> {
+            Optional<UserExamEntity> optionalUserExamEntity = userExamEntities.stream()
+                    .filter(userExamEntity -> Objects.equals(userExamEntity.getExamId(), exam.getId()))
+                    .findFirst();
+            if (optionalUserExamEntity.isPresent()) {
+                exam.enrichIsStarted(true);
+            }
+        });
     }
 }

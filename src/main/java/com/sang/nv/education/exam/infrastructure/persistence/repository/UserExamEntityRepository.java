@@ -17,7 +17,10 @@ import java.util.Optional;
 @Repository
 public interface UserExamEntityRepository extends JpaRepository<UserExamEntity, String> {
     @Query("from UserExamEntity u where u.deleted = false and u.examId = :examId and u.periodId = :periodId")
-    Optional<UserExamEntity> findAllByExamId(@Param("examId") String examId, @Param("periodId") String periodId);
+    Optional<UserExamEntity> findByExamId(@Param("examId") String examId, @Param("periodId") String periodId);
+
+    @Query("from UserExamEntity u where u.deleted = false and u.examId in :examIds")
+    List<UserExamEntity> findAllByExamId(@Param("examIds") List<String> examId);
 
     @Query("from UserExamEntity u where u.deleted = false and u.userId = :userId and u.examId = :examId and u.periodId = :periodId")
     Optional<UserExamEntity> findByPeriod(@Param("userId") String userId, @Param("examId") String examId, @Param("periodId") String periodId);

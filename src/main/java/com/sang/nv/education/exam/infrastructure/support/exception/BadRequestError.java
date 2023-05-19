@@ -21,6 +21,7 @@ public enum BadRequestError implements ResponseError {
     USER_INVALID(400, "User invalid"),
 
     PERMISSION_DENY(400, "Permission deny"),
+    EXAM_IS_STARTED(400, "Exam is started"),
     ;
     private final Integer code;
     private final String message;

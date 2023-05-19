@@ -13,21 +13,28 @@ import com.sang.nv.education.exam.application.mapper.ExamAutoMapperQuery;
 import com.sang.nv.education.exam.application.service.ExamExcelService;
 import com.sang.nv.education.exam.application.service.QuestionService;
 import com.sang.nv.education.exam.domain.Answer;
+import com.sang.nv.education.exam.domain.Exam;
+import com.sang.nv.education.exam.domain.ExamQuestion;
 import com.sang.nv.education.exam.domain.GroupQuestion;
 import com.sang.nv.education.exam.domain.Question;
 import com.sang.nv.education.exam.domain.command.QuestionCreateCmd;
 import com.sang.nv.education.exam.domain.command.QuestionUpdateCmd;
 import com.sang.nv.education.exam.domain.repository.QuestionDomainRepository;
 import com.sang.nv.education.exam.infrastructure.persistence.entity.AnswerEntity;
+import com.sang.nv.education.exam.infrastructure.persistence.entity.ExamQuestionEntity;
 import com.sang.nv.education.exam.infrastructure.persistence.entity.GroupQuestionEntity;
 import com.sang.nv.education.exam.infrastructure.persistence.entity.QuestionEntity;
+import com.sang.nv.education.exam.infrastructure.persistence.entity.UserExamEntity;
 import com.sang.nv.education.exam.infrastructure.persistence.mapper.AnswerEntityMapper;
+import com.sang.nv.education.exam.infrastructure.persistence.mapper.ExamQuestionEntityMapper;
 import com.sang.nv.education.exam.infrastructure.persistence.mapper.GroupQuestionEntityMapper;
 import com.sang.nv.education.exam.infrastructure.persistence.mapper.QuestionEntityMapper;
 import com.sang.nv.education.exam.infrastructure.persistence.query.QuestionSearchQuery;
 import com.sang.nv.education.exam.infrastructure.persistence.repository.AnswerEntityRepository;
+import com.sang.nv.education.exam.infrastructure.persistence.repository.ExamQuestionEntityRepository;
 import com.sang.nv.education.exam.infrastructure.persistence.repository.GroupQuestionEntityRepository;
 import com.sang.nv.education.exam.infrastructure.persistence.repository.QuestionEntityRepository;
+import com.sang.nv.education.exam.infrastructure.persistence.repository.UserExamEntityRepository;
 import com.sang.nv.education.exam.infrastructure.support.enums.QuestionLevel;
 import com.sang.nv.education.exam.infrastructure.support.exception.BadRequestError;
 import com.sang.nv.education.exam.infrastructure.support.exception.NotFoundError;
@@ -56,12 +63,14 @@ public class QuestionServiceImpl implements QuestionService {
     private final AnswerEntityRepository answerEntityRepository;
     private final AnswerEntityMapper answerEntityMapper;
     private final ExamExcelService examExcelService;
-
+    private final ExamQuestionEntityRepository examQuestionEntityRepository;
+    private final ExamQuestionEntityMapper examQuestionEntityMapper;
+    private final UserExamEntityRepository userExamEntityRepository;
     public QuestionServiceImpl(QuestionEntityRepository questionEntityRepository,
                                GroupQuestionEntityRepository groupQuestionEntityRepository, ExamAutoMapper examAutoMapper,
                                ExamAutoMapperQuery examAutoMapperQuery, QuestionDomainRepository questionDomainRepository,
                                QuestionEntityMapper questionEntityMapper,
-                               GroupQuestionEntityMapper groupQuestionEntityMapper, AnswerEntityRepository answerEntityRepository, AnswerEntityMapper answerEntityMapper, ExamExcelService examExcelService) {
+                               GroupQuestionEntityMapper groupQuestionEntityMapper, AnswerEntityRepository answerEntityRepository, AnswerEntityMapper answerEntityMapper, ExamExcelService examExcelService, ExamQuestionEntityRepository examQuestionEntityRepository, ExamQuestionEntityMapper examQuestionEntityMapper, UserExamEntityRepository userExamEntityRepository) {
         this.questionEntityRepository = questionEntityRepository;
         this.groupQuestionEntityRepository = groupQuestionEntityRepository;
         this.examAutoMapper = examAutoMapper;
@@ -72,6 +81,9 @@ public class QuestionServiceImpl implements QuestionService {
         this.answerEntityRepository = answerEntityRepository;
         this.answerEntityMapper = answerEntityMapper;
         this.examExcelService = examExcelService;
+        this.examQuestionEntityRepository = examQuestionEntityRepository;
+        this.examQuestionEntityMapper = examQuestionEntityMapper;
+        this.userExamEntityRepository = userExamEntityRepository;
     }
 
     @Override
@@ -196,6 +208,34 @@ public class QuestionServiceImpl implements QuestionService {
             );
             question.enrichAnswers(answers);
         });
+        this.checkQuestionStarted(questionList);
     }
+
+    private void checkQuestionStarted(List<Question> questions) {
+        List<String> questionIds = questions.stream().map(Question::getId).collect(Collectors.toList());
+        List<ExamQuestion> examQuestions = this.examQuestionEntityMapper.toDomain(this.examQuestionEntityRepository.findAllByQuestionIds(questionIds));
+        this.checkExamIsStarted(examQuestions);
+        questions.forEach(question -> {
+            Optional<ExamQuestion> optionalExamQuestion = examQuestions.stream()
+                    .filter(examQuestion -> Objects.equals(examQuestion.getQuestionId(), question.getId()))
+                    .findFirst();
+            if (optionalExamQuestion.isPresent()) {
+                question.enrichIsStarted(true);
+            }
+        });
+    }
+    private void checkExamIsStarted(List<ExamQuestion> examQuestions) {
+        List<String> examIds = examQuestions.stream().map(ExamQuestion::getId).collect(Collectors.toList());
+        List<UserExamEntity> userExamEntities = this.userExamEntityRepository.findAllByExamId(examIds);
+        examQuestions.forEach(exam -> {
+            Optional<UserExamEntity> optionalUserExamEntity = userExamEntities.stream()
+                    .filter(userExamEntity -> Objects.equals(userExamEntity.getExamId(), exam.getId()))
+                    .findFirst();
+            if (optionalUserExamEntity.isPresent()) {
+                exam.enrichIsStarted(true);
+            }
+        });
+    }
+
 
 }
