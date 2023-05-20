@@ -3,6 +3,7 @@ package com.sang.nv.education.iam.application.service.impl;
 import com.sang.common.email.MailService;
 import com.sang.nv.education.iam.application.service.SendEmailService;
 import com.sang.nv.education.iam.domain.User;
+import com.sang.nv.education.iam.infrastructure.support.enums.UserType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -22,6 +23,8 @@ public class SendEmailServiceImpl implements SendEmailService {
     private static final String LINK = "redirectLink";
     @Value("${app.iam.domain}")
     private String domain;
+    @Value("${app.iam.domain_client}")
+    private String domainClient;
     private final MailService mailService;
     private final SpringTemplateEngine templateEngine;
     private final String redirectLink = "authentication/reset-password";
@@ -44,7 +47,7 @@ public class SendEmailServiceImpl implements SendEmailService {
         Context context = new Context(locale);
         context.setVariable(USER, user);
         context.setVariable(TOKEN, token);
-        context.setVariable(LINK, String.format("%s/#/%s", domain, redirectLink));
+        context.setVariable(LINK, String.format("%s/#/%s", user.getUserType().equals(UserType.MANAGER)? domain : domainClient, redirectLink));
         String content = templateEngine.process(templateName, context);
         mailService.sendHtmlMail(user.getEmail(), titleKey, content);
     }

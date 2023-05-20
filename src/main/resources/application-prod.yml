@@ -19,4 +19,5 @@ spring:
           jwk-set-uri: ${JWK_URI:http://localhost:9999/api/certificate/.well-known/jwks.json}
 app:
   iam:
-    domain: ${DOMAIN_FE:https://adminedu-887ba.web.app}
+    domain: ${DOMAIN_ADMIN:https://adminedu-887ba.web.app}
+    domain_client: ${DOMAIN_CLIENT:https://clientedu-dc1c3.web.app}
