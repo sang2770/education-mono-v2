@@ -73,7 +73,7 @@ server:
 #      defaultZone: http://${EUREKA_HOST:localhost}:${EUREKA_PORT:8081}/eureka/
 app:
   iam:
-    domain: http://localhost:4200
+    domain: ${DOMAIN_FE:http://localhost:4200}
     client:
       authenticate-uri: /api/client/authenticate
       client-id: 46fa7bd2-eb87-41f7-82e5-576d9dee258b
