@@ -11,6 +11,7 @@ RUN mvn -s settings.xml clean package -DskipTests
 FROM openjdk:11-jre-slim
 WORKDIR /app
 COPY --from=build /app/target/*.jar education-0.0.1.jar
+ENV ENV=prod
 ENV POSTGRES_URI jdbc:postgresql://dpg-chf4pcm4dad1jqfnjq60-a.oregon-postgres.render.com:5432/education_c1ny
 ENV POSTGRES_USER admin
 ENV POSTGRES_PASSWORD MZiokZdlp9LOV47joF91zUfEaVosfXMU
@@ -18,4 +19,4 @@ ENV JWK_URI https://education-mono-service.onrender.com/api/certificate/.well-kn
 # ADD ./src/main/resources /app/config
 EXPOSE 80 9999
 
-ENTRYPOINT ["java","-jar","education-0.0.1.jar"]
+ENTRYPOINT ["java","-jar","education-0.0.1.jar", "--spring.profiles.active=${ENV:prod}"]
