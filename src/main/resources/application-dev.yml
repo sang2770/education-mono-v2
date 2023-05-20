@@ -3,9 +3,9 @@ spring:
   #    restart:
   #      enabled: true
   datasource:
-    url: ${POSTGRES_URI:jdbc:postgresql://containers-us-west-48.railway.app:5777/postgres}
-    username: ${POSTGRES_USER:postgres}
-    password: ${POSTGRES_PASSWORD:oEJIo4RAdPGq1iERrSHa}
+    url: ${POSTGRES_URI:jdbc:postgresql://localhost:5432/postgres}
+    username: ${POSTGRES_USER:admin}
+    password: ${POSTGRES_PASSWORD:admin}
     hikari:
       maximum-pool-size: ${CONNECTION_POOL_SIZE:10}
   sql:
