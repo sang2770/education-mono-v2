@@ -21,3 +21,8 @@ app:
   iam:
     domain: ${DOMAIN_ADMIN:https://adminedu-887ba.web.app}
     domain_client: ${DOMAIN_CLIENT:https://clientedu-dc1c3.web.app}
+
+firebase:
+  bucket-name: storage-df647.appspot.com
+  image-url: https://firebasestorage.googleapis.com/v0/b/${firebase.bucket-name}/o/%s?alt=media&token=%s
+  fcm-account-service-path: firebase/sang.json
