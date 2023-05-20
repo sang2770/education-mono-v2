@@ -75,7 +75,7 @@ public class ReportServiceImpl implements ReportService {
             statisticUserAdmin.ifPresent(statisticUser -> numberUserAndPeriod.setNumberUserAdmin(statisticUser.getNumberUser()));
             Optional<StatisticUser> statisticUserClient = statisticUsers.stream().filter(item -> Objects.equals(item.getMonth(), month.getValue()) &&
                     UserType.STUDENT.equals(item.getUserType())).findFirst();
-            statisticUserClient.ifPresent(statisticUser -> numberUserAndPeriod.setNumberUserAdmin(statisticUser.getNumberUser()));
+            statisticUserClient.ifPresent(statisticUser -> numberUserAndPeriod.setNumberUserClient(statisticUser.getNumberUser()));
             Optional<StatisticPeriod> statisticPeriod = statisticPeriods.stream().filter(item -> Objects.equals(item.getMonth(), month.getValue())).findFirst();
             statisticPeriod.ifPresent(period -> numberUserAndPeriod.setNumberPeriod(period.getNumberPeriod()));
             numberUserAndPeriod.setMonth(month.getValue());
