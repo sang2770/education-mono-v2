@@ -30,6 +30,7 @@
         <problem-spring-web.version>0.25.0</problem-spring-web.version>
         <commons-compress.version>1.18</commons-compress.version>
         <commons-net.version>3.6</commons-net.version>
+        <db-scheduler.version>11.6</db-scheduler.version>
     </properties>
     <dependencies>
         <dependency>
@@ -181,6 +182,13 @@
             <groupId>com.sang</groupId>
             <artifactId>common-captcha</artifactId>
             <version>${common.version}</version>
+        </dependency>
+
+<!--        scheduler-->
+        <dependency>
+            <groupId>com.github.kagkarlsson</groupId>
+            <artifactId>db-scheduler-spring-boot-starter</artifactId>
+            <version>${db-scheduler.version}</version>
         </dependency>
     </dependencies>
     <dependencyManagement>

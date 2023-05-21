@@ -9,10 +9,8 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface EventEntityRepository extends JpaRepository<EventEntity, String>, BaseRepositoryCustom<EventEntity> {
+public interface EventEntityRepository extends JpaRepository<EventEntity, String>{
     @Query("from EventEntity e where e.deleted = false and e.id = :id ")
     Optional<EventEntity> findById(String id);
 
-    @Query("from EventEntity e where e.deleted = false and e.id in :ids ")
-    List<EventEntity> findByIds(@Param("ids") List<String> ids);
 }

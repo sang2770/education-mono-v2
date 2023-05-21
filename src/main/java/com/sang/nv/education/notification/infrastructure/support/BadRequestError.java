@@ -5,7 +5,9 @@ import lombok.Getter;
 
 @Getter
 public enum BadRequestError implements ResponseError {
-    FILE_NOT_FOUND(404, "File not found!");
+    EVENT_NOT_FOUND(404, "Event not found!"),
+    EVENT_CAN_NOT_CHANGE(400, "Event can not change!"),
+    ;
 
     private final Integer code;
     private final String message;
