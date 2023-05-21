@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -52,12 +51,12 @@ public class ReportServiceImpl implements ReportService {
             );
         }
         List<Room> rooms = roomService.search(roomSearchRequest).getData();
-        List<String> roomIds = rooms.stream().map(Room::getId).collect(Collectors.toList());
+//        List<String> roomIds = rooms.stream().map(Room::getId).collect(Collectors.toList());
         return GeneralReport.builder()
                 .numberRoom(rooms.size())
-                .numberPeriod(this.periodService.count(roomIds))
-                .numberExam(this.examService.countExam(roomIds))
-                .numberUser(this.userService.countUser(roomIds))
+                .numberPeriod(this.periodService.count(request.getRoomIds()))
+                .numberExam(this.examService.countExam(request.getRoomIds()))
+                .numberUser(this.userService.countUser(request.getRoomIds()))
                 .build();
     }
 
