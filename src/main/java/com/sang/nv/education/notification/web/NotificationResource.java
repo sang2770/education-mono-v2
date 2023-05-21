@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.validation.Valid;
 
-@Api(tags = "Storage resource")
+@Api(tags = "Notification resource")
 @RequestMapping("/api")
 public interface NotificationResource {
     @ApiOperation(value = "Find notification by user login with paging")

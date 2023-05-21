@@ -3,6 +3,7 @@ package com.sang.nv.education.notification.infrastructure.persistence.entity;
 import com.sang.commonmodel.entity.AuditableEntity;
 import com.sang.commonmodel.validator.ValidateConstraint;
 import com.sang.nv.education.notification.infrastructure.support.enums.NotificationCode;
+import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,6 +18,11 @@ import javax.persistence.Version;
 @Table(name = "notification_templates", indexes = {
         @Index(name = "notification_templates_deleted_idx", columnList = "deleted")
 })
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
+@AllArgsConstructor
 public class NotificationTemplateEntity extends AuditableEntity {
     @Id
     @Column(name = "id", nullable = false)
@@ -35,4 +41,7 @@ public class NotificationTemplateEntity extends AuditableEntity {
     @Column(name = "code", length = ValidateConstraint.LENGTH.CODE_MAX_LENGTH)
     @Enumerated(EnumType.STRING)
     private NotificationCode code;
+
+    @Column(name = "deleted")
+    protected Boolean deleted;
 }

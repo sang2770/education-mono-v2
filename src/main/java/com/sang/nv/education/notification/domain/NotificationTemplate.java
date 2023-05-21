@@ -25,6 +25,7 @@ public class NotificationTemplate extends AuditableDomain {
     private String content;
     private String url;
     private Long version;
+    private Boolean deleted;
     public NotificationTemplate(NotificationTemplateCreateCmd cmd) {
         this.id = IdUtils.nextId();
         this.code = cmd.getCode();

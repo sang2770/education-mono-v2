@@ -24,7 +24,7 @@ public class NotificationEntityRepositoryImpl implements NotificationEntityRepos
     public List<NotificationEntity> search(NotificationSearchQuery querySearch) {
         Map<String, Object> values = new HashMap<>();
         StringBuilder sql = new StringBuilder();
-        sql.append("select U from NotificationEntity U  ");
+        sql.append("select e from NotificationEntity e ");
         sql.append(createWhereQuery(querySearch, values));
         sql.append(createOrderQuery(querySearch.getSortBy()));
         Query query = entityManager.createQuery(sql.toString(), NotificationEntity.class);
@@ -38,7 +38,7 @@ public class NotificationEntityRepositoryImpl implements NotificationEntityRepos
     public Long count(NotificationSearchQuery querySearch) {
         Map<String, Object> values = new HashMap<>();
         StringBuilder sql = new StringBuilder();
-        sql.append("select count(U) from NotificationEntity U ");
+        sql.append("select count(e) from NotificationEntity e ");
         sql.append(createWhereQuery(querySearch, values));
         Query query = entityManager.createQuery(sql.toString(), Long.class);
         values.forEach(query::setParameter);
@@ -60,9 +60,9 @@ public class NotificationEntityRepositoryImpl implements NotificationEntityRepos
     public StringBuilder createOrderQuery(String sortBy) {
         StringBuilder hql = new StringBuilder(" ");
         if (StringUtils.hasLength(sortBy)) {
-            hql.append(" order by U.").append(sortBy.replace(".", " "));
+            hql.append(" order by e.").append(sortBy.replace(".", " "));
         } else {
-            hql.append(" order by U.createdAt desc ");
+            hql.append(" order by e.createdAt desc ");
         }
         return hql;
     }

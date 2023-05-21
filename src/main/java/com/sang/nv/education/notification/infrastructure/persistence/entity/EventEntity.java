@@ -56,4 +56,7 @@ public class EventEntity extends AuditableEntity {
 
     @Column(name = "failure_causes", length = ValidateConstraint.LENGTH.NOTE_MAX_LENGTH)
     private String failureCauses;
+
+    @Column(name = "deleted")
+    protected Boolean deleted;
 }

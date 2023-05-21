@@ -2,7 +2,6 @@ package com.sang.nv.education.notification.application.service.impl;
 
 import com.github.kagkarlsson.scheduler.Scheduler;
 import com.github.kagkarlsson.scheduler.task.Task;
-import com.sang.commonmodel.exception.ResponseException;
 import com.sang.nv.education.iam.application.service.UserService;
 import com.sang.nv.education.iam.domain.User;
 import com.sang.nv.education.notification.application.dto.request.IssueEventRequest;
@@ -11,7 +10,6 @@ import com.sang.nv.education.notification.application.service.EventService;
 import com.sang.nv.education.notification.domain.Event;
 import com.sang.nv.education.notification.domain.command.EventCmd;
 import com.sang.nv.education.notification.domain.repository.EventDomainRepository;
-import com.sang.nv.education.notification.infrastructure.support.enums.BadRequestError;
 import com.sang.nv.education.notification.infrastructure.support.enums.EventStatus;
 import com.sang.nv.education.notification.infrastructure.support.enums.EventType;
 import lombok.AllArgsConstructor;
@@ -51,9 +49,9 @@ public class EventServiceImpl implements EventService {
     @Override
     public void send(String id) {
         Event event = this.eventDomainRepository.getById(id);
-        if (!Objects.equals(event.getStatus(), EventStatus.PENDING)) {
-            throw new ResponseException(BadRequestError.EVENT_CAN_NOT_CHANGE);
-        }
+//        if (Objects.equals(event.getStatus(), EventStatus.PENDING)) {
+//            throw new ResponseException(BadRequestError.EVENT_CAN_NOT_CHANGE);
+//        }
 
         // Gửi lại
         if (EventStatus.FAILED.equals(event.getStatus())) {

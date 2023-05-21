@@ -1,5 +1,6 @@
 package com.sang.nv.education.notification.application.runner;
 
+import com.sang.commonutil.IdUtils;
 import com.sang.nv.education.notification.domain.NotificationTemplate;
 import com.sang.nv.education.notification.infrastructure.persistence.mapper.NotificationTemplateEntityMapper;
 import com.sang.nv.education.notification.infrastructure.persistence.repository.NotificationTemplateEntityRepository;
@@ -15,7 +16,7 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Component
-public class SeedDatabaseRunner implements CommandLineRunner {
+public class NotificationSeedDatabaseRunner implements CommandLineRunner {
     private final NotificationTemplateEntityRepository notificationTemplateEntityRepository;
     private final NotificationTemplateEntityMapper notificationTemplateEntityMapper;
     @Override
@@ -39,7 +40,9 @@ public class SeedDatabaseRunner implements CommandLineRunner {
                     .title(resourceCategory.getTitle())
                     .content(resourceCategory.getContent())
                     .url(resourceCategory.getUrl())
+                    .id(IdUtils.nextId())
                     .build();
+
             notificationTemplateList.add(notificationTemplate);
         }
         this.notificationTemplateEntityRepository.saveAll(this.notificationTemplateEntityMapper.toEntity(notificationTemplateList));

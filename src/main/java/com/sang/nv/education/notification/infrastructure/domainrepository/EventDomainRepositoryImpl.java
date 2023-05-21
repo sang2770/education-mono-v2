@@ -53,6 +53,7 @@ public class EventDomainRepositoryImpl extends AbstractDomainRepository<Event, E
         {
             this.eventTargetEntityRepository.saveAll(this.eventTargetEntityMapper.toEntity(domain.getEventTargets()));
         }
+        this.eventEntityRepository.save(this.eventEntityMapper.toEntity(domain));
         return domain;
     }
 
