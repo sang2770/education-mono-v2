@@ -32,6 +32,7 @@ public class Event extends AuditableDomain {
     private String attachedLink;
     private Long version;
     private String failureCauses;
+    private List<EventTarget> eventTargets;
     @JsonIgnore
     private List<Notification> notifications;
 
@@ -43,16 +44,16 @@ public class Event extends AuditableDomain {
         this.status = EventStatus.IN_PROGRESS;
         this.attachedLink = cmd.getAttachedLink();
         if (!CollectionUtils.isEmpty(users)) {
-            this.notifications = this.createNotifications(users);
+            this.eventTargets = this.createTargets(users);
         }
     }
 
-    private List<Notification> createNotifications(List<User> users) {
-        List<Notification> notifications = new ArrayList<>();
+    private List<EventTarget> createTargets(List<User> users) {
+        List<EventTarget> eventTargetList = new ArrayList<>();
         users.forEach(user -> {
-            notifications.add(new Notification(user.getId(), this.id));
+            eventTargetList.add(EventTarget.builder().eventId(this.id).targetId(user.getId()).build());
         });
-        return notifications;
+        return eventTargetList;
     }
 
     public void delete() {
@@ -67,4 +68,7 @@ public class Event extends AuditableDomain {
         this.status = EventStatus.IN_PROGRESS;
     }
 
+    public void enrichEventTarget(List<EventTarget> eventTargets){
+        this.eventTargets = eventTargets;
+    }
 }

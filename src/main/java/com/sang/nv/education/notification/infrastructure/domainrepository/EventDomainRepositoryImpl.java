@@ -3,15 +3,20 @@ package com.sang.nv.education.notification.infrastructure.domainrepository;
 import com.sang.commonmodel.exception.ResponseException;
 import com.sang.nv.education.common.web.support.AbstractDomainRepository;
 import com.sang.nv.education.notification.domain.Event;
+import com.sang.nv.education.notification.domain.EventTarget;
 import com.sang.nv.education.notification.domain.repository.EventDomainRepository;
 import com.sang.nv.education.notification.infrastructure.persistence.entity.EventEntity;
 import com.sang.nv.education.notification.infrastructure.persistence.mapper.EventEntityMapper;
+import com.sang.nv.education.notification.infrastructure.persistence.mapper.EventTargetEntityMapper;
 import com.sang.nv.education.notification.infrastructure.persistence.mapper.NotificationEntityMapper;
 import com.sang.nv.education.notification.infrastructure.persistence.repository.EventEntityRepository;
+import com.sang.nv.education.notification.infrastructure.persistence.repository.EventTargetEntityRepository;
 import com.sang.nv.education.notification.infrastructure.persistence.repository.NotificationEntityRepository;
 import com.sang.nv.education.notification.infrastructure.support.BadRequestError;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+
+import java.util.List;
 
 @Service
 public class EventDomainRepositoryImpl extends AbstractDomainRepository<Event, EventEntity, String> implements EventDomainRepository {
@@ -20,13 +25,17 @@ public class EventDomainRepositoryImpl extends AbstractDomainRepository<Event, E
 
     private final NotificationEntityRepository notificationEntityRepository;
     private final NotificationEntityMapper notificationEntityMapper;
+    private final EventTargetEntityRepository eventTargetEntityRepository;
+    private final EventTargetEntityMapper eventTargetEntityMapper;
 
-    public EventDomainRepositoryImpl(EventEntityRepository eventEntityRepository, EventEntityMapper eventEntityMapper, NotificationEntityRepository notificationEntityRepository, NotificationEntityMapper notificationEntityMapper) {
+    public EventDomainRepositoryImpl(EventEntityRepository eventEntityRepository, EventEntityMapper eventEntityMapper, NotificationEntityRepository notificationEntityRepository, NotificationEntityMapper notificationEntityMapper, EventTargetEntityRepository eventTargetEntityRepository, EventTargetEntityMapper eventTargetEntityMapper) {
         super(eventEntityRepository, eventEntityMapper);
         this.eventEntityRepository = eventEntityRepository;
         this.eventEntityMapper = eventEntityMapper;
         this.notificationEntityRepository = notificationEntityRepository;
         this.notificationEntityMapper = notificationEntityMapper;
+        this.eventTargetEntityRepository = eventTargetEntityRepository;
+        this.eventTargetEntityMapper = eventTargetEntityMapper;
     }
 
     @Override
@@ -40,6 +49,19 @@ public class EventDomainRepositoryImpl extends AbstractDomainRepository<Event, E
         {
             this.notificationEntityRepository.saveAll(this.notificationEntityMapper.toEntity(domain.getNotifications()));
         }
+        if (!CollectionUtils.isEmpty(domain.getEventTargets()))
+        {
+            this.eventTargetEntityRepository.saveAll(this.eventTargetEntityMapper.toEntity(domain.getEventTargets()));
+        }
         return domain;
+    }
+
+    @Override
+    protected Event enrich(Event event) {
+        List<EventTarget> eventTargetList = this.eventTargetEntityMapper.toDomain(this.eventTargetEntityRepository.findAllByEventId(event.getId()));
+        if (!CollectionUtils.isEmpty(eventTargetList)){
+            event.enrichEventTarget(eventTargetList);
+        }
+        return event;
     }
 }
