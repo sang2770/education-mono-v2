@@ -68,7 +68,17 @@ public class Event extends AuditableDomain {
         this.status = EventStatus.IN_PROGRESS;
     }
 
-    public void enrichEventTarget(List<EventTarget> eventTargets){
+    public void enrichEventTarget(List<EventTarget> eventTargets) {
         this.eventTargets = eventTargets;
+    }
+
+    public void sendNotification() {
+        if (!CollectionUtils.isEmpty(this.getEventTargets())) {
+            this.notifications = new ArrayList<>();
+            this.getEventTargets().forEach(eventTarget -> {
+                this.notifications.add(
+                        new Notification(eventTarget.getTargetId(), this));
+            });
+        }
     }
 }

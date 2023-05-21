@@ -1,4 +1,4 @@
-package com.sang.nv.education.notification.infrastructure.support;
+package com.sang.nv.education.notification.infrastructure.support.enums;
 
 import com.sang.commonmodel.error.ResponseError;
 import lombok.Getter;
@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter
 public enum BadRequestError implements ResponseError {
     EVENT_NOT_FOUND(404, "Event not found!"),
+    NOTIFICATION_NOT_FOUND(404, "Notification not found!"),
     EVENT_CAN_NOT_CHANGE(400, "Event can not change!"),
     ;
 

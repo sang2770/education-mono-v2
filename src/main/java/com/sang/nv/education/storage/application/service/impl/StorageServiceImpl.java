@@ -12,8 +12,8 @@ import com.sang.commonmodel.dto.request.BaseSearchRequest;
 import com.sang.commonmodel.query.BaseSearchQuery;
 import com.sang.nv.education.iam.application.config.TemplateProperties;
 import com.sang.nv.education.storage.application.dto.response.FileFirebaseResponse;
-import com.sang.nv.education.storage.application.mapper.AutoMapper;
 import com.sang.nv.education.storage.application.mapper.FileEntityMapper;
+import com.sang.nv.education.storage.application.mapper.StorageAutoMapper;
 import com.sang.nv.education.storage.application.service.FileBaseService;
 import com.sang.nv.education.storage.application.service.StorageService;
 import com.sang.nv.education.storage.domain.FileDomain;
@@ -43,7 +43,7 @@ public class StorageServiceImpl implements StorageService {
     private final FileDomainRepository fileDomainRepository;
 
     private final FileEntityMapper fileEntityMapper;
-    private final AutoMapper autoMapper;
+    private final StorageAutoMapper autoMapper;
 
     @Value("${firebase.fcm-account-service-path}")
     private String path;
@@ -51,7 +51,13 @@ public class StorageServiceImpl implements StorageService {
     @Value("${firebase.bucket-name}")
     private String bucketName;
 
-    public StorageServiceImpl(TemplateProperties templateProperties, FileBaseService fileBaseService, FileEntityRepository fileEntityRepository, FileDomainRepository fileDomainRepository, FileEntityMapper fileEntityMapper, AutoMapper autoMapper) {
+    public StorageServiceImpl(
+            TemplateProperties templateProperties,
+            FileBaseService fileBaseService,
+            FileEntityRepository fileEntityRepository,
+            FileDomainRepository fileDomainRepository,
+            FileEntityMapper fileEntityMapper,
+            StorageAutoMapper autoMapper) {
         this.templateProperties = templateProperties;
         this.fileBaseService = fileBaseService;
         this.fileEntityRepository = fileEntityRepository;

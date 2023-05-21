@@ -20,7 +20,7 @@ import java.time.Instant;
 @Getter
 public class Notification extends AuditableDomain {
     private String id;
-    private String userId;
+    private String targetId;
     private String eventId;
     private Boolean isRead;
     private Instant readAt;
@@ -32,12 +32,16 @@ public class Notification extends AuditableDomain {
     private String attachedLink;
     private Long version;
 
-    public Notification(String userId, String eventId) {
+    public Notification(String targetId, Event event) {
         this.id = IdUtils.nextId();
-        this.userId = userId;
-        this.eventId = eventId;
+        this.targetId = targetId;
+        this.eventId = event.getId();
+        this.title = event.getTitle();
+        this.content = event.getContent();
+        this.attachedLink = event.getAttachedLink();
+        this.sendAt = Instant.now();
         this.isRead = false;
-        this.isSend = false;
+        this.isSend = true;
         this.deleted = false;
     }
 
@@ -49,11 +53,6 @@ public class Notification extends AuditableDomain {
     public void unread() {
         this.isRead = false;
         this.readAt = null;
-    }
-
-    public void sent() {
-        this.isSend = true;
-        this.sendAt = Instant.now();
     }
 
     public void deleted() {

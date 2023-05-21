@@ -12,7 +12,7 @@ import com.sang.nv.education.notification.infrastructure.persistence.mapper.Noti
 import com.sang.nv.education.notification.infrastructure.persistence.repository.EventEntityRepository;
 import com.sang.nv.education.notification.infrastructure.persistence.repository.EventTargetEntityRepository;
 import com.sang.nv.education.notification.infrastructure.persistence.repository.NotificationEntityRepository;
-import com.sang.nv.education.notification.infrastructure.support.BadRequestError;
+import com.sang.nv.education.notification.infrastructure.support.enums.BadRequestError;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 

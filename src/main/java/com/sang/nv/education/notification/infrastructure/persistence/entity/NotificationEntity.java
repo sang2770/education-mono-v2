@@ -33,8 +33,8 @@ public class NotificationEntity extends AuditableEntity {
     @Column(name = "id", length = ValidateConstraint.LENGTH.ID_MAX_LENGTH, nullable = false)
     private String id;
 
-    @Column(name = "userId", length = ValidateConstraint.LENGTH.ID_MAX_LENGTH, nullable = false)
-    private String userId;
+    @Column(name = "targetId", length = ValidateConstraint.LENGTH.ID_MAX_LENGTH, nullable = false)
+    private String targetId;
 
     @Column(name = "eventId", length = ValidateConstraint.LENGTH.ID_MAX_LENGTH, nullable = false)
     private String eventId;

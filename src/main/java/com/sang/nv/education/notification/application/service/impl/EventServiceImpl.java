@@ -11,7 +11,7 @@ import com.sang.nv.education.notification.application.service.EventService;
 import com.sang.nv.education.notification.domain.Event;
 import com.sang.nv.education.notification.domain.command.EventCmd;
 import com.sang.nv.education.notification.domain.repository.EventDomainRepository;
-import com.sang.nv.education.notification.infrastructure.support.BadRequestError;
+import com.sang.nv.education.notification.infrastructure.support.enums.BadRequestError;
 import com.sang.nv.education.notification.infrastructure.support.enums.EventStatus;
 import com.sang.nv.education.notification.infrastructure.support.enums.EventType;
 import lombok.AllArgsConstructor;
