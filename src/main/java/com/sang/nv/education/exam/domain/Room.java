@@ -85,7 +85,7 @@ public class Room extends AuditableDomain {
             if (userRoomOptional.isEmpty()) {
                 throw new ResponseException(BadRequestError.USER_IS_NOT_IN_GROUP);
             } else {
-                this.userRooms.remove(userRoomOptional.get());
+                userRoomOptional.get().deleted();
             }
         });
     }

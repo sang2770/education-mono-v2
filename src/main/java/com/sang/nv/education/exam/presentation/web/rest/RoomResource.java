@@ -44,11 +44,12 @@ public interface RoomResource {
 
     @ApiOperation(value = "Update Room")
     @PostMapping("/rooms/{id}/add-members")
-    @PreAuthorize("hasPermission(null, 'room:update_user')")
+//    @PreAuthorize("hasPermission(null, 'room:update_user')")
     Response<Room> addMember(@PathVariable String id, @RequestBody UpdateMemberInRoomRequest request) throws JsonProcessingException;
 
 
     @ApiOperation(value = "remove Member Room")
+    @PostMapping("/rooms/{id}/remove-members")
     Response<Room> removeMember(@PathVariable String id, @RequestBody UpdateMemberInRoomRequest request);
 
 
