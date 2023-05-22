@@ -255,11 +255,11 @@ public class RoomServiceImpl implements RoomService {
         if (SecurityUtils.getCurrentUser().isEmpty()) {
             throw new ResponseException(BadRequestError.USER_INVALID);
         }
-        User user = this.objectMapper.convertValue(SecurityUtils.getCurrentUser().get(), User.class);
-        List<UserRoomEntity> userRoomEntity = this.userRoomEntityRepository.findByUserIds(List.of(user.getId()));
-        if (CollectionUtils.isEmpty(userRoomEntity) && !user.getIsRoot()) {
-            throw new ResponseException(BadRequestError.PERMISSION_DENY);
-        }
+//        User user = this.objectMapper.convertValue(SecurityUtils.getCurrentUser().get(), User.class);
+//        List<UserRoomEntity> userRoomEntity = this.userRoomEntityRepository.findByUserIds(List.of(user.getId()));
+//        if (CollectionUtils.isEmpty(userRoomEntity) && !user.getIsRoot()) {
+//            throw new ResponseException(BadRequestError.PERMISSION_DENY);
+//        }
         Room room = this.getById(id);
         PeriodRoom periodRoom = this.periodRoomEntityMapper.toDomain(this.periodRoomEntityRepository.findByRoomIdAndPeriodId(id, request.getPeriodId()).orElseThrow(() -> new ResponseException(NotFoundError.PERIOD_NOT_EXISTED_IN_ROOM)));
         periodRoom.updateIsSendExam(true);
