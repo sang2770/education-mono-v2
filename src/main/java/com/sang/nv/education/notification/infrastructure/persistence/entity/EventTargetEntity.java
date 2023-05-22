@@ -33,6 +33,9 @@ public class EventTargetEntity extends AuditableEntity {
     @Column(name = "target_Id", nullable = false)
     private String targetId;
 
+    @Column(name = "email")
+    private String email;
+
     @Column(name = "deleted")
     protected Boolean deleted;
 

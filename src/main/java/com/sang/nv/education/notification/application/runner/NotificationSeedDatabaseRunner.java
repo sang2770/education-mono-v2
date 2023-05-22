@@ -41,6 +41,7 @@ public class NotificationSeedDatabaseRunner implements CommandLineRunner {
                     .content(resourceCategory.getContent())
                     .url(resourceCategory.getUrl())
                     .id(IdUtils.nextId())
+                    .deleted(false)
                     .build();
 
             notificationTemplateList.add(notificationTemplate);

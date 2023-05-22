@@ -34,6 +34,9 @@ public class NotificationTemplateEntity extends AuditableEntity {
     @Column(name = "content", nullable = false)
     private String content;
 
+    @Column(name = "url")
+    private String url;
+
     @Version
     @Column(name = "version")
     private Long version;

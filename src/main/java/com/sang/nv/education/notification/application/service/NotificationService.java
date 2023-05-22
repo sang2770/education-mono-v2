@@ -22,5 +22,4 @@ public interface NotificationService {
     Long countUnreadNotification();
 
     Boolean markReadAll();
-
 }

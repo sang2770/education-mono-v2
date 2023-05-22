@@ -53,7 +53,7 @@ public class Event extends AuditableDomain {
     private List<EventTarget> createTargets(List<User> users) {
         List<EventTarget> eventTargetList = new ArrayList<>();
         users.forEach(user -> {
-            eventTargetList.add(new EventTarget(this.id, user.getId()));
+            eventTargetList.add(new EventTarget(this.id, user.getId(), user.getEmail()));
         });
         return eventTargetList;
     }

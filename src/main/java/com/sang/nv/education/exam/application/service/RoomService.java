@@ -1,5 +1,6 @@
 package com.sang.nv.education.exam.application.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sang.commonmodel.dto.PageDTO;
 import com.sang.nv.education.exam.application.dto.request.UpdateMemberInRoomRequest;
 import com.sang.nv.education.exam.application.dto.request.UpdatePeriodInRoomRequest;
@@ -48,7 +49,7 @@ public interface RoomService {
      */
     Room getById(String id);
 
-    Room addMemberInRoom(String id, UpdateMemberInRoomRequest request);
+    Room addMemberInRoom(String id, UpdateMemberInRoomRequest request) throws JsonProcessingException;
 
     Room removeMemberInRoom(String id, UpdateMemberInRoomRequest request);
 

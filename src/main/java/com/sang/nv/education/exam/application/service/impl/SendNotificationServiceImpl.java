@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class SendNotificationServiceImpl implements SendNotificationService {
@@ -41,12 +42,12 @@ public class SendNotificationServiceImpl implements SendNotificationService {
             case ROOM_IN:
                 title = notificationTemplate.getTitle();
                 content = String.format(notificationTemplate.getContent(), extraData.get(Constant.ROOM_NAME), extraData.get(Constant.FULL_NAME));
-                attackedLink = String.format(notificationTemplate.getUrl(), extraData.get(Constant.ROOM_ID));
+                attackedLink = Objects.nonNull(notificationTemplate.getUrl()) ? String.format(notificationTemplate.getUrl(), extraData.get(Constant.ROOM_ID)) : "";
                 break;
             case NEW_EXAM:
                 title = notificationTemplate.getTitle();
                 content = String.format(notificationTemplate.getContent(), extraData.get(Constant.PERIOD_NAME), extraData.get(Constant.ROOM_NAME));
-                attackedLink = String.format(notificationTemplate.getUrl(), extraData.get(Constant.ROOM_ID), extraData.get(Constant.PERIOD_ID));
+                attackedLink = Objects.nonNull(notificationTemplate.getUrl()) ? String.format(notificationTemplate.getUrl(), extraData.get(Constant.ROOM_ID), extraData.get(Constant.PERIOD_ID)) : "";
                 break;
             default:
                 break;
@@ -55,13 +56,11 @@ public class SendNotificationServiceImpl implements SendNotificationService {
                 .title(title)
                 .content(content)
                 .attachedLink(attackedLink)
-                .eventType(EventType.NOTIFICATION)
+                .eventType(EventType.NOTIFICATION_EMAIL)
+                .targetIds(targetIds)
                 .build();
 
         Event event = this.eventService.issued(request);
         this.eventService.send(event.getId());
-
     }
-
-
 }

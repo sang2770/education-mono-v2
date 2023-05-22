@@ -35,6 +35,12 @@ public interface NotificationResource {
     @PostMapping("/me/notifications/mark-read-by-ids")
     Response<Boolean> markReadByIds(@RequestBody @Valid NotificationMarkReadRequest notificationMarkReadRequest);
 
+    @ApiOperation(value = "Mark as read notification by id")
+    @PostMapping("/me/notifications/{id}/mark-read")
+    Response<Boolean> markReadById(@PathVariable String id);
+
+
+
     @ApiOperation(value = "Mark as read all notification")
     @PostMapping("/me/notifications/mark-read-all")
     Response<Boolean> markReadAll();

@@ -8,4 +8,5 @@ public interface SendEmailService {
 
     void send(User user, String templateName, String titleKey, String token)
             throws MessagingException, javax.mail.MessagingException;
+
 }

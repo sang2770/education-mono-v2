@@ -52,4 +52,9 @@ public class NotificationResourceImpl implements NotificationResource {
     public Response<Long> countUnreadNotification() {
         return Response.of(notificationService.countUnreadNotification());
     }
+
+    @Override
+    public Response<Boolean> markReadById(String id) {
+        return Response.of(notificationService.markRead(id));
+    }
 }

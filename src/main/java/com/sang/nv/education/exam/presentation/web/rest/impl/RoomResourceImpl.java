@@ -1,5 +1,6 @@
 package com.sang.nv.education.exam.presentation.web.rest.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sang.commonmodel.dto.response.PagingResponse;
 import com.sang.commonmodel.dto.response.Response;
 import com.sang.nv.education.exam.application.dto.request.UpdateMemberInRoomRequest;
@@ -43,7 +44,7 @@ public class RoomResourceImpl implements RoomResource {
     }
 
     @Override
-    public Response<Room> addMember(String id, UpdateMemberInRoomRequest request) {
+    public Response<Room> addMember(String id, UpdateMemberInRoomRequest request) throws JsonProcessingException {
         return Response.of(this.RoomsService.addMemberInRoom(id, request));
     }
 

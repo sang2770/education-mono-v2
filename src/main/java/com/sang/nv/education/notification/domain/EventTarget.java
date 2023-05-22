@@ -24,12 +24,22 @@ public class EventTarget extends AuditableDomain {
 
     private String targetId;
 
+    private String email;
+
     private Boolean deleted;
 
     public EventTarget(String eventId, String targetId) {
         this.id = IdUtils.nextId();
         this.eventId = eventId;
         this.targetId = targetId;
+        this.deleted = false;
+    }
+
+    public EventTarget(String eventId, String targetId, String email) {
+        this.id = IdUtils.nextId();
+        this.eventId = eventId;
+        this.targetId = targetId;
+        this.email = email;
         this.deleted = false;
     }
 

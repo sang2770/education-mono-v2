@@ -1,11 +1,14 @@
 package com.sang.nv.education.exam.application.service.impl;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sang.commonmodel.dto.PageDTO;
+import com.sang.commonmodel.error.enums.AuthenticationError;
 import com.sang.commonmodel.exception.ResponseException;
 import com.sang.commonmodel.mapper.util.PageableMapperUtil;
 import com.sang.commonpersistence.support.SeqRepository;
+import com.sang.commonutil.DataUtil;
 import com.sang.nv.education.common.web.support.SecurityUtils;
 import com.sang.nv.education.exam.application.dto.request.UpdateMemberInRoomRequest;
 import com.sang.nv.education.exam.application.dto.request.UpdatePeriodInRoomRequest;
@@ -138,7 +141,7 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public Room addMemberInRoom(String id, UpdateMemberInRoomRequest request) {
+    public Room addMemberInRoom(String id, UpdateMemberInRoomRequest request) throws JsonProcessingException {
         Room room = this.getById(id);
         if (!CollectionUtils.isEmpty(request.getMemberIds())) {
             List<User> users = this.userService.findByIds(request.getMemberIds());
@@ -157,7 +160,8 @@ public class RoomServiceImpl implements RoomService {
             Map<String, String> data = new HashMap<>();
             data.put(Constant.ROOM_ID, room.getId());
             data.put(Constant.ROOM_NAME, room.getName());
-            data.put(Constant.FULL_NAME, "Quản lý hệ thống");
+            User user = this.currentUser();
+            data.put(Constant.FULL_NAME, Objects.nonNull(user)? user.getFullName() : "Quản trị hệ thống" );
             this.notificationService.sendNotification(NotificationCode.ROOM_IN, request.getMemberIds(), data);
         }
         return room;
@@ -382,6 +386,15 @@ public class RoomServiceImpl implements RoomService {
             List<UserRoom> userRoom = userRooms.stream().filter(userRoom1 -> userRoom1.getRoomId().equals(room1.getId())).collect(Collectors.toList());
             room1.enrichUser(userRoom);
         });
+    }
+
+    public User currentUser() throws JsonProcessingException {
+        Optional<String> current = SecurityUtils.getCurrentUserLoginId();
+        if (current.isEmpty())
+        {
+            return null;
+        }
+       return this.userService.getUserById(current.get());
     }
 
 }
