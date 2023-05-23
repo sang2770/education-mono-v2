@@ -1,6 +1,7 @@
 package com.sang.nv.education.notification.application.service.impl;
 
 import com.sang.common.email.MailService;
+import com.sang.commonmodel.validator.ValidateConstraint;
 import com.sang.nv.education.iam.application.service.SendEmailService;
 import com.sang.nv.education.notification.application.service.SendService;
 import com.sang.nv.education.notification.domain.Event;
@@ -24,8 +25,9 @@ public class SendServiceImpl implements SendService {
         List<EventTarget> eventTargetList = event.getEventTargets();
         if (!CollectionUtils.isEmpty(eventTargetList))
         {
+            String emailRegex = ValidateConstraint.FORMAT.EMAIL_PATTERN;
             eventTargetList.forEach(eventTarget -> {
-                if (Objects.isNull(eventTarget.getEmail()))
+                if (Objects.isNull(eventTarget.getEmail()) || !eventTarget.getEmail().matches(emailRegex) )
                 {
                     return;
                 }
