@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -24,6 +25,10 @@ public class SendServiceImpl implements SendService {
         if (!CollectionUtils.isEmpty(eventTargetList))
         {
             eventTargetList.forEach(eventTarget -> {
+                if (Objects.isNull(eventTarget.getEmail()))
+                {
+                    return;
+                }
                 this.sendEmailService.sendSimpleMail(eventTarget.getEmail(), event.getTitle(), event.getContent());
             });
         }
