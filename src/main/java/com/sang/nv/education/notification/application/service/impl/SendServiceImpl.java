@@ -37,12 +37,12 @@ public class SendServiceImpl implements SendService {
 
     public void sendNotification(String eventId) {
         Event event = eventDomainRepository.getById(eventId);
+        // send notification
+        event.sendNotification();
         if (event.getEventType().equals(EventType.EMAIL) || event.getEventType().equals(EventType.NOTIFICATION_EMAIL))
         {
             this.sendEmail(event);
         }
-        // send notification
-        event.sendNotification();
         this.eventDomainRepository.save(event);
     }
 }
