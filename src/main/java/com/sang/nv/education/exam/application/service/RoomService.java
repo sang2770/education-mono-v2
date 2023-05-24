@@ -79,4 +79,5 @@ public interface RoomService {
 
     List<Room> getAll();
 
+    List<String> getAllPeriodIdInRooms(List<String> roomIds);
 }

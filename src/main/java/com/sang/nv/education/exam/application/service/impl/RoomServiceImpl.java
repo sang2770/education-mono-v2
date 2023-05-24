@@ -397,4 +397,8 @@ public class RoomServiceImpl implements RoomService {
        return this.userService.getUserById(current.get());
     }
 
+    @Override
+    public List<String> getAllPeriodIdInRooms(List<String> roomIds) {
+        return this.periodRoomEntityRepository.findAllByRoomIds(roomIds).stream().map(PeriodRoomEntity::getPeriodId).collect(Collectors.toList());
+    }
 }

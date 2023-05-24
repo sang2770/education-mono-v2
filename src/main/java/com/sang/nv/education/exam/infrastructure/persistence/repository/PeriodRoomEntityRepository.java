@@ -20,10 +20,13 @@ public interface PeriodRoomEntityRepository extends JpaRepository<PeriodRoomEnti
     @Query("from PeriodRoomEntity u where u.deleted = false and u.roomId = :roomId ")
     List<PeriodRoomEntity> findAllByRoomIds(@Param("roomId") String roomId);
 
-    @Query("from PeriodRoomEntity u where u.deleted = false and (:roomIds is null or u.roomId in :roomIds) ")
+    @Query("from PeriodRoomEntity u where u.deleted = false and u.roomId in :roomIds ")
     List<PeriodRoomEntity> findAllByRoomIds(@Param("roomIds") List<String> roomIds);
 
     @Query("select u from PeriodRoomEntity u join PeriodEntity p on u.periodId = p.id where u.deleted = false and u.roomId = :roomId and ( :periodIds is null or ( u.periodId in :periodIds)) and (:keyword is null or (p.name like :keyword)) ")
     Page<PeriodRoomEntity> searchByRoomId(@Param("roomId") String roomId, @Param("periodIds") List<String> periodIds, @Param("keyword") String keyword, Pageable pageable);
+
+    @Query("select COUNT(DISTINCT u.periodId) from PeriodRoomEntity u where u.deleted = false and u.roomId in :roomIds ")
+    Integer countAllByRoomIds(@Param("roomIds") List<String> roomIds);
 }
 

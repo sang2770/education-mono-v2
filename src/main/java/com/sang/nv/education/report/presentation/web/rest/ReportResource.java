@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
-@Api(tags = "Key Resource")
+@Api(tags = "Report Resource")
 @RequestMapping("/api")
 public interface ReportResource {
     // Thống kê số lượng phòng thi, thí sinh, ki thi

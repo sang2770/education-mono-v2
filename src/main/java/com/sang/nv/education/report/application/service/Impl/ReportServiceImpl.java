@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -43,19 +44,32 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public GeneralReport generalReport(ReportGeneralRequest request) {
         RoomSearchRequest roomSearchRequest = new RoomSearchRequest();
+        Integer countPeriod = 0;
+        Integer countExam = 0;
+        List<String> periodIds;
         if (!CollectionUtils.isEmpty(request.getUserIds())) {
             roomSearchRequest.setUserIds(request.getUserIds());
+            List<String> roomIds = request.getRoomIds();
+            if (CollectionUtils.isEmpty(request.getRoomIds()))
+            {
+                roomIds = this.roomService.search(roomSearchRequest).getData().stream().map(Room::getId).collect(Collectors.toList());
+            }
+            periodIds = this.roomService.getAllPeriodIdInRooms(roomIds);
+            countPeriod = periodIds.size();
+            countExam = this.examService.countExamByPeriodIds(periodIds);
+        }else{
+            countPeriod = this.periodService.count(request.getRoomIds());
+            countExam = this.examService.countExam(request.getRoomIds());
         }
         if (!CollectionUtils.isEmpty(request.getRoomIds())) {
-            roomSearchRequest.setIds(request.getRoomIds()
-            );
+            roomSearchRequest.setIds(request.getRoomIds());
         }
         List<Room> rooms = roomService.search(roomSearchRequest).getData();
 //        List<String> roomIds = rooms.stream().map(Room::getId).collect(Collectors.toList());
         return GeneralReport.builder()
                 .numberRoom(rooms.size())
-                .numberPeriod(this.periodService.count(request.getRoomIds()))
-                .numberExam(this.examService.countExam(request.getRoomIds()))
+                .numberPeriod(countPeriod)
+                .numberExam(countExam)
                 .numberUser(this.userService.countUser(request.getRoomIds()))
                 .build();
     }

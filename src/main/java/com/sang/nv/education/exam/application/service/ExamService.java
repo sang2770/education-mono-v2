@@ -48,4 +48,6 @@ public interface ExamService {
     void removeQuestionToExam(String examId, String questionId);
 
     Integer countExam(List<String> roomIds);
+
+    Integer countExamByPeriodIds(List<String> periodIds);
 }
