@@ -55,6 +55,9 @@ public class UserEntityRepositoryImpl implements UserEntityRepositoryCustom {
             sql.append(" left join UserRoomEntity UB on UB.userId = U.id ");
         }
         sql.append(createWhereQuery(querySearch, values));
+        if (!CollectionUtils.isEmpty(querySearch.getRoomIds())) {
+            sql.append(" and UB.deleted = false ");
+        }
         Query query = entityManager.createQuery(sql.toString(), Long.class);
         values.forEach(query::setParameter);
         return (Long) query.getSingleResult();

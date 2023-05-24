@@ -56,7 +56,7 @@ public class SendNotificationServiceImpl implements SendNotificationService {
                 .title(title)
                 .content(content)
                 .attachedLink(attackedLink)
-                .eventType(EventType.NOTIFICATION_EMAIL)
+                .eventType(EventType.NOTIFICATION)
                 .targetIds(targetIds)
                 .build();
 
