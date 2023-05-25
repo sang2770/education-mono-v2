@@ -49,13 +49,13 @@ public class UserExam extends AuditableDomain {
     Long timeDelay;
     Long time;
     List<UserExamInfo> userExamInfos;
-
     Exam exam;
     UserExamResult userExamResult;
     User user;
 
     Room room;
     Period period;
+    PeriodRoom periodRoom;
 
     public UserExam(UserExamCreateCmd cmd) {
         this.id = IdUtils.nextId();
@@ -178,5 +178,9 @@ public class UserExam extends AuditableDomain {
         this.status = UserExamStatus.OVERTIME;
         this.timeEnd = Instant.now();
         this.totalPoint = 0f;
+    }
+
+    public void enrichPeriodRoom(PeriodRoom periodRoom) {
+        this.periodRoom = periodRoom;
     }
 }

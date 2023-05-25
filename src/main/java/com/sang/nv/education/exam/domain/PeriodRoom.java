@@ -1,6 +1,7 @@
 package com.sang.nv.education.exam.domain;
 
 import com.sang.commonmodel.domain.AuditableDomain;
+import com.sang.commonutil.DataUtil;
 import com.sang.commonutil.IdUtils;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -29,6 +30,7 @@ public class PeriodRoom extends AuditableDomain {
     Instant startSendAt;
     Instant endSendAt;
     Long time;
+    Long timeDelay;
 
     public PeriodRoom(String periodId, String roomId) {
         this.id = IdUtils.nextId();
@@ -51,9 +53,10 @@ public class PeriodRoom extends AuditableDomain {
         this.period = period;
     }
 
-    public void updateIsSendExam(Boolean isSendExam, Long time) {
+    public void updateIsSendExam(Boolean isSendExam, Long time, Long timeDelay) {
         this.isSendExam = isSendExam;
-        this.time = time;
+        this.time = DataUtil.getValueOrDefault(time, 0L) + DataUtil.getValueOrDefault(timeDelay, 0L);
+        this.timeDelay = timeDelay;
         if (isSendExam) {
             this.startSendAt = Instant.now();
         }

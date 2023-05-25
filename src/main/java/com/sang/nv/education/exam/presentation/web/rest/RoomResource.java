@@ -72,7 +72,7 @@ public interface RoomResource {
             request);
 
     @ApiOperation(value = "Done period in room")
-    @GetMapping("/rooms/{id}/periods/{periodId}/done")
+    @PostMapping("/rooms/{id}/periods/{periodId}/done")
     Response<PeriodRoom> donePeriodInRoom(@PathVariable String id, @PathVariable String periodId);
 
 

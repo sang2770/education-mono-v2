@@ -51,6 +51,9 @@ public class PeriodRoomEntity extends AuditableEntity {
 
     @Column(name = "time")
     Long time;
+    @Column(name = "timeDelay")
+    Long timeDelay;
+
 
     @Override
     public boolean equals(Object o) {

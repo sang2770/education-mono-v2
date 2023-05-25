@@ -157,6 +157,10 @@ public class UserExamServiceImpl implements UserExamService {
             userExam.updateStatus(UserExamStatus.DOING);
             this.userExamDomainRepository.save(userExam);
         }
+        PeriodRoomEntity periodRoomEntity = this.periodRoomEntityRepository.findByRoomIdAndPeriodId(userExam.getRoomId(), userExam.getPeriodId())
+                .orElseThrow(() -> new ResponseException(NotFoundError.PERIOD_NOT_EXISTED_IN_ROOM));
+        PeriodRoom periodRoom = this.periodRoomEntityMapper.toDomain(periodRoomEntity);
+        userExam.enrichPeriodRoom(periodRoom);
         return userExam;
     }
 
@@ -205,10 +209,5 @@ public class UserExamServiceImpl implements UserExamService {
                     .createdAt(userExam.getCreatedAt())
                     .build();
         }).collect(Collectors.toList());
-    }
-
-    @Transactional
-    void checkDonePeriod(String roomId, String periodId){
-
     }
 }
