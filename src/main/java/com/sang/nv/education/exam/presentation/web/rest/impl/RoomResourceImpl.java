@@ -83,4 +83,9 @@ public class RoomResourceImpl implements RoomResource {
     public PagingResponse<Room> getMyRoom(RoomSearchRequest request) {
         return PagingResponse.of(this.RoomsService.getMyRoom(request));
     }
+
+    @Override
+    public Response<PeriodRoom> donePeriodInRoom(String id, String periodId) {
+        return Response.of(this.RoomsService.donePeriodInRoom(id, periodId));
+    }
 }

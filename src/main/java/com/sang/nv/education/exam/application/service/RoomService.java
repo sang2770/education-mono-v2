@@ -80,4 +80,6 @@ public interface RoomService {
     List<Room> getAll();
 
     List<String> getAllPeriodIdInRooms(List<String> roomIds);
+
+    PeriodRoom donePeriodInRoom(String id, String periodId);
 }

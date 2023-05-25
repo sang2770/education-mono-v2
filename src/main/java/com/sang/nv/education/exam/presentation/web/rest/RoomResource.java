@@ -71,6 +71,10 @@ public interface RoomResource {
     PagingResponse<PeriodRoom> getPeriodInRoom(@PathVariable String id, PeriodRoomSearchRequest
             request);
 
+    @ApiOperation(value = "Done period in room")
+    @GetMapping("/rooms/{id}/periods/{periodId}/done")
+    Response<PeriodRoom> donePeriodInRoom(@PathVariable String id, @PathVariable String periodId);
+
 
     @ApiOperation(value = "Send exam to user Room")
     @PostMapping("/rooms/{id}/send-exam-to-user")

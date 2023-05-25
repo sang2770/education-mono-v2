@@ -262,7 +262,7 @@ public class RoomServiceImpl implements RoomService {
 //        }
         Room room = this.getById(id);
         PeriodRoom periodRoom = this.periodRoomEntityMapper.toDomain(this.periodRoomEntityRepository.findByRoomIdAndPeriodId(id, request.getPeriodId()).orElseThrow(() -> new ResponseException(NotFoundError.PERIOD_NOT_EXISTED_IN_ROOM)));
-        periodRoom.updateIsSendExam(true);
+        periodRoom.updateIsSendExam(true, 0L);
         Optional<PeriodRoomEntity> periodRoomEntityOptional = this.periodRoomEntityRepository.findByRoomIdAndPeriodId(id, request.getPeriodId());
         if (periodRoomEntityOptional.isEmpty()) {
             throw new ResponseException(NotFoundError.PERIOD_NOT_EXISTED_IN_ROOM);
@@ -299,7 +299,6 @@ public class RoomServiceImpl implements RoomService {
                 .findByRoomIdAndPeriodId(id, request.getPeriodId()).orElseThrow(() -> new ResponseException(NotFoundError.PERIOD_NOT_EXISTED_IN_ROOM)));
         Period period = this.periodEntityRepository.findById(periodRoom.getPeriodId()).map(this.periodEntityMapper::toDomain)
                 .orElseThrow(() -> new ResponseException(NotFoundError.PERIOD_NOT_EXISTED_IN_ROOM));
-        periodRoom.updateIsSendExam(true);
         Optional<PeriodRoomEntity> periodRoomEntityOptional = this.periodRoomEntityRepository.findByRoomIdAndPeriodId(id, request.getPeriodId());
         if (periodRoomEntityOptional.isEmpty()) {
             throw new ResponseException(NotFoundError.PERIOD_NOT_EXISTED_IN_ROOM);
@@ -308,6 +307,7 @@ public class RoomServiceImpl implements RoomService {
         if (CollectionUtils.isEmpty(exams)) {
             throw new ResponseException(BadRequestError.PERIOD_NOT_EXAM);
         }
+        periodRoom.updateIsSendExam(true, DataUtil.getValueOrDefault(request.getTime(), 0L) + DataUtil.getValueOrDefault(request.getTimeDelay(), 0L));
         List<UserRoom> userRooms = this.userRoomEntityMapper.toDomain(this.userRoomEntityRepository.findByRoomId(id))
                 .stream().filter(userRoom -> Objects.equals(userRoom.getUserType(), UserType.STUDENT)).collect(Collectors.toList());
         List<UserExam> userExams = new ArrayList<>();
@@ -322,6 +322,7 @@ public class RoomServiceImpl implements RoomService {
                         .examId(exam.getId())
                         .userId(userRoom.getUserId())
                         .roomId(id)
+                        .time(Objects.nonNull(request.getTime()) ? request.getTime() : exam.getTime())
                         .timeDelay(Objects.nonNull(request.getTimeDelay()) ? request.getTimeDelay() : exam.getTimeDelay())
                         .periodId(request.getPeriodId())
                         .build();
@@ -400,5 +401,14 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public List<String> getAllPeriodIdInRooms(List<String> roomIds) {
         return this.periodRoomEntityRepository.findAllByRoomIds(roomIds).stream().map(PeriodRoomEntity::getPeriodId).collect(Collectors.toList());
+    }
+
+    @Override
+    public PeriodRoom donePeriodInRoom(String id, String periodId) {
+        PeriodRoomEntity periodRoomEntity = this.periodRoomEntityRepository.findByRoomIdAndPeriodId(id, periodId)
+                .orElseThrow(() -> new ResponseException(NotFoundError.PERIOD_NOT_EXISTED_IN_ROOM));
+        PeriodRoom periodRoom = this.periodRoomEntityMapper.toDomain(periodRoomEntity);
+        periodRoom.setIsDone(true);
+        return periodRoom;
     }
 }

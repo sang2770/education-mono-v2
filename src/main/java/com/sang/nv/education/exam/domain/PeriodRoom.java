@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
+import java.time.Instant;
+
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,12 +25,17 @@ public class PeriodRoom extends AuditableDomain {
     Boolean deleted;
     Period period;
     Boolean isSendExam;
+    Boolean isDone;
+    Instant startSendAt;
+    Instant endSendAt;
+    Long time;
 
     public PeriodRoom(String periodId, String roomId) {
         this.id = IdUtils.nextId();
         this.periodId = periodId;
         this.roomId = roomId;
         this.isSendExam = false;
+        this.isDone = false;
         this.deleted = false;
     }
 
@@ -44,7 +51,18 @@ public class PeriodRoom extends AuditableDomain {
         this.period = period;
     }
 
-    public void updateIsSendExam(Boolean isSendExam) {
+    public void updateIsSendExam(Boolean isSendExam, Long time) {
         this.isSendExam = isSendExam;
+        this.time = time;
+        if (isSendExam) {
+            this.startSendAt = Instant.now();
+        }
+    }
+
+    public void setIsDone(Boolean isDone) {
+        this.isDone = isDone;
+        if (isDone) {
+            this.endSendAt = Instant.now();
+        }
     }
 }

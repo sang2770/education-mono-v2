@@ -19,6 +19,9 @@ public interface UserExamEntityRepository extends JpaRepository<UserExamEntity, 
     @Query("from UserExamEntity u where u.deleted = false and u.examId = :examId and u.periodId = :periodId")
     Optional<UserExamEntity> findByExamId(@Param("examId") String examId, @Param("periodId") String periodId);
 
+    @Query("from UserExamEntity u where u.deleted = false and u.roomId = :roomId and u.periodId = :periodId")
+    List<UserExamEntity> findByRoomAndPeriod(@Param("roomId") String roomId, @Param("periodId") String periodId);
+
     @Query("from UserExamEntity u where u.deleted = false and u.examId in :examIds")
     List<UserExamEntity> findAllByExamId(@Param("examIds") List<String> examId);
 
