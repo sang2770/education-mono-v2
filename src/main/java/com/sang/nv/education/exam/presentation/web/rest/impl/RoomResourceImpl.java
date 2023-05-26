@@ -86,6 +86,7 @@ public class RoomResourceImpl implements RoomResource {
 
     @Override
     public Response<PeriodRoom> donePeriodInRoom(String id, String periodId) {
-        return Response.of(this.RoomsService.donePeriodInRoom(id, periodId));
+        PeriodRoom periodRoom = this.RoomsService.donePeriodInRoom(id, periodId);
+        return Response.of(periodRoom);
     }
 }

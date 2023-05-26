@@ -55,7 +55,7 @@ public class PeriodRoom extends AuditableDomain {
 
     public void updateIsSendExam(Boolean isSendExam, Long time, Long timeDelay) {
         this.isSendExam = isSendExam;
-        this.time = DataUtil.getValueOrDefault(time, 0L) + DataUtil.getValueOrDefault(timeDelay, 0L);
+        this.time = DataUtil.getValueOrDefault(time, 0L);
         this.timeDelay = timeDelay;
         if (isSendExam) {
             this.startSendAt = Instant.now();

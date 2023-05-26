@@ -4,11 +4,9 @@ package com.sang.nv.education.exam.application.service.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sang.commonmodel.dto.PageDTO;
-import com.sang.commonmodel.error.enums.AuthenticationError;
 import com.sang.commonmodel.exception.ResponseException;
 import com.sang.commonmodel.mapper.util.PageableMapperUtil;
 import com.sang.commonpersistence.support.SeqRepository;
-import com.sang.commonutil.DataUtil;
 import com.sang.nv.education.common.web.support.SecurityUtils;
 import com.sang.nv.education.exam.application.dto.request.UpdateMemberInRoomRequest;
 import com.sang.nv.education.exam.application.dto.request.UpdatePeriodInRoomRequest;
@@ -22,16 +20,33 @@ import com.sang.nv.education.exam.application.mapper.ExamAutoMapper;
 import com.sang.nv.education.exam.application.mapper.ExamAutoMapperQuery;
 import com.sang.nv.education.exam.application.service.RoomService;
 import com.sang.nv.education.exam.application.service.SendNotificationService;
-import com.sang.nv.education.exam.domain.*;
+import com.sang.nv.education.exam.domain.Exam;
+import com.sang.nv.education.exam.domain.Period;
+import com.sang.nv.education.exam.domain.PeriodRoom;
+import com.sang.nv.education.exam.domain.Room;
+import com.sang.nv.education.exam.domain.Subject;
+import com.sang.nv.education.exam.domain.UserExam;
+import com.sang.nv.education.exam.domain.UserRoom;
 import com.sang.nv.education.exam.domain.command.RoomCreateOrUpdateCmd;
 import com.sang.nv.education.exam.domain.command.UserExamCreateCmd;
 import com.sang.nv.education.exam.domain.repository.RoomDomainRepository;
 import com.sang.nv.education.exam.infrastructure.persistence.entity.PeriodRoomEntity;
-import com.sang.nv.education.exam.infrastructure.persistence.entity.UserRoomEntity;
-import com.sang.nv.education.exam.infrastructure.persistence.mapper.*;
+import com.sang.nv.education.exam.infrastructure.persistence.mapper.ExamEntityMapper;
+import com.sang.nv.education.exam.infrastructure.persistence.mapper.PeriodEntityMapper;
+import com.sang.nv.education.exam.infrastructure.persistence.mapper.PeriodRoomEntityMapper;
+import com.sang.nv.education.exam.infrastructure.persistence.mapper.RoomEntityMapper;
+import com.sang.nv.education.exam.infrastructure.persistence.mapper.SubjectEntityMapper;
+import com.sang.nv.education.exam.infrastructure.persistence.mapper.UserExamEntityMapper;
+import com.sang.nv.education.exam.infrastructure.persistence.mapper.UserRoomEntityMapper;
 import com.sang.nv.education.exam.infrastructure.persistence.query.RoomSearchQuery;
 import com.sang.nv.education.exam.infrastructure.persistence.query.UserRoomSearchQuery;
-import com.sang.nv.education.exam.infrastructure.persistence.repository.*;
+import com.sang.nv.education.exam.infrastructure.persistence.repository.ExamEntityRepository;
+import com.sang.nv.education.exam.infrastructure.persistence.repository.PeriodEntityRepository;
+import com.sang.nv.education.exam.infrastructure.persistence.repository.PeriodRoomEntityRepository;
+import com.sang.nv.education.exam.infrastructure.persistence.repository.RoomEntityRepository;
+import com.sang.nv.education.exam.infrastructure.persistence.repository.SubjectEntityRepository;
+import com.sang.nv.education.exam.infrastructure.persistence.repository.UserExamEntityRepository;
+import com.sang.nv.education.exam.infrastructure.persistence.repository.UserRoomEntityRepository;
 import com.sang.nv.education.exam.infrastructure.support.Constant;
 import com.sang.nv.education.exam.infrastructure.support.enums.UserExamStatus;
 import com.sang.nv.education.exam.infrastructure.support.exception.BadRequestError;
@@ -46,7 +61,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -161,7 +181,7 @@ public class RoomServiceImpl implements RoomService {
             data.put(Constant.ROOM_ID, room.getId());
             data.put(Constant.ROOM_NAME, room.getName());
             User user = this.currentUser();
-            data.put(Constant.FULL_NAME, Objects.nonNull(user)? user.getFullName() : "Quản trị hệ thống" );
+            data.put(Constant.FULL_NAME, Objects.nonNull(user) ? user.getFullName() : "Quản trị hệ thống");
             this.notificationService.sendNotification(NotificationCode.ROOM_IN, request.getMemberIds(), data);
         }
         return room;
@@ -307,7 +327,7 @@ public class RoomServiceImpl implements RoomService {
         if (CollectionUtils.isEmpty(exams)) {
             throw new ResponseException(BadRequestError.PERIOD_NOT_EXAM);
         }
-        periodRoom.updateIsSendExam(true, request.getTime(), request.getTimeDelay()));
+        periodRoom.updateIsSendExam(true, request.getTime(), request.getTimeDelay());
         List<UserRoom> userRooms = this.userRoomEntityMapper.toDomain(this.userRoomEntityRepository.findByRoomId(id))
                 .stream().filter(userRoom -> Objects.equals(userRoom.getUserType(), UserType.STUDENT)).collect(Collectors.toList());
         List<UserExam> userExams = new ArrayList<>();
@@ -391,11 +411,10 @@ public class RoomServiceImpl implements RoomService {
 
     public User currentUser() throws JsonProcessingException {
         Optional<String> current = SecurityUtils.getCurrentUserLoginId();
-        if (current.isEmpty())
-        {
+        if (current.isEmpty()) {
             return null;
         }
-       return this.userService.getUserById(current.get());
+        return this.userService.getUserById(current.get());
     }
 
     @Override
@@ -409,7 +428,14 @@ public class RoomServiceImpl implements RoomService {
                 .orElseThrow(() -> new ResponseException(NotFoundError.PERIOD_NOT_EXISTED_IN_ROOM));
         PeriodRoom periodRoom = this.periodRoomEntityMapper.toDomain(periodRoomEntity);
         periodRoom.setIsDone(true);
+        List<UserExam> userExams = this.userExamEntityMapper.toDomain(this.userExamEntityRepository.findByRoomAndPeriod(id, periodId));
+        userExams.forEach(userExam -> {
+            if (!userExam.getStatus().equals(UserExamStatus.DONE)) {
+                userExam.overTimeExam();
+            }
+        });
         this.periodRoomEntityRepository.save(this.periodRoomEntityMapper.toEntity(periodRoom));
+        this.userExamEntityRepository.saveAll(this.userExamEntityMapper.toEntity(userExams));
         return periodRoom;
     }
 }
