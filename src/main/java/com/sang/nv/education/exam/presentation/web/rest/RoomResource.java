@@ -1,6 +1,7 @@
 package com.sang.nv.education.exam.presentation.web.rest;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sang.commonmodel.dto.response.PagingResponse;
 import com.sang.commonmodel.dto.response.Response;
 import com.sang.nv.education.exam.application.dto.request.UpdateMemberInRoomRequest;
@@ -43,11 +44,12 @@ public interface RoomResource {
 
     @ApiOperation(value = "Update Room")
     @PostMapping("/rooms/{id}/add-members")
-    @PreAuthorize("hasPermission(null, 'room:update_user')")
-    Response<Room> addMember(@PathVariable String id, @RequestBody UpdateMemberInRoomRequest request);
+//    @PreAuthorize("hasPermission(null, 'room:update_user')")
+    Response<Room> addMember(@PathVariable String id, @RequestBody UpdateMemberInRoomRequest request) throws JsonProcessingException;
 
 
     @ApiOperation(value = "remove Member Room")
+    @PostMapping("/rooms/{id}/remove-members")
     Response<Room> removeMember(@PathVariable String id, @RequestBody UpdateMemberInRoomRequest request);
 
 
@@ -68,6 +70,10 @@ public interface RoomResource {
     @GetMapping("/rooms/{id}/periods")
     PagingResponse<PeriodRoom> getPeriodInRoom(@PathVariable String id, PeriodRoomSearchRequest
             request);
+
+    @ApiOperation(value = "Done period in room")
+    @PostMapping("/rooms/{id}/periods/{periodId}/done")
+    Response<PeriodRoom> donePeriodInRoom(@PathVariable String id, @PathVariable String periodId);
 
 
     @ApiOperation(value = "Send exam to user Room")

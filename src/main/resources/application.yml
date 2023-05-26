@@ -94,3 +94,13 @@ question-template:
   folder: 'templates/excel'
   question:
     importFileName: 'question_import_template.xlsx'
+db-scheduler:
+  enabled: true
+  heartbeat-interval: ${SCHEDULER_HEARTBEAT_INTERVAL:5m}
+  polling-interval: ${SCHEDULER_POLLING_INTERVAL:10s} # interval to check for new jobs in db
+  polling-limit: ${SCHEDULER_POLLING_LIMIT:10} # max number of jobs to process in one polling
+  table-name: ${SCHEDULER_TABLE_NAME:SCHEDULED_TASK}
+  immediate-execution-enabled: ${IMMEDIATE_EXECUTION_ENABLED:true} # if true, immediate execution will be enabled
+  scheduler-name: ${SCHEDULER_NAME:db-scheduler}
+  threads: ${SCHEDULER_THREADS:5}
+  shutdown-max-wait: 10m

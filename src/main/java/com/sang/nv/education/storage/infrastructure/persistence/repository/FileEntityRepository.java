@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FileEntityRepository extends JpaRepository<FileEntity, String>, BaseRepositoryCustom<FileEntity> {
-    @Query("from FileEntity e where e.deleted = false and e.id = :id ")
+    @Query("from EventEntity e where e.deleted = false and e.id = :id ")
     Optional<FileEntity> findById(String id);
 
-    @Query("from FileEntity e where e.deleted = false and e.id in :ids ")
+    @Query("from EventEntity e where e.deleted = false and e.id in :ids ")
     List<FileEntity> findByIds(@Param("ids") List<String> ids);
 }

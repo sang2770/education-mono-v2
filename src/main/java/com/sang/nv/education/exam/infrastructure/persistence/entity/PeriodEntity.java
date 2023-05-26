@@ -14,6 +14,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.Table;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -37,10 +38,11 @@ public class PeriodEntity extends AuditableEntity {
     @Column(name = "code", length = ValidateConstraint.LENGTH.CODE_MAX_LENGTH, nullable = false)
     private String code;
 
-    @Column(name = "startDate", nullable = false)
+    @Column(name = "startDate")
     private LocalDate startDate;
-    @Column(name = "endDate", nullable = false)
+    @Column(name = "endDate")
     private LocalDate endDate;
+
     @Column(name = "deleted", nullable = false)
     private Boolean deleted;
 

@@ -203,7 +203,7 @@ public class ExamServiceImpl implements ExamService {
     public Integer countExam(List<String> roomIds) {
         List<PeriodEntity> periodEntities = this.periodEntityRepository.findAllByRoomIds(roomIds);
         List<String> periodIds = periodEntities.stream().map(PeriodEntity::getId).collect(Collectors.toList());
-        return this.examEntityRepository.count(ExamSearchQuery.builder().periodIds(periodIds).build()).intValue();
+        return this.examEntityRepository.countByPeriodIds(periodIds);
     }
 
     private void checkExamIsStarted(List<Exam> exams) {
@@ -217,5 +217,10 @@ public class ExamServiceImpl implements ExamService {
                 exam.enrichIsStarted(true);
             }
         });
+    }
+
+    @Override
+    public Integer countExamByPeriodIds(List<String> periodIds) {
+        return this.examEntityRepository.countByPeriodIds(periodIds);
     }
 }

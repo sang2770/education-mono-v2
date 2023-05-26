@@ -40,12 +40,9 @@ public class Exam extends AuditableDomain {
     Boolean deleted;
     //  Thời gian làm bài tính bằng phút
     Long time;
-
     Long timeDelay;
-
     List<Question> questions;
     List<ExamQuestion> examQuestions;
-
     Boolean isStarted;
 
     public Exam(ExamCreateCmd cmd, List<Question> questions) {

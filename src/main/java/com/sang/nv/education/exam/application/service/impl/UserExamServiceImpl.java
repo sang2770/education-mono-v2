@@ -11,16 +11,20 @@ import com.sang.nv.education.exam.application.dto.response.UserExamResult;
 import com.sang.nv.education.exam.application.mapper.ExamAutoMapper;
 import com.sang.nv.education.exam.application.service.UserExamService;
 import com.sang.nv.education.exam.domain.Exam;
+import com.sang.nv.education.exam.domain.PeriodRoom;
 import com.sang.nv.education.exam.domain.UserExam;
 import com.sang.nv.education.exam.domain.command.UserExamCreateCmd;
 import com.sang.nv.education.exam.domain.repository.ExamDomainRepository;
 import com.sang.nv.education.exam.domain.repository.UserExamDomainRepository;
 import com.sang.nv.education.exam.infrastructure.persistence.entity.ExamEntity;
+import com.sang.nv.education.exam.infrastructure.persistence.entity.PeriodRoomEntity;
 import com.sang.nv.education.exam.infrastructure.persistence.entity.RoomEntity;
 import com.sang.nv.education.exam.infrastructure.persistence.entity.UserExamEntity;
+import com.sang.nv.education.exam.infrastructure.persistence.mapper.PeriodRoomEntityMapper;
 import com.sang.nv.education.exam.infrastructure.persistence.mapper.UserExamEntityMapper;
 import com.sang.nv.education.exam.infrastructure.persistence.repository.ExamEntityRepository;
 import com.sang.nv.education.exam.infrastructure.persistence.repository.ExamQuestionEntityRepository;
+import com.sang.nv.education.exam.infrastructure.persistence.repository.PeriodRoomEntityRepository;
 import com.sang.nv.education.exam.infrastructure.persistence.repository.QuestionEntityRepository;
 import com.sang.nv.education.exam.infrastructure.persistence.repository.RoomEntityRepository;
 import com.sang.nv.education.exam.infrastructure.persistence.repository.UserExamEntityRepository;
@@ -31,6 +35,7 @@ import com.sang.nv.education.report.application.dto.request.UserExamReportReques
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
@@ -50,12 +55,14 @@ public class UserExamServiceImpl implements UserExamService {
     private final UserExamDomainRepository userExamDomainRepository;
     private final UserExamEntityRepository userExamEntityRepository;
     private final UserExamEntityMapper userExamEntityMapper;
+    private final PeriodRoomEntityRepository periodRoomEntityRepository;
+    private final PeriodRoomEntityMapper periodRoomEntityMapper;
 
     public UserExamServiceImpl(ExamEntityRepository ExamEntityRepository,
                                QuestionEntityRepository questionEntityRepository,
                                RoomEntityRepository roomEntityRepository, ExamQuestionEntityRepository examQuestionEntityRepository,
                                ExamAutoMapper examAutoMapper,
-                               ExamDomainRepository ExamDomainRepository, UserExamDomainRepository userExamDomainRepository, UserExamEntityRepository examEntityRepository, UserExamEntityMapper userExamEntityMapper) {
+                               ExamDomainRepository ExamDomainRepository, UserExamDomainRepository userExamDomainRepository, UserExamEntityRepository examEntityRepository, UserExamEntityMapper userExamEntityMapper, PeriodRoomEntityRepository periodRoomEntityRepository, PeriodRoomEntityMapper periodRoomEntityMapper) {
         this.ExamEntityRepository = ExamEntityRepository;
         this.roomEntityRepository = roomEntityRepository;
         this.examQuestionEntityRepository = examQuestionEntityRepository;
@@ -64,6 +71,8 @@ public class UserExamServiceImpl implements UserExamService {
         this.userExamDomainRepository = userExamDomainRepository;
         this.userExamEntityRepository = examEntityRepository;
         this.userExamEntityMapper = userExamEntityMapper;
+        this.periodRoomEntityRepository = periodRoomEntityRepository;
+        this.periodRoomEntityMapper = periodRoomEntityMapper;
     }
 
     @Override
@@ -81,6 +90,27 @@ public class UserExamServiceImpl implements UserExamService {
         userExam.update(cmd, exam.getExamQuestions());
 //        UserExam userExam = new UserExam(cmd, exam.getExamQuestions());
         this.userExamDomainRepository.save(userExam);
+
+        // check period Done
+        PeriodRoomEntity periodRoomEntity = this.periodRoomEntityRepository.findByRoomIdAndPeriodId(roomId, request.getPeriodId())
+                .orElseThrow(() -> new ResponseException(NotFoundError.PERIOD_NOT_EXISTED_IN_ROOM));
+        PeriodRoom periodRoom = this.periodRoomEntityMapper.toDomain(periodRoomEntity);
+        List<UserExam> userExams = this.userExamEntityMapper.toDomain(this.userExamEntityRepository.findByRoomAndPeriod(roomId, request.getPeriodId()));
+        UserExam userExamDone = userExams.stream().filter(item -> Objects.equals(userExam.getId(), item.getId())).findFirst().orElse(null);
+        if (Objects.nonNull(userExamDone)) {
+            userExamDone.updateStatus(UserExamStatus.DONE);
+        }
+        Boolean isDone = true;
+        for (UserExam item : userExams) {
+            if (!item.getStatus().equals(UserExamStatus.DONE)) {
+                isDone = false;
+                break;
+            }
+        }
+        periodRoom.setIsDone(isDone);
+        this.periodRoomEntityRepository.save(this.periodRoomEntityMapper.toEntity(periodRoom));
+        // End Period Done
+
         Long duration = 0L;
         if (Objects.nonNull(userExam.getTimeStart()) && Objects.nonNull(userExam.getTimeEnd())) {
             duration = Duration.between(userExam.getTimeStart(), userExam.getTimeEnd()).toSeconds();
@@ -127,6 +157,10 @@ public class UserExamServiceImpl implements UserExamService {
             userExam.updateStatus(UserExamStatus.DOING);
             this.userExamDomainRepository.save(userExam);
         }
+        PeriodRoomEntity periodRoomEntity = this.periodRoomEntityRepository.findByRoomIdAndPeriodId(userExam.getRoomId(), userExam.getPeriodId())
+                .orElseThrow(() -> new ResponseException(NotFoundError.PERIOD_NOT_EXISTED_IN_ROOM));
+        PeriodRoom periodRoom = this.periodRoomEntityMapper.toDomain(periodRoomEntity);
+        userExam.enrichPeriodRoom(periodRoom);
         return userExam;
     }
 

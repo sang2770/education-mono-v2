@@ -13,4 +13,5 @@ import java.util.List;
 public class ReportGeneralRequest extends Request {
     List<String> roomIds;
     List<String> userIds;
+    Boolean isClient;
 }

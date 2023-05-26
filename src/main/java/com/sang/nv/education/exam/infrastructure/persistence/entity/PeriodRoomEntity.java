@@ -14,6 +14,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.Table;
+import java.time.Instant;
 import java.util.Objects;
 
 @Entity
@@ -39,6 +40,20 @@ public class PeriodRoomEntity extends AuditableEntity {
     private Boolean deleted;
     @Column(name = "is_send_exam")
     private Boolean isSendExam;
+    @Column(name = "isDone")
+    Boolean isDone;
+
+    @Column(name = "startSendAt")
+    Instant startSendAt;
+
+    @Column(name = "endSendAt")
+    Instant endSendAt;
+
+    @Column(name = "time")
+    Long time;
+    @Column(name = "timeDelay")
+    Long timeDelay;
+
 
     @Override
     public boolean equals(Object o) {

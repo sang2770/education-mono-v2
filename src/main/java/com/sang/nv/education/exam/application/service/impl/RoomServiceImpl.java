@@ -1,6 +1,7 @@
 package com.sang.nv.education.exam.application.service.impl;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sang.commonmodel.dto.PageDTO;
 import com.sang.commonmodel.exception.ResponseException;
@@ -18,6 +19,7 @@ import com.sang.nv.education.exam.application.dto.request.room.SendExamToUserReq
 import com.sang.nv.education.exam.application.mapper.ExamAutoMapper;
 import com.sang.nv.education.exam.application.mapper.ExamAutoMapperQuery;
 import com.sang.nv.education.exam.application.service.RoomService;
+import com.sang.nv.education.exam.application.service.SendNotificationService;
 import com.sang.nv.education.exam.domain.Exam;
 import com.sang.nv.education.exam.domain.Period;
 import com.sang.nv.education.exam.domain.PeriodRoom;
@@ -29,7 +31,6 @@ import com.sang.nv.education.exam.domain.command.RoomCreateOrUpdateCmd;
 import com.sang.nv.education.exam.domain.command.UserExamCreateCmd;
 import com.sang.nv.education.exam.domain.repository.RoomDomainRepository;
 import com.sang.nv.education.exam.infrastructure.persistence.entity.PeriodRoomEntity;
-import com.sang.nv.education.exam.infrastructure.persistence.entity.UserRoomEntity;
 import com.sang.nv.education.exam.infrastructure.persistence.mapper.ExamEntityMapper;
 import com.sang.nv.education.exam.infrastructure.persistence.mapper.PeriodEntityMapper;
 import com.sang.nv.education.exam.infrastructure.persistence.mapper.PeriodRoomEntityMapper;
@@ -46,12 +47,14 @@ import com.sang.nv.education.exam.infrastructure.persistence.repository.RoomEnti
 import com.sang.nv.education.exam.infrastructure.persistence.repository.SubjectEntityRepository;
 import com.sang.nv.education.exam.infrastructure.persistence.repository.UserExamEntityRepository;
 import com.sang.nv.education.exam.infrastructure.persistence.repository.UserRoomEntityRepository;
+import com.sang.nv.education.exam.infrastructure.support.Constant;
 import com.sang.nv.education.exam.infrastructure.support.enums.UserExamStatus;
 import com.sang.nv.education.exam.infrastructure.support.exception.BadRequestError;
 import com.sang.nv.education.exam.infrastructure.support.exception.NotFoundError;
 import com.sang.nv.education.iam.application.service.UserService;
 import com.sang.nv.education.iam.domain.User;
 import com.sang.nv.education.iam.infrastructure.support.enums.UserType;
+import com.sang.nv.education.notification.infrastructure.support.enums.NotificationCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -59,7 +62,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -90,6 +95,7 @@ public class RoomServiceImpl implements RoomService {
     private final PeriodEntityMapper periodEntityMapper;
     private final UserService userService;
     private final ObjectMapper objectMapper;
+    private final SendNotificationService notificationService;
 
     public RoomServiceImpl(RoomEntityRepository roomEntityRepository, ExamAutoMapper examAutoMapper,
                            ExamAutoMapperQuery examAutoMapperQuery, RoomDomainRepository RoomDomainRepository,
@@ -100,7 +106,7 @@ public class RoomServiceImpl implements RoomService {
                            SubjectEntityMapper subjectEntityMapper,
                            ExamEntityRepository examEntityRepository,
                            ExamEntityMapper examEntityMapper,
-                           SeqRepository seqRepository, PeriodRoomEntityMapper periodRoomEntityMapper, PeriodEntityRepository periodEntityRepository, PeriodEntityMapper periodEntityMapper, UserService userService, ObjectMapper objectMapper) {
+                           SeqRepository seqRepository, PeriodRoomEntityMapper periodRoomEntityMapper, PeriodEntityRepository periodEntityRepository, PeriodEntityMapper periodEntityMapper, UserService userService, ObjectMapper objectMapper, SendNotificationService notificationService) {
         this.examAutoMapper = examAutoMapper;
         this.examAutoMapperQuery = examAutoMapperQuery;
         this.roomDomainRepository = RoomDomainRepository;
@@ -121,6 +127,7 @@ public class RoomServiceImpl implements RoomService {
         this.periodEntityMapper = periodEntityMapper;
         this.userService = userService;
         this.objectMapper = objectMapper;
+        this.notificationService = notificationService;
     }
 
     @Override
@@ -154,7 +161,7 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public Room addMemberInRoom(String id, UpdateMemberInRoomRequest request) {
+    public Room addMemberInRoom(String id, UpdateMemberInRoomRequest request) throws JsonProcessingException {
         Room room = this.getById(id);
         if (!CollectionUtils.isEmpty(request.getMemberIds())) {
             List<User> users = this.userService.findByIds(request.getMemberIds());
@@ -169,6 +176,13 @@ public class RoomServiceImpl implements RoomService {
 //            }
 //            room.addUser(request.getMemberIds(), userDTOResponse.getData());
             this.roomDomainRepository.save(room);
+            // Send noti
+            Map<String, String> data = new HashMap<>();
+            data.put(Constant.ROOM_ID, room.getId());
+            data.put(Constant.ROOM_NAME, room.getName());
+            User user = this.currentUser();
+            data.put(Constant.FULL_NAME, Objects.nonNull(user) ? user.getFullName() : "Quản trị hệ thống");
+            this.notificationService.sendNotification(NotificationCode.ROOM_IN, request.getMemberIds(), data);
         }
         return room;
     }
@@ -261,14 +275,14 @@ public class RoomServiceImpl implements RoomService {
         if (SecurityUtils.getCurrentUser().isEmpty()) {
             throw new ResponseException(BadRequestError.USER_INVALID);
         }
-        User user = this.objectMapper.convertValue(SecurityUtils.getCurrentUser().get(), User.class);
-        List<UserRoomEntity> userRoomEntity = this.userRoomEntityRepository.findByUserIds(List.of(user.getId()));
-        if (CollectionUtils.isEmpty(userRoomEntity) && !user.getIsRoot()) {
-            throw new ResponseException(BadRequestError.PERMISSION_DENY);
-        }
+//        User user = this.objectMapper.convertValue(SecurityUtils.getCurrentUser().get(), User.class);
+//        List<UserRoomEntity> userRoomEntity = this.userRoomEntityRepository.findByUserIds(List.of(user.getId()));
+//        if (CollectionUtils.isEmpty(userRoomEntity) && !user.getIsRoot()) {
+//            throw new ResponseException(BadRequestError.PERMISSION_DENY);
+//        }
         Room room = this.getById(id);
         PeriodRoom periodRoom = this.periodRoomEntityMapper.toDomain(this.periodRoomEntityRepository.findByRoomIdAndPeriodId(id, request.getPeriodId()).orElseThrow(() -> new ResponseException(NotFoundError.PERIOD_NOT_EXISTED_IN_ROOM)));
-        periodRoom.updateIsSendExam(true);
+        periodRoom.updateIsSendExam(true, 0L, 0L);
         Optional<PeriodRoomEntity> periodRoomEntityOptional = this.periodRoomEntityRepository.findByRoomIdAndPeriodId(id, request.getPeriodId());
         if (periodRoomEntityOptional.isEmpty()) {
             throw new ResponseException(NotFoundError.PERIOD_NOT_EXISTED_IN_ROOM);
@@ -303,7 +317,8 @@ public class RoomServiceImpl implements RoomService {
         Room room = this.getById(id);
         PeriodRoom periodRoom = this.periodRoomEntityMapper.toDomain(this.periodRoomEntityRepository
                 .findByRoomIdAndPeriodId(id, request.getPeriodId()).orElseThrow(() -> new ResponseException(NotFoundError.PERIOD_NOT_EXISTED_IN_ROOM)));
-        periodRoom.updateIsSendExam(true);
+        Period period = this.periodEntityRepository.findById(periodRoom.getPeriodId()).map(this.periodEntityMapper::toDomain)
+                .orElseThrow(() -> new ResponseException(NotFoundError.PERIOD_NOT_EXISTED_IN_ROOM));
         Optional<PeriodRoomEntity> periodRoomEntityOptional = this.periodRoomEntityRepository.findByRoomIdAndPeriodId(id, request.getPeriodId());
         if (periodRoomEntityOptional.isEmpty()) {
             throw new ResponseException(NotFoundError.PERIOD_NOT_EXISTED_IN_ROOM);
@@ -312,6 +327,7 @@ public class RoomServiceImpl implements RoomService {
         if (CollectionUtils.isEmpty(exams)) {
             throw new ResponseException(BadRequestError.PERIOD_NOT_EXAM);
         }
+        periodRoom.updateIsSendExam(true, request.getTime(), request.getTimeDelay());
         List<UserRoom> userRooms = this.userRoomEntityMapper.toDomain(this.userRoomEntityRepository.findByRoomId(id))
                 .stream().filter(userRoom -> Objects.equals(userRoom.getUserType(), UserType.STUDENT)).collect(Collectors.toList());
         List<UserExam> userExams = new ArrayList<>();
@@ -326,6 +342,7 @@ public class RoomServiceImpl implements RoomService {
                         .examId(exam.getId())
                         .userId(userRoom.getUserId())
                         .roomId(id)
+                        .time(Objects.nonNull(request.getTime()) ? request.getTime() : exam.getTime())
                         .timeDelay(Objects.nonNull(request.getTimeDelay()) ? request.getTimeDelay() : exam.getTimeDelay())
                         .periodId(request.getPeriodId())
                         .build();
@@ -336,6 +353,14 @@ public class RoomServiceImpl implements RoomService {
         }
         this.periodRoomEntityRepository.save(this.periodRoomEntityMapper.toEntity(periodRoom));
         this.userExamEntityRepository.saveAll(this.userExamEntityMapper.toEntity(userExams));
+
+        // Send noti
+        Map<String, String> data = new HashMap<>();
+        data.put(Constant.ROOM_ID, room.getId());
+        data.put(Constant.ROOM_NAME, room.getName());
+        data.put(Constant.PERIOD_ID, periodRoom.getPeriodId());
+        data.put(Constant.PERIOD_NAME, period.getName());
+        this.notificationService.sendNotification(NotificationCode.NEW_EXAM, userExams.stream().map(UserExam::getUserId).collect(Collectors.toList()), data);
     }
 
     @Override
@@ -384,4 +409,33 @@ public class RoomServiceImpl implements RoomService {
         });
     }
 
+    public User currentUser() throws JsonProcessingException {
+        Optional<String> current = SecurityUtils.getCurrentUserLoginId();
+        if (current.isEmpty()) {
+            return null;
+        }
+        return this.userService.getUserById(current.get());
+    }
+
+    @Override
+    public List<String> getAllPeriodIdInRooms(List<String> roomIds) {
+        return this.periodRoomEntityRepository.findAllByRoomIds(roomIds).stream().map(PeriodRoomEntity::getPeriodId).collect(Collectors.toList());
+    }
+
+    @Override
+    public PeriodRoom donePeriodInRoom(String id, String periodId) {
+        PeriodRoomEntity periodRoomEntity = this.periodRoomEntityRepository.findByRoomIdAndPeriodId(id, periodId)
+                .orElseThrow(() -> new ResponseException(NotFoundError.PERIOD_NOT_EXISTED_IN_ROOM));
+        PeriodRoom periodRoom = this.periodRoomEntityMapper.toDomain(periodRoomEntity);
+        periodRoom.setIsDone(true);
+        List<UserExam> userExams = this.userExamEntityMapper.toDomain(this.userExamEntityRepository.findByRoomAndPeriod(id, periodId));
+        userExams.forEach(userExam -> {
+            if (!userExam.getStatus().equals(UserExamStatus.DONE)) {
+                userExam.overTimeExam();
+            }
+        });
+        this.periodRoomEntityRepository.save(this.periodRoomEntityMapper.toEntity(periodRoom));
+        this.userExamEntityRepository.saveAll(this.userExamEntityMapper.toEntity(userExams));
+        return periodRoom;
+    }
 }

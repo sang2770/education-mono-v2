@@ -23,6 +23,7 @@ public class UserExamCreateCmd {
     String roomId;
     Float maxPoint;
     Long timeDelay;
+    Long time;
     List<UserExamInfoCreateRequest> userExamInfoCreateRequests;
 
     Integer numberOutTab;

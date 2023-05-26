@@ -47,14 +47,15 @@ public class UserExam extends AuditableDomain {
     Integer numberOutTab;
     UserExamStatus status;
     Long timeDelay;
+    Long time;
     List<UserExamInfo> userExamInfos;
-
     Exam exam;
     UserExamResult userExamResult;
     User user;
 
     Room room;
     Period period;
+    PeriodRoom periodRoom;
 
     public UserExam(UserExamCreateCmd cmd) {
         this.id = IdUtils.nextId();
@@ -69,6 +70,7 @@ public class UserExam extends AuditableDomain {
         this.totalPoint = 0f;
         this.status = UserExamStatus.WAITING;
         this.timeDelay = cmd.getTimeDelay();
+        this.time = cmd.getTime();
 //        this.timeEnd = Instant.now();
         this.deleted = Boolean.FALSE;
         this.numberOutTab = 0;
@@ -176,5 +178,9 @@ public class UserExam extends AuditableDomain {
         this.status = UserExamStatus.OVERTIME;
         this.timeEnd = Instant.now();
         this.totalPoint = 0f;
+    }
+
+    public void enrichPeriodRoom(PeriodRoom periodRoom) {
+        this.periodRoom = periodRoom;
     }
 }

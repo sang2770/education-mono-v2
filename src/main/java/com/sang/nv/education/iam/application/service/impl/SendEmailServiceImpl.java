@@ -51,4 +51,5 @@ public class SendEmailServiceImpl implements SendEmailService {
         String content = templateEngine.process(templateName, context);
         mailService.sendHtmlMail(user.getEmail(), titleKey, content);
     }
+
 }

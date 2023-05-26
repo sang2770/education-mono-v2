@@ -24,4 +24,6 @@ public interface ExamEntityRepository extends JpaRepository<ExamEntity, String>,
     @Query("from ExamEntity u where u.deleted = false and u.id in :ids")
     List<ExamEntity> findAllByIds(@Param("ids") List<String> ids);
 
+    @Query("Select count(u.periodId) from ExamEntity u where u.deleted = false and u.periodId in :periodIds")
+    Integer countByPeriodIds(List<String> periodIds);
 }

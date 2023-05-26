@@ -9,4 +9,5 @@ import lombok.NoArgsConstructor;
 public class SendExamToUserRequest extends Request {
     String periodId;
     Long timeDelay;
+    Long time;
 }
