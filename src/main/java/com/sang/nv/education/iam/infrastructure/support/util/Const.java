@@ -14,6 +14,7 @@ public class Const {
     public static final String CLASS_NOT_FOUND = "Không tìm thấy lớp học";
     public static final String INVALID = "Không hợp lệ";
     public static final String DEFAULT_DOMAIN = "";
+    public static final String COL_DATE_OF_BIRTH_NOT_FORMAT = "Ngày sinh không đúng định dạng";
 
 
     private Const() {
