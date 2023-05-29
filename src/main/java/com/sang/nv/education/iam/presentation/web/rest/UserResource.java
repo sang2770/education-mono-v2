@@ -16,6 +16,7 @@ import com.sang.nv.education.iam.application.dto.response.ImportResult;
 import com.sang.nv.education.iam.domain.User;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,6 +34,7 @@ import java.util.List;
 public interface UserResource {
     @ApiOperation(value = "Create User")
     @PostMapping("/users")
+    @PreAuthorize("hasPermission(null, 'user:create')")
     Response<User> create(@RequestBody UserCreateRequest request);
 
     @ApiOperation(value = "Update user")
@@ -50,6 +52,7 @@ public interface UserResource {
 
     @ApiOperation(value = "Search user")
     @GetMapping("/users")
+    @PreAuthorize("hasPermission(null, 'user:view')")
     PagingResponse<User> search(@ValidatePaging(allowedSorts = {"lastModifiedAt", "createdAt",
             "fullName", "username", "email", "status", "userType"})
                                 UserSearchRequest request);

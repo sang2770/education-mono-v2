@@ -28,7 +28,7 @@ public interface RoleResource {
 
     @ApiOperation(value = "Search user")
     @GetMapping("/roles")
-    @PreAuthorize("hasPermission(null, 'user:view')")
+    @PreAuthorize("hasPermission(null, 'role:view')")
     PagingResponse<Role> search(@ValidatePaging(allowedSorts = {"id", "createdAt", "code", "name", "createdBy", "lastModifiedAt"})
                                 RoleSearchRequest request);
 

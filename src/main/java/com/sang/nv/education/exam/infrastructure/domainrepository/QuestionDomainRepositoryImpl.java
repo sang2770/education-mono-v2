@@ -124,8 +124,18 @@ public class QuestionDomainRepositoryImpl extends AbstractDomainRepository<Quest
         // enrich answer
         List<AnswerEntity> answerEntities = this.answerEntityRepository.findByQuestionId(question.getId());
         question.enrichAnswers(this.answerEntityMapper.toDomain(answerEntities));
-        List<QuestionFileEntity> questionFileEntities = this.questionFileEntityRepository.findAllByQuestionIds(List.of(question.getId()));
-        question.enrichFile(this.questionFileEntityMapper.toDomain(questionFileEntities));
+        List<QuestionFile> questionFiles = this.questionFileEntityMapper.toDomain(this.questionFileEntityRepository.findAllByQuestionIds(List.of(question.getId())));
+        List<String> fileIds = questionFiles.stream().map(QuestionFile::getFileId).collect(Collectors.toList());
+        List<FileDomain> fileDomains = this.storageService.getByIds(fileIds);
+        questionFiles.forEach(questionFile -> {
+            FileDomain fileDomain = fileDomains.stream().filter(item ->
+                    Objects.equals(item.getId(), questionFile.getFileId())).findFirst().orElse(null);
+            if (Objects.nonNull(fileDomain)) {
+                questionFile.enrichViewUrl(fileDomain.getFilePath());
+                questionFile.enrichFileName(fileDomain.getFileName());
+            }
+        });
+        question.enrichFile(questionFiles);
         return super.enrich(question);
     }
 

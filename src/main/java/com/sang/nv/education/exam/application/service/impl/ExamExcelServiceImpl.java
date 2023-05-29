@@ -23,6 +23,7 @@ import com.sang.nv.education.exam.infrastructure.persistence.repository.GroupQue
 import com.sang.nv.education.exam.infrastructure.persistence.repository.QuestionEntityRepository;
 import com.sang.nv.education.exam.infrastructure.persistence.repository.SubjectEntityRepository;
 import com.sang.nv.education.exam.infrastructure.support.enums.QuestionLevel;
+import com.sang.nv.education.exam.infrastructure.support.enums.QuestionLevelList;
 import com.sang.nv.education.exam.infrastructure.support.utils.Const;
 import com.sang.nv.education.iam.infrastructure.support.exception.BadRequestError;
 import com.sang.nv.education.iam.infrastructure.support.util.ExcelUtils;
@@ -76,6 +77,7 @@ public class ExamExcelServiceImpl implements ExamExcelService {
                 groupQuestion.enrichSubject(subject.get());
             }
         });
+        List<QuestionLevelList> questionLevelLists = List.of(QuestionLevelList.values());
         String folder = templateProperties.getFolder();
         String fileName = templateProperties.getQuestion().getImportFileName();
         try (InputStream inputStream = new ClassPathResource((String.format("%s%s%s", folder, StringPool.FORWARD_SLASH, fileName))).getInputStream()) {
@@ -91,6 +93,7 @@ public class ExamExcelServiceImpl implements ExamExcelService {
             OutputStream os = response.getOutputStream();
             Context context = new Context();
             context.putVar("groupQuestions", groupQuestions);
+            context.putVar("questionTypes", questionLevelLists);
             JxlsHelper.getInstance().processTemplate(inputStream, os, context);
             response.flushBuffer();
         } catch (Exception e) {
@@ -138,81 +141,77 @@ public class ExamExcelServiceImpl implements ExamExcelService {
                 List<AnswerCreateOrUpdateCmd> answerCreateOrUpdateCmds = new ArrayList<>();
                 StringBuilder error = new StringBuilder();
                 int answerIndex = 0;
-                if (row.getPhysicalNumberOfCells() < COL_NUMBER) {
-                    error.append(Const.INVALID).append(StringPool.COMMA);
-                } else {
-                    for (Cell cell : row) {
-                        String value = ExcelUtils.readCellContent(cell);
+                for (Cell cell : row) {
+                    String value = ExcelUtils.readCellContent(cell);
 
-                        switch (cell.getColumnIndex()) {
-                            case 1:
-                                if (!StrUtils.isBlank(value)) {
-                                    cmd.setTitle(value);
+                    switch (cell.getColumnIndex()) {
+                        case 1:
+                            if (!StrUtils.isBlank(value)) {
+                                cmd.setTitle(value);
+                            } else {
+                                error.append(Const.COL_TITLE_QUESTION_NOT_EMPTY).append(StringPool.COMMA);
+                            }
+                            break;
+                        case 2:
+                            if (!StrUtils.isBlank(value)) {
+                                Optional<GroupQuestionEntity> groupQuestion = this.groupQuestionEntityRepository.findByCode(value);
+                                if (groupQuestion.isPresent()) {
+                                    cmd.setGroupId(groupQuestion.get().getId());
                                 } else {
-                                    error.append(Const.COL_TITLE_QUESTION_NOT_EMPTY).append(StringPool.COMMA);
+                                    error.append(Const.COL_GROUP_QUESTION_NOT_FOUND).append(StringPool.COMMA);
                                 }
-                                break;
-                            case 2:
-                                if (!StrUtils.isBlank(value)) {
-                                    Optional<GroupQuestionEntity> groupQuestion = this.groupQuestionEntityRepository.findByCode(value);
-                                    if (groupQuestion.isPresent()) {
-                                        cmd.setGroupId(groupQuestion.get().getId());
-                                    } else {
-                                        error.append(Const.COL_GROUP_QUESTION_NOT_FOUND).append(StringPool.COMMA);
-                                    }
+                            } else {
+                                error.append(Const.COL_GROUP_QUESTION_NOT_EMPTY).append(StringPool.COMMA);
+                            }
+                            break;
+                        case 3:
+                            if (!StrUtils.isBlank(value)) {
+                                Optional<SubjectEntity> subjectEntity = this.subjectEntityRepository.findByCode(value);
+                                if (subjectEntity.isPresent()) {
+                                    cmd.setSubjectId(subjectEntity.get().getId());
                                 } else {
-                                    error.append(Const.COL_GROUP_QUESTION_NOT_EMPTY).append(StringPool.COMMA);
+                                    error.append(Const.COL_SUBJECT_QUESTION_NOT_FOUND).append(StringPool.COMMA);
                                 }
-                                break;
-                            case 3:
-                                if (!StrUtils.isBlank(value)) {
-                                    Optional<SubjectEntity> subjectEntity = this.subjectEntityRepository.findByCode(value);
-                                    if (subjectEntity.isPresent()) {
-                                        cmd.setSubjectId(subjectEntity.get().getId());
-                                    } else {
-                                        error.append(Const.COL_SUBJECT_QUESTION_NOT_FOUND).append(StringPool.COMMA);
-                                    }
-                                } else {
-                                    error.append(Const.COL_GROUP_QUESTION_NOT_EMPTY).append(StringPool.COMMA);
-                                }
-                                break;
-                            case 4:
-                                if (!StrUtils.isBlank(value)) {
-                                    cmd.setQuestionLevel(QuestionLevel.valueOf(value));
-                                }
-                                break;
-                            case 5:
-                                if (!StrUtils.isBlank(value)) {
-                                    answerIndex = (int) Float.parseFloat(value);
-                                }
-                                break;
-                            case 6:
-                                if (!StrUtils.isBlank(value)) {
-                                    answerCreateOrUpdateCmds.add(AnswerCreateOrUpdateCmd.builder().content(value).status(answerIndex == 1).build());
-                                }
-                                break;
-                            case 7:
-                                if (!StrUtils.isBlank(value)) {
-                                    answerCreateOrUpdateCmds.add(AnswerCreateOrUpdateCmd.builder().content(value).status(answerIndex == 2).build());
-                                }
-                                break;
-                            case 8:
-                                if (!StrUtils.isBlank(value)) {
-                                    answerCreateOrUpdateCmds.add(AnswerCreateOrUpdateCmd.builder().content(value).status(answerIndex == 3).build());
-                                }
-                                break;
-                            case 9:
-                                if (!StrUtils.isBlank(value)) {
-                                    answerCreateOrUpdateCmds.add(AnswerCreateOrUpdateCmd.builder().content(value).status(answerIndex == 4).build());
-                                }
-                                if (CollectionUtils.isEmpty(answerCreateOrUpdateCmds)) {
-                                    error.append(Const.COL_ANSWER_QUESTION_NOT_EMPTY).append(StringPool.COMMA);
-                                }
-                                break;
+                            } else {
+                                error.append(Const.COL_GROUP_QUESTION_NOT_EMPTY).append(StringPool.COMMA);
+                            }
+                            break;
+                        case 4:
+                            if (!StrUtils.isBlank(value)) {
+                                cmd.setQuestionLevel(QuestionLevel.valueOf(value));
+                            }
+                            break;
+                        case 5:
+                            if (!StrUtils.isBlank(value)) {
+                                answerIndex = (int) Float.parseFloat(value);
+                            }
+                            break;
+                        case 6:
+                            if (!StrUtils.isBlank(value)) {
+                                answerCreateOrUpdateCmds.add(AnswerCreateOrUpdateCmd.builder().content(value).status(answerIndex == 1).build());
+                            }
+                            break;
+                        case 7:
+                            if (!StrUtils.isBlank(value)) {
+                                answerCreateOrUpdateCmds.add(AnswerCreateOrUpdateCmd.builder().content(value).status(answerIndex == 2).build());
+                            }
+                            break;
+                        case 8:
+                            if (!StrUtils.isBlank(value)) {
+                                answerCreateOrUpdateCmds.add(AnswerCreateOrUpdateCmd.builder().content(value).status(answerIndex == 3).build());
+                            }
+                            break;
+                        case 9:
+                            if (!StrUtils.isBlank(value)) {
+                                answerCreateOrUpdateCmds.add(AnswerCreateOrUpdateCmd.builder().content(value).status(answerIndex == 4).build());
+                            }
+                            if (CollectionUtils.isEmpty(answerCreateOrUpdateCmds)) {
+                                error.append(Const.COL_ANSWER_QUESTION_NOT_EMPTY).append(StringPool.COMMA);
+                            }
+                            break;
 
-                            default:
-                                break;
-                        }
+                        default:
+                            break;
                     }
                 }
                 cmd.setAnswerCreateOrUpdateCmdList(answerCreateOrUpdateCmds);
@@ -227,7 +226,8 @@ public class ExamExcelServiceImpl implements ExamExcelService {
                 importQuestionDTOS.add(importQuestionDTO);
                 rowIndex++;
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new ResponseException(BadRequestError.QUESTION_INVALID);
         }
         return importQuestionDTOS;

@@ -34,6 +34,10 @@ public class QuestionFileEntity extends AuditableEntity {
     private String questionId;
     @Column(name = "fileId", length = ValidateConstraint.LENGTH.ID_MAX_LENGTH, nullable = false)
     private String fileId;
+    @Column(name = "viewUrl")
+    String viewUrl;
+    @Column(name = "fileName")
+    String fileName;
     @Column(name = "deleted", nullable = false)
     private Boolean deleted;
 

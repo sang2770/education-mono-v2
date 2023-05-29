@@ -28,10 +28,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public interface RoomResource {
     @ApiOperation(value = "Search Room")
     @GetMapping("/rooms")
+    @PreAuthorize("hasPermission(null, 'room:view')")
     PagingResponse<Room> search(RoomSearchRequest request);
 
     @ApiOperation(value = "Create Room")
     @PostMapping("/rooms")
+    @PreAuthorize("hasPermission(null, 'room:create')")
     Response<Room> create(@RequestBody RoomCreateOrUpdateRequest request);
 
     @ApiOperation(value = "Update Room")
@@ -44,12 +46,13 @@ public interface RoomResource {
 
     @ApiOperation(value = "Update Room")
     @PostMapping("/rooms/{id}/add-members")
-//    @PreAuthorize("hasPermission(null, 'room:update_user')")
+    @PreAuthorize("hasPermission(null, 'room:update_user')")
     Response<Room> addMember(@PathVariable String id, @RequestBody UpdateMemberInRoomRequest request) throws JsonProcessingException;
 
 
     @ApiOperation(value = "remove Member Room")
     @PostMapping("/rooms/{id}/remove-members")
+    @PreAuthorize("hasPermission(null, 'room:update_user')")
     Response<Room> removeMember(@PathVariable String id, @RequestBody UpdateMemberInRoomRequest request);
 
 
