@@ -7,10 +7,11 @@ import com.sang.commonutil.DateUtils;
 import com.sang.commonutil.StrUtils;
 import com.sang.commonutil.StringPool;
 import com.sang.nv.education.iam.application.config.TemplateProperties;
-import com.sang.nv.education.iam.application.dto.request.User.UserExportRequest;
+import com.sang.nv.education.iam.application.dto.request.User.UserSearchRequest;
 import com.sang.nv.education.iam.application.dto.response.ImportResult;
 import com.sang.nv.education.iam.application.dto.response.ImportUserDTO;
 import com.sang.nv.education.iam.application.dto.response.UserExportDTO;
+import com.sang.nv.education.iam.application.mapper.IamAutoMapperQuery;
 import com.sang.nv.education.iam.application.service.ExcelService;
 import com.sang.nv.education.iam.domain.Classes;
 import com.sang.nv.education.iam.domain.Department;
@@ -18,6 +19,7 @@ import com.sang.nv.education.iam.domain.Key;
 import com.sang.nv.education.iam.domain.User;
 import com.sang.nv.education.iam.domain.command.UserCreateOrUpdateCmd;
 import com.sang.nv.education.iam.domain.query.ClassSearchQuery;
+import com.sang.nv.education.iam.domain.query.UserSearchQuery;
 import com.sang.nv.education.iam.domain.repository.UserDomainRepository;
 import com.sang.nv.education.iam.infrastructure.persistence.entity.ClassEntity;
 import com.sang.nv.education.iam.infrastructure.persistence.entity.UserEntity;
@@ -54,7 +56,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -75,17 +82,18 @@ public class ExcelServiceImpl implements ExcelService {
     private final UserDomainRepository userDomainRepository;
     private final PasswordEncoder passwordEncoder;
 
+    private final IamAutoMapperQuery iamAutoMapperQuery;
 
     @Override
-    public void exportUsers(UserExportRequest request, HttpServletResponse response) {
+    public void exportUsers(UserSearchRequest request, HttpServletResponse response) {
         ClassSearchQuery query = ClassSearchQuery.builder()
                 .ids(request.getClassIds())
                 .departmentIds(request.getDepartmentIds())
                 .keyIds(request.getDepartmentIds()).build();
         List<Classes> classes = this.classesEntityMapper.toDomain(this.classesEntityRepository.findAll(query.getIds(), query.getDepartmentIds(), query.getKeyIds()));
         this.enrichClasses(classes);
-        List<String> classIds = classes.stream().map(Classes::getId).collect(Collectors.toList());
-        List<User> users = this.userEntityMapper.toDomain(this.userEntityRepository.findAllByClassIds(classIds));
+        UserSearchQuery userQuery = this.iamAutoMapperQuery.toQuery(request);
+        List<User> users = this.userEntityMapper.toDomain(this.userEntityRepository.search(userQuery));
 //      // Enrich User
         users.forEach(user -> {
             Optional<Classes> classesOptional = classes.stream().filter(classes1 -> classes1.getId().equals(user.getClassId())).findFirst();

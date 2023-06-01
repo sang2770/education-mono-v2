@@ -92,7 +92,7 @@ public class UserResourceImpl implements UserResource {
     }
 
     @Override
-    public void exportUsers(UserExportRequest request, HttpServletResponse response) {
+    public void exportUsers(UserSearchRequest request, HttpServletResponse response) {
         this.userService.exportUsers(request, response);
     }
 

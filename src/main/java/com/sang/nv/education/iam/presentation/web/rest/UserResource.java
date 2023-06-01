@@ -90,7 +90,7 @@ public interface UserResource {
 
     @ApiOperation(value = "Export users")
     @GetMapping("/users/exports")
-    void exportUsers(@Valid UserExportRequest request, HttpServletResponse response);
+    void exportUsers(@Valid UserSearchRequest request, HttpServletResponse response);
 
     @ApiOperation(value = "Download template import")
     @GetMapping("/users/download-template")
