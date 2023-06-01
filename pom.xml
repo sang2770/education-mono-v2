@@ -235,16 +235,18 @@
 
     <repositories>
         <repository>
-            <id>snapshots</id>
-            <name>libs-snapshot</name>
-            <url>https://sang2770.jfrog.io/artifactory/libs-snapshot</url>
+            <id>gitlab-maven</id>
+            <url>https://gitlab.com/api/v4/projects/46507825/packages/maven</url>
         </repository>
     </repositories>
     <distributionManagement>
         <repository>
-            <id>central</id>
-            <name>libs-release</name>
-            <url>https://sang2770.jfrog.io/artifactory/libs-release</url>
+            <id>gitlab-maven</id>
+            <url>https://gitlab.com/api/v4/projects/46507825/packages/maven</url>
         </repository>
+        <snapshotRepository>
+            <id>gitlab-maven</id>
+            <url>https://gitlab.com/api/v4/projects/46507825/packages/maven</url>
+        </snapshotRepository>
     </distributionManagement>
 </project>
