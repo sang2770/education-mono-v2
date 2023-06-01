@@ -4,7 +4,7 @@
 FROM maven:3.8.1-openjdk-11 AS build
 WORKDIR /app
 COPY . .
-RUN mvn -s settings.xml clean package -DskipTests
+RUN mvn -s settings.xml clean package install -DskipTests
 
 
 # Build docker
