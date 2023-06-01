@@ -1,11 +1,11 @@
 #
 # Build stage
 #
-FROM maven:3.8.1-openjdk-11 AS build
-WORKDIR /app
-COPY . .
-RUN mvn dependency:purge-local-repository
-RUN mvn -s settings.xml clean package -DskipTests
+#FROM maven:3.8.1-openjdk-11 AS build
+#WORKDIR /app
+#COPY . .
+#RUN mvn dependency:purge-local-repository
+#RUN mvn -s settings.xml clean package -DskipTests
 
 
 # Build docker
