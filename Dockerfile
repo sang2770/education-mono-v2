@@ -11,7 +11,7 @@
 # Build docker
 FROM openjdk:11-jre-slim
 WORKDIR /app
-COPY --from=build /app/target/*.jar education-0.0.1.jar
+COPY /app/target/*.jar education-0.0.1.jar
 ENV ENV=prod
 ENV POSTGRES_URI jdbc:postgresql://dpg-chf4pcm4dad1jqfnjq60-a.oregon-postgres.render.com:5432/education_c1ny
 ENV POSTGRES_USER admin
