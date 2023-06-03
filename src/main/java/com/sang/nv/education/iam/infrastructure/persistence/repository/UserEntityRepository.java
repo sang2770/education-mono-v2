@@ -30,6 +30,8 @@ public interface UserEntityRepository extends JpaRepository<UserEntity, String>,
     @Query("from UserEntity u where u.deleted = false and u.email = :email")
     Optional<UserEntity> findByAllEmail(@Param("email") String email);
 
+    @Query("from UserEntity u where u.deleted = false and u.id = :id")
+    Optional<UserEntity> findById(@Param("id") String id);
 
     default Optional<UserEntity> findByPhoneNumber(String phoneNumber) {
         return findByAllPhoneNumber(phoneNumber).stream().findFirst();

@@ -13,7 +13,6 @@ import com.sang.nv.education.exam.application.mapper.ExamAutoMapperQuery;
 import com.sang.nv.education.exam.application.service.ExamExcelService;
 import com.sang.nv.education.exam.application.service.QuestionService;
 import com.sang.nv.education.exam.domain.Answer;
-import com.sang.nv.education.exam.domain.Exam;
 import com.sang.nv.education.exam.domain.ExamQuestion;
 import com.sang.nv.education.exam.domain.GroupQuestion;
 import com.sang.nv.education.exam.domain.Question;
@@ -21,7 +20,6 @@ import com.sang.nv.education.exam.domain.command.QuestionCreateCmd;
 import com.sang.nv.education.exam.domain.command.QuestionUpdateCmd;
 import com.sang.nv.education.exam.domain.repository.QuestionDomainRepository;
 import com.sang.nv.education.exam.infrastructure.persistence.entity.AnswerEntity;
-import com.sang.nv.education.exam.infrastructure.persistence.entity.ExamQuestionEntity;
 import com.sang.nv.education.exam.infrastructure.persistence.entity.GroupQuestionEntity;
 import com.sang.nv.education.exam.infrastructure.persistence.entity.QuestionEntity;
 import com.sang.nv.education.exam.infrastructure.persistence.entity.UserExamEntity;
@@ -30,11 +28,7 @@ import com.sang.nv.education.exam.infrastructure.persistence.mapper.ExamQuestion
 import com.sang.nv.education.exam.infrastructure.persistence.mapper.GroupQuestionEntityMapper;
 import com.sang.nv.education.exam.infrastructure.persistence.mapper.QuestionEntityMapper;
 import com.sang.nv.education.exam.infrastructure.persistence.query.QuestionSearchQuery;
-import com.sang.nv.education.exam.infrastructure.persistence.repository.AnswerEntityRepository;
-import com.sang.nv.education.exam.infrastructure.persistence.repository.ExamQuestionEntityRepository;
-import com.sang.nv.education.exam.infrastructure.persistence.repository.GroupQuestionEntityRepository;
-import com.sang.nv.education.exam.infrastructure.persistence.repository.QuestionEntityRepository;
-import com.sang.nv.education.exam.infrastructure.persistence.repository.UserExamEntityRepository;
+import com.sang.nv.education.exam.infrastructure.persistence.repository.*;
 import com.sang.nv.education.exam.infrastructure.support.enums.QuestionLevel;
 import com.sang.nv.education.exam.infrastructure.support.exception.BadRequestError;
 import com.sang.nv.education.exam.infrastructure.support.exception.NotFoundError;
@@ -42,11 +36,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -143,10 +133,10 @@ public class QuestionServiceImpl implements QuestionService {
             questions.addAll(this.getQuestionByLevel(questionEntities, QuestionLevel.HIGH, request.getNumberHighQuestion()));
         }
         if (Objects.nonNull(request.getNumberMediumQuestion()) && request.getNumberMediumQuestion() > 0) {
-            questions.addAll(this.getQuestionByLevel(questionEntities, QuestionLevel.MEDIUM, request.getNumberHighQuestion()));
+            questions.addAll(this.getQuestionByLevel(questionEntities, QuestionLevel.MEDIUM, request.getNumberMediumQuestion()));
         }
         if (Objects.nonNull(request.getNumberLowQuestion()) && request.getNumberLowQuestion() > 0) {
-            questions.addAll(this.getQuestionByLevel(questionEntities, QuestionLevel.LOW, request.getNumberHighQuestion()));
+            questions.addAll(this.getQuestionByLevel(questionEntities, QuestionLevel.LOW, request.getNumberLowQuestion()));
         }
         this.enrichQuestions(questions);
         return questions;
@@ -178,7 +168,14 @@ public class QuestionServiceImpl implements QuestionService {
         List<QuestionEntity> questions = questionEntities.stream().filter(questionEntity ->
                 Objects.equals(questionEntity.getLevel(), questionLevel)).collect(Collectors.toList());
         if (questions.size() < number) {
-            throw new ResponseException(BadRequestError.NUMBER_QUESTION_INVALID);
+            switch (questionLevel) {
+                case HIGH:
+                    throw new ResponseException(BadRequestError.NUMBER_QUESTION_HIGH_INVALID);
+                case MEDIUM:
+                    throw new ResponseException(BadRequestError.NUMBER_QUESTION_MEDIUM_INVALID);
+                case LOW:
+                    throw new ResponseException(BadRequestError.NUMBER_QUESTION_INVALID);
+            }
         } else if (questions.size() == number) {
             return this.questionEntityMapper.toDomain(questions);
         }

@@ -2,6 +2,7 @@ package com.sang.nv.education.iam.application.service.impl;
 
 import com.sang.commonmodel.dto.PageDTO;
 import com.sang.commonmodel.dto.request.FindByIdsRequest;
+import com.sang.commonmodel.exception.ResponseException;
 import com.sang.commonmodel.mapper.util.PageableMapperUtil;
 import com.sang.commonpersistence.support.SeqRepository;
 import com.sang.commonpersistence.support.SqlUtils;
@@ -16,13 +17,16 @@ import com.sang.nv.education.iam.domain.command.RoleCreateOrUpdateCmd;
 import com.sang.nv.education.iam.domain.repository.RoleDomainRepository;
 import com.sang.nv.education.iam.infrastructure.persistence.entity.PermissionEntity;
 import com.sang.nv.education.iam.infrastructure.persistence.entity.RoleEntity;
+import com.sang.nv.education.iam.infrastructure.persistence.entity.UserEntity;
 import com.sang.nv.education.iam.infrastructure.persistence.entity.UserRoleEntity;
 import com.sang.nv.education.iam.infrastructure.persistence.mapper.PermissionEntityMapper;
 import com.sang.nv.education.iam.infrastructure.persistence.mapper.RoleEntityMapper;
 import com.sang.nv.education.iam.infrastructure.persistence.mapper.UserRoleEntityMapper;
 import com.sang.nv.education.iam.infrastructure.persistence.repository.PermissionEntityRepository;
 import com.sang.nv.education.iam.infrastructure.persistence.repository.RoleEntityRepository;
+import com.sang.nv.education.iam.infrastructure.persistence.repository.UserEntityRepository;
 import com.sang.nv.education.iam.infrastructure.persistence.repository.UserRoleEntityRepository;
+import com.sang.nv.education.iam.infrastructure.support.exception.NotFoundError;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -32,6 +36,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,6 +53,7 @@ public class RoleServiceImpl implements RoleService {
     private final RoleDomainRepository roleDomainRepository;
     private final UserRoleEntityRepository userRoleEntityRepository;
     private final UserRoleEntityMapper userRoleEntityMapper;
+    private final UserEntityRepository userEntityRepository;
     private final SeqRepository seqRepository;
 
     @Override
@@ -121,6 +128,16 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public List<Role> findByUserId(String userId) {
+        Optional<UserEntity> userEntity = this.userEntityRepository.findById(userId);
+        if (userEntity.isEmpty()) {
+            throw new ResponseException(NotFoundError.USER_NOT_FOUND);
+        }
+        UserEntity user = userEntity.get();
+        if (Objects.nonNull(user.getIsRoot()))
+        {
+            List<RoleEntity> roleEntities = this.roleEntityRepository.findAll();
+            return this.roleEntityMapper.toDomain(roleEntities);
+        }
         List<UserRoleEntity> userRoles = this.userRoleEntityRepository.findAllByUserIds(List.of(userId));
         List<String> roleIds = userRoles.stream().map(UserRoleEntity::getRoleId).collect(Collectors.toList());
         List<RoleEntity> roleEntities = this.roleEntityRepository.findAllByIds(roleIds);
