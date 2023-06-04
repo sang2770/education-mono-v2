@@ -13,7 +13,7 @@ public interface UserExamDomainRepository extends DomainRepository<UserExam, Str
     UserExam findByExamIdAndPeriodId(String examId, String periodId);
 //    UserExam findById(String id);
 
-    PageDTO<UserExam> searchUserExam(String roomId, String periodId, Pageable pageable);
+    PageDTO<UserExam> searchUserExam(String roomId, String periodId, String keyword, Pageable pageable);
 
     PageDTO<UserExam> getMyExam(String roomId, String periodId, List<String> userIds, Pageable pageable);
 }

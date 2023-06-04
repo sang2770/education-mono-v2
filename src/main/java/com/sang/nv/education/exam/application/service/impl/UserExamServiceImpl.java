@@ -4,30 +4,30 @@ package com.sang.nv.education.exam.application.service.impl;
 import com.sang.commonmodel.dto.PageDTO;
 import com.sang.commonmodel.exception.ResponseException;
 import com.sang.commonmodel.mapper.util.PageableMapperUtil;
+import com.sang.commonpersistence.support.SeqRepository;
+import com.sang.commonpersistence.support.SqlUtils;
 import com.sang.nv.education.common.web.support.SecurityUtils;
 import com.sang.nv.education.exam.application.dto.request.UserExamCreateRequest;
+import com.sang.nv.education.exam.application.dto.request.UserExamReviewDoneRequest;
 import com.sang.nv.education.exam.application.dto.request.UserRoomSearchRequest;
 import com.sang.nv.education.exam.application.dto.response.UserExamResult;
 import com.sang.nv.education.exam.application.mapper.ExamAutoMapper;
 import com.sang.nv.education.exam.application.service.UserExamService;
-import com.sang.nv.education.exam.domain.Exam;
-import com.sang.nv.education.exam.domain.PeriodRoom;
-import com.sang.nv.education.exam.domain.UserExam;
+import com.sang.nv.education.exam.domain.*;
 import com.sang.nv.education.exam.domain.command.UserExamCreateCmd;
 import com.sang.nv.education.exam.domain.repository.ExamDomainRepository;
+import com.sang.nv.education.exam.domain.repository.ExamReviewDomainRepository;
 import com.sang.nv.education.exam.domain.repository.UserExamDomainRepository;
 import com.sang.nv.education.exam.infrastructure.persistence.entity.ExamEntity;
 import com.sang.nv.education.exam.infrastructure.persistence.entity.PeriodRoomEntity;
 import com.sang.nv.education.exam.infrastructure.persistence.entity.RoomEntity;
 import com.sang.nv.education.exam.infrastructure.persistence.entity.UserExamEntity;
+import com.sang.nv.education.exam.infrastructure.persistence.mapper.PeriodEntityMapper;
 import com.sang.nv.education.exam.infrastructure.persistence.mapper.PeriodRoomEntityMapper;
+import com.sang.nv.education.exam.infrastructure.persistence.mapper.RoomEntityMapper;
 import com.sang.nv.education.exam.infrastructure.persistence.mapper.UserExamEntityMapper;
-import com.sang.nv.education.exam.infrastructure.persistence.repository.ExamEntityRepository;
-import com.sang.nv.education.exam.infrastructure.persistence.repository.ExamQuestionEntityRepository;
-import com.sang.nv.education.exam.infrastructure.persistence.repository.PeriodRoomEntityRepository;
-import com.sang.nv.education.exam.infrastructure.persistence.repository.QuestionEntityRepository;
-import com.sang.nv.education.exam.infrastructure.persistence.repository.RoomEntityRepository;
-import com.sang.nv.education.exam.infrastructure.persistence.repository.UserExamEntityRepository;
+import com.sang.nv.education.exam.infrastructure.persistence.repository.*;
+import com.sang.nv.education.exam.infrastructure.support.enums.ExamReviewStatus;
 import com.sang.nv.education.exam.infrastructure.support.enums.UserExamStatus;
 import com.sang.nv.education.exam.infrastructure.support.exception.BadRequestError;
 import com.sang.nv.education.exam.infrastructure.support.exception.NotFoundError;
@@ -35,7 +35,6 @@ import com.sang.nv.education.report.application.dto.request.UserExamReportReques
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
@@ -49,6 +48,7 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 public class UserExamServiceImpl implements UserExamService {
     private final ExamEntityRepository ExamEntityRepository;
     private final RoomEntityRepository roomEntityRepository;
+    private final RoomEntityMapper roomEntityMapper;
     private final ExamQuestionEntityRepository examQuestionEntityRepository;
     private final ExamAutoMapper examAutoMapper;
     private final ExamDomainRepository examDomainRepository;
@@ -57,14 +57,18 @@ public class UserExamServiceImpl implements UserExamService {
     private final UserExamEntityMapper userExamEntityMapper;
     private final PeriodRoomEntityRepository periodRoomEntityRepository;
     private final PeriodRoomEntityMapper periodRoomEntityMapper;
-
+    private final ExamReviewDomainRepository examReviewDomainRepository;
+    private final SeqRepository seqRepository;
+    private final PeriodEntityMapper periodEntityMapper;
+    private final PeriodEntityRepository periodEntityRepository;
     public UserExamServiceImpl(ExamEntityRepository ExamEntityRepository,
                                QuestionEntityRepository questionEntityRepository,
-                               RoomEntityRepository roomEntityRepository, ExamQuestionEntityRepository examQuestionEntityRepository,
+                               RoomEntityRepository roomEntityRepository, RoomEntityMapper roomEntityMapper, ExamQuestionEntityRepository examQuestionEntityRepository,
                                ExamAutoMapper examAutoMapper,
-                               ExamDomainRepository ExamDomainRepository, UserExamDomainRepository userExamDomainRepository, UserExamEntityRepository examEntityRepository, UserExamEntityMapper userExamEntityMapper, PeriodRoomEntityRepository periodRoomEntityRepository, PeriodRoomEntityMapper periodRoomEntityMapper) {
+                               ExamDomainRepository ExamDomainRepository, UserExamDomainRepository userExamDomainRepository, UserExamEntityRepository examEntityRepository, UserExamEntityMapper userExamEntityMapper, PeriodRoomEntityRepository periodRoomEntityRepository, PeriodRoomEntityMapper periodRoomEntityMapper, ExamReviewDomainRepository examReviewDomainRepository, SeqRepository seqRepository, PeriodEntityMapper periodEntityMapper, PeriodEntityRepository periodEntityRepository) {
         this.ExamEntityRepository = ExamEntityRepository;
         this.roomEntityRepository = roomEntityRepository;
+        this.roomEntityMapper = roomEntityMapper;
         this.examQuestionEntityRepository = examQuestionEntityRepository;
         this.examAutoMapper = examAutoMapper;
         this.examDomainRepository = ExamDomainRepository;
@@ -73,6 +77,10 @@ public class UserExamServiceImpl implements UserExamService {
         this.userExamEntityMapper = userExamEntityMapper;
         this.periodRoomEntityRepository = periodRoomEntityRepository;
         this.periodRoomEntityMapper = periodRoomEntityMapper;
+        this.examReviewDomainRepository = examReviewDomainRepository;
+        this.seqRepository = seqRepository;
+        this.periodEntityMapper = periodEntityMapper;
+        this.periodEntityRepository = periodEntityRepository;
     }
 
     @Override
@@ -161,6 +169,11 @@ public class UserExamServiceImpl implements UserExamService {
                 .orElseThrow(() -> new ResponseException(NotFoundError.PERIOD_NOT_EXISTED_IN_ROOM));
         PeriodRoom periodRoom = this.periodRoomEntityMapper.toDomain(periodRoomEntity);
         userExam.enrichPeriodRoom(periodRoom);
+        RoomEntity roomEntity = this.roomEntityRepository.getById(userExam.getRoomId());
+        Room room = this.roomEntityMapper.toDomain(roomEntity);
+        userExam.enrichRoom(room);
+        Period period = this.periodEntityMapper.toDomain(this.periodEntityRepository.getById(userExam.getPeriodId()));
+        userExam.enrichPeriod(period);
         return userExam;
     }
 
@@ -172,7 +185,7 @@ public class UserExamServiceImpl implements UserExamService {
     @Override
     public PageDTO<UserExam> searchByRoomAndPeriod(String roomId, String periodId, UserRoomSearchRequest request) {
         Pageable pageable = PageableMapperUtil.toPageable(request);
-        return this.userExamDomainRepository.searchUserExam(roomId, periodId, pageable);
+        return this.userExamDomainRepository.searchUserExam(roomId, periodId, SqlUtils.encodeKeyword(request.getKeyword()), pageable);
     }
 
     @Override
@@ -209,5 +222,51 @@ public class UserExamServiceImpl implements UserExamService {
                     .createdAt(userExam.getCreatedAt())
                     .build();
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public ExamReview review(String id) {
+        UserExam userExam = this.userExamDomainRepository.getById(id);
+        if (this.examReviewDomainRepository.checkExist(id))
+        {
+            throw new ResponseException(BadRequestError.EXAM_REVIEW_EXISTED);
+        }
+        ExamReview examReview = new ExamReview(userExam, this.seqRepository.generateUserExamCode());
+        examReviewDomainRepository.save(examReview);
+        return examReview;
+    }
+
+    @Override
+    public List<ExamReview> getAllReview(String id) {
+        return this.examReviewDomainRepository.getByUserExamId(id);
+    }
+
+    @Override
+    public ExamReview receiveReview(String id, String reviewId) {
+        ExamReview examReview = this.examReviewDomainRepository.getById(reviewId);
+        if (!examReview.getStatus().equals(ExamReviewStatus.NEW))
+        {
+            throw new ResponseException(BadRequestError.EXAM_REVIEW_MUST_BE_NEW);
+        }
+        examReview.updateStatus(ExamReviewStatus.RECEIVED);
+        examReviewDomainRepository.save(examReview);
+        return examReview;
+    }
+
+    @Override
+    public ExamReview doneReview(String id, String reviewId, UserExamReviewDoneRequest request) {
+        ExamReview examReview = this.examReviewDomainRepository.getById(reviewId);
+        if (!examReview.getStatus().equals(ExamReviewStatus.RECEIVED))
+        {
+            throw new ResponseException(BadRequestError.EXAM_REVIEW_MUST_BE_RECEIVED);
+        }
+        examReview.complete(request.getFeedBack(), request.getReviewFileIds());
+        examReviewDomainRepository.save(examReview);
+        return examReview;
+    }
+
+    @Override
+    public List<ExamReview> getAllReviewByPeriodRoom(String roomId, String periodId) {
+        return this.examReviewDomainRepository.getAllByPeriodRoom(periodId, roomId);
     }
 }
