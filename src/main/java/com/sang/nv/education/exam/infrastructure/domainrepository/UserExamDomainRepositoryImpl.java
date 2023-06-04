@@ -187,8 +187,8 @@ public class UserExamDomainRepositoryImpl extends AbstractDomainRepository<UserE
 //    }
 
     @Override
-    public PageDTO<UserExam> searchUserExam(String roomId, String periodId, Pageable pageable) {
-        Page<UserExamEntity> userExamEntities = this.userExamEntityRepository.searchUserExam(roomId, periodId, pageable);
+    public PageDTO<UserExam> searchUserExam(String roomId, String periodId, String keyword, Pageable pageable) {
+        Page<UserExamEntity> userExamEntities = this.userExamEntityRepository.searchUserExam(roomId, periodId, keyword, pageable);
         List<UserExam> userExams = this.userExamEntityMapper.toDomain(userExamEntities.getContent());
         this.enrichList(userExams);
         return PageDTO.of(userExams, userExamEntities.getTotalPages(), userExamEntities.getNumber(), userExamEntities.getSize());

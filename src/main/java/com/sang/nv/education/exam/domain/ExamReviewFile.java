@@ -1,6 +1,7 @@
 package com.sang.nv.education.exam.domain;
 
 import com.sang.commonmodel.domain.AuditableDomain;
+import com.sang.commonutil.IdUtils;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -18,6 +19,12 @@ public class ExamReviewFile extends AuditableDomain {
     String fileName;
     Boolean deleted;
 
+    public ExamReviewFile(String examReviewId, String fileId){
+        this.id = IdUtils.nextId();
+        this.examReviewId = examReviewId;
+        this.fileId = fileId;
+        this.deleted = false;
+    }
     public void enrichViewUrl(String viewUrl) {
         this.viewUrl = viewUrl;
     }

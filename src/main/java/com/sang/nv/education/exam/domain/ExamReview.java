@@ -59,7 +59,7 @@ public class ExamReview extends AuditableDomain {
         this.timeCompletedAt = Instant.now();
         if (!CollectionUtils.isEmpty(fileIds)) {
             fileIds.forEach(fileId -> {
-                ExamReviewFile examReviewFile = ExamReviewFile.builder().fileId(fileId).examReviewId(this.id).build();
+                ExamReviewFile examReviewFile = new ExamReviewFile(this.id, fileId);
                 this.examReviewFiles.add(examReviewFile);
             });
         }

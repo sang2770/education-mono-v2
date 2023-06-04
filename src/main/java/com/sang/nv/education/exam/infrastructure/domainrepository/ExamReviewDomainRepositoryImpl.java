@@ -4,6 +4,7 @@ package com.sang.nv.education.exam.infrastructure.domainrepository;
 import com.sang.commonmodel.exception.ResponseException;
 import com.sang.nv.education.common.web.support.AbstractDomainRepository;
 import com.sang.nv.education.exam.domain.ExamReview;
+import com.sang.nv.education.exam.domain.ExamReviewFile;
 import com.sang.nv.education.exam.domain.repository.ExamReviewDomainRepository;
 import com.sang.nv.education.exam.infrastructure.persistence.entity.ExamReviewEntity;
 import com.sang.nv.education.exam.infrastructure.persistence.entity.ExamReviewFileEntity;
@@ -15,11 +16,15 @@ import com.sang.nv.education.exam.infrastructure.support.enums.ExamReviewStatus;
 import com.sang.nv.education.exam.infrastructure.support.exception.NotFoundError;
 import com.sang.nv.education.iam.application.service.UserService;
 import com.sang.nv.education.iam.domain.User;
+import com.sang.nv.education.storage.application.service.StorageService;
+import com.sang.nv.education.storage.domain.FileDomain;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,14 +36,16 @@ public class ExamReviewDomainRepositoryImpl extends AbstractDomainRepository<Exa
     private final ExamReviewFileEntityMapper examReviewFileEntityMapper;
     private final ExamReviewFileEntityRepository examReviewFileEntityRepository;
     private final UserService userService;
+    private final StorageService storageService;
 
-    public ExamReviewDomainRepositoryImpl(ExamReviewEntityRepository examReviewEntityRepository, ExamReviewEntityMapper examReviewEntityMapper, ExamReviewFileEntityMapper examReviewFileEntityMapper, ExamReviewFileEntityRepository examReviewFileEntityRepository, UserService userService) {
+    public ExamReviewDomainRepositoryImpl(ExamReviewEntityRepository examReviewEntityRepository, ExamReviewEntityMapper examReviewEntityMapper, ExamReviewFileEntityMapper examReviewFileEntityMapper, ExamReviewFileEntityRepository examReviewFileEntityRepository, UserService userService, StorageService storageService) {
         super(examReviewEntityRepository, examReviewEntityMapper);
         this.examReviewEntityRepository = examReviewEntityRepository;
         this.examReviewEntityMapper = examReviewEntityMapper;
         this.examReviewFileEntityMapper = examReviewFileEntityMapper;
         this.examReviewFileEntityRepository = examReviewFileEntityRepository;
         this.userService = userService;
+        this.storageService = storageService;
     }
 
     @Override
@@ -74,9 +81,20 @@ public class ExamReviewDomainRepositoryImpl extends AbstractDomainRepository<Exa
         // enrich
         List<String> examReviewIds = examReviewList.stream().map(ExamReview::getId).collect(Collectors.toList());
         List<ExamReviewFileEntity> examReviewFileEntities = examReviewFileEntityRepository.findByExamReviewIds(examReviewIds);
+        List<ExamReviewFile> examReviewFiles = this.examReviewFileEntityMapper.toDomain(examReviewFileEntities);
+        List<String> reviewFileIds = examReviewFiles.stream().map(ExamReviewFile::getFileId).collect(Collectors.toList());
+        List<FileDomain> fileDomains = this.storageService.getByIds(reviewFileIds);
+        examReviewFiles.forEach(examReviewFile -> {
+            Optional<FileDomain> fileDomain = fileDomains.stream().filter(item -> Objects.equals(item.getId(), examReviewFile.getFileId())).findFirst();
+            if (fileDomain.isPresent()){
+                FileDomain  fileDomain1 = fileDomain.get();
+                examReviewFile.enrichFileName(fileDomain1.getFileName());
+                examReviewFile.enrichViewUrl(fileDomain1.getFilePath());
+            }
+        });
         examReviewList.forEach(examReview -> {
-            List<ExamReviewFileEntity> examReviewFileEntityList = examReviewFileEntities.stream().filter(examReviewFileEntity -> examReviewFileEntity.getExamReviewId().equals(examReview.getId())).collect(Collectors.toList());
-            examReview.enrichFile(examReviewFileEntityMapper.toDomain(examReviewFileEntityList));
+            List<ExamReviewFile> examReviewFile = examReviewFiles.stream().filter(item -> item.getExamReviewId().equals(examReview.getId())).collect(Collectors.toList());
+            examReview.enrichFile(examReviewFile);
         });
 
         // enrich User

@@ -15,6 +15,7 @@ import java.util.List;
 @Builder
 public class UserExamCreateCmd {
     String code;
+    String examCode;
     Instant timeEnd;
     Instant timeStart;
     String examId;

@@ -5,6 +5,7 @@ import com.sang.commonmodel.dto.PageDTO;
 import com.sang.commonmodel.exception.ResponseException;
 import com.sang.commonmodel.mapper.util.PageableMapperUtil;
 import com.sang.commonpersistence.support.SeqRepository;
+import com.sang.commonpersistence.support.SqlUtils;
 import com.sang.nv.education.common.web.support.SecurityUtils;
 import com.sang.nv.education.exam.application.dto.request.UserExamCreateRequest;
 import com.sang.nv.education.exam.application.dto.request.UserExamReviewDoneRequest;
@@ -184,7 +185,7 @@ public class UserExamServiceImpl implements UserExamService {
     @Override
     public PageDTO<UserExam> searchByRoomAndPeriod(String roomId, String periodId, UserRoomSearchRequest request) {
         Pageable pageable = PageableMapperUtil.toPageable(request);
-        return this.userExamDomainRepository.searchUserExam(roomId, periodId, pageable);
+        return this.userExamDomainRepository.searchUserExam(roomId, periodId, SqlUtils.encodeKeyword(request.getKeyword()), pageable);
     }
 
     @Override
@@ -266,6 +267,6 @@ public class UserExamServiceImpl implements UserExamService {
 
     @Override
     public List<ExamReview> getAllReviewByPeriodRoom(String roomId, String periodId) {
-        return this.examReviewDomainRepository.getAllByPeriodRoom(roomId, periodId);
+        return this.examReviewDomainRepository.getAllByPeriodRoom(periodId, roomId);
     }
 }
