@@ -29,8 +29,7 @@ public class FileDomain extends AuditableDomain {
     public FileDomain(FileCmd cmd) {
         this.id = UUID.randomUUID().toString();
 //        File name firebase
-        this.fileName = cmd.getFileName();
-//
+        this.fileName = String.format("%s_%s", this.id, cmd.getOriginFileName());
         this.filePath = cmd.getFilePath();
         this.originFileName = cmd.getOriginFileName();
         this.owner = SecurityUtils.authentication().getName();

@@ -41,12 +41,12 @@ public interface UserExamService {
 
     ExamReview review(String id);
 
-    List<ExamReview> getAllReview(String id);
+    List<ExamReview> getAllReview(String id,  String keyword);
 
     ExamReview receiveReview(String id, String reviewId);
 
 
     ExamReview doneReview(String id, String reviewId, UserExamReviewDoneRequest request);
 
-    List<ExamReview> getAllReviewByPeriodRoom(String roomId, String periodId);
+    List<ExamReview> getAllReviewByPeriodRoom(String roomId, String periodId, String keyword);
 }

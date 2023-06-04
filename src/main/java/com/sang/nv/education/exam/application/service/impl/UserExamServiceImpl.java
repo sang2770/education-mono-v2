@@ -18,10 +18,7 @@ import com.sang.nv.education.exam.domain.command.UserExamCreateCmd;
 import com.sang.nv.education.exam.domain.repository.ExamDomainRepository;
 import com.sang.nv.education.exam.domain.repository.ExamReviewDomainRepository;
 import com.sang.nv.education.exam.domain.repository.UserExamDomainRepository;
-import com.sang.nv.education.exam.infrastructure.persistence.entity.ExamEntity;
-import com.sang.nv.education.exam.infrastructure.persistence.entity.PeriodRoomEntity;
-import com.sang.nv.education.exam.infrastructure.persistence.entity.RoomEntity;
-import com.sang.nv.education.exam.infrastructure.persistence.entity.UserExamEntity;
+import com.sang.nv.education.exam.infrastructure.persistence.entity.*;
 import com.sang.nv.education.exam.infrastructure.persistence.mapper.PeriodEntityMapper;
 import com.sang.nv.education.exam.infrastructure.persistence.mapper.PeriodRoomEntityMapper;
 import com.sang.nv.education.exam.infrastructure.persistence.mapper.RoomEntityMapper;
@@ -169,11 +166,18 @@ public class UserExamServiceImpl implements UserExamService {
                 .orElseThrow(() -> new ResponseException(NotFoundError.PERIOD_NOT_EXISTED_IN_ROOM));
         PeriodRoom periodRoom = this.periodRoomEntityMapper.toDomain(periodRoomEntity);
         userExam.enrichPeriodRoom(periodRoom);
-        RoomEntity roomEntity = this.roomEntityRepository.getById(userExam.getRoomId());
-        Room room = this.roomEntityMapper.toDomain(roomEntity);
-        userExam.enrichRoom(room);
-        Period period = this.periodEntityMapper.toDomain(this.periodEntityRepository.getById(userExam.getPeriodId()));
-        userExam.enrichPeriod(period);
+        Optional<RoomEntity> roomEntity = this.roomEntityRepository.findById(userExam.getRoomId());
+        if (roomEntity.isPresent())
+        {
+            Room room = this.roomEntityMapper.toDomain(roomEntity.get());
+            userExam.enrichRoom(room);
+        }
+        Optional<PeriodEntity> optionalPeriodEntity = this.periodEntityRepository.findById(userExam.getPeriodId());
+        if (optionalPeriodEntity.isPresent())
+        {
+            Period period = this.periodEntityMapper.toDomain(optionalPeriodEntity.get());
+            userExam.enrichPeriod(period);
+        }
         return userExam;
     }
 
@@ -237,8 +241,8 @@ public class UserExamServiceImpl implements UserExamService {
     }
 
     @Override
-    public List<ExamReview> getAllReview(String id) {
-        return this.examReviewDomainRepository.getByUserExamId(id);
+    public List<ExamReview> getAllReview(String id, String keyword) {
+        return this.examReviewDomainRepository.getByUserExamId(id, keyword);
     }
 
     @Override
@@ -266,7 +270,7 @@ public class UserExamServiceImpl implements UserExamService {
     }
 
     @Override
-    public List<ExamReview> getAllReviewByPeriodRoom(String roomId, String periodId) {
-        return this.examReviewDomainRepository.getAllByPeriodRoom(periodId, roomId);
+    public List<ExamReview> getAllReviewByPeriodRoom(String roomId, String periodId, String keyword) {
+        return this.examReviewDomainRepository.getAllByPeriodRoom(periodId, roomId, keyword);
     }
 }

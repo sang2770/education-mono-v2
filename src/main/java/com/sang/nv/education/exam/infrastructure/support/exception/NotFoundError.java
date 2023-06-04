@@ -4,8 +4,8 @@ package com.sang.nv.education.exam.infrastructure.support.exception;
 import com.sang.commonmodel.error.ResponseError;
 
 public enum NotFoundError implements ResponseError {
-    USER_NOT_FOUND(404, "USER_NOT_FOUND"),
-    ROOM_NOT_FOUND(404, "ROOM_NOT_FOUND"),
+    USER_NOT_FOUND(404, "Không tìm thấy người dùng"),
+    ROOM_NOT_FOUND(404, "Không tìm thấy phòng thi"),
     SUBJECT_NOT_EXISTED(404, "SUBJECT_NOT_EXISTED"),
     QUESTION_NOT_EXISTED(404, "QUESTION_NOT_EXISTED"),
     EXAM_NOT_EXISTED(404, "EXAM_NOT_EXISTED"),

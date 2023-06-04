@@ -2,6 +2,7 @@ package com.sang.nv.education.exam.infrastructure.domainrepository;
 
 
 import com.sang.commonmodel.exception.ResponseException;
+import com.sang.commonpersistence.support.SqlUtils;
 import com.sang.nv.education.common.web.support.AbstractDomainRepository;
 import com.sang.nv.education.exam.domain.ExamReview;
 import com.sang.nv.education.exam.domain.ExamReviewFile;
@@ -54,8 +55,8 @@ public class ExamReviewDomainRepositoryImpl extends AbstractDomainRepository<Exa
     }
 
     @Override
-    public List<ExamReview> getByUserExamId(String id) {
-        List<ExamReview> examReviewList = examReviewEntityMapper.toDomain(examReviewEntityRepository.findByUserExamId(id));
+    public List<ExamReview> getByUserExamId(String id, String keyword) {
+        List<ExamReview> examReviewList = examReviewEntityMapper.toDomain(examReviewEntityRepository.findByUserExamId(id, SqlUtils.encodeKeyword(keyword)));
         this.enrichList(examReviewList);
         return examReviewList;
     }
@@ -70,8 +71,8 @@ public class ExamReviewDomainRepositoryImpl extends AbstractDomainRepository<Exa
     }
 
     @Override
-    public List<ExamReview> getAllByPeriodRoom(String periodId, String roomId) {
-        List<ExamReview> examReviewList = examReviewEntityMapper.toDomain(examReviewEntityRepository.findAllByPeriodRoom(periodId, roomId));
+    public List<ExamReview> getAllByPeriodRoom(String periodId, String roomId, String keyword) {
+        List<ExamReview> examReviewList = examReviewEntityMapper.toDomain(examReviewEntityRepository.findAllByPeriodRoom(periodId, roomId, SqlUtils.encodeKeyword(keyword)));
         this.enrichList(examReviewList);
         return examReviewList;
     }
