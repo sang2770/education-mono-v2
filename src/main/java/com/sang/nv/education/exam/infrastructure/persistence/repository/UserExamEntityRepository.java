@@ -31,8 +31,8 @@ public interface UserExamEntityRepository extends JpaRepository<UserExamEntity, 
     @Query("from UserExamEntity u where u.deleted = false and u.id = :id")
     Optional<UserExamEntity> findById(@Param("id") String id);
 
-    @Query("from UserExamEntity u where u.deleted = false and u.roomId = :roomId and u.periodId = :periodId")
-    Page<UserExamEntity> searchUserExam(@Param("roomId") String roomId, @Param("periodId") String periodId, Pageable pageable);
+    @Query("from UserExamEntity u where u.deleted = false and u.roomId = :roomId and u.periodId = :periodId and (:keyword is null or u.code like :keyword )")
+    Page<UserExamEntity> searchUserExam(@Param("roomId") String roomId, @Param("periodId") String periodId, String keyword, Pageable pageable);
 
     @Query("from UserExamEntity u where u.deleted = false and u.roomId = :roomId and u.periodId = :periodId and u.userId in :userIds")
     Page<UserExamEntity> getMyExam(@Param("roomId") String roomId, @Param("periodId") String periodId, @Param("userIds") List<String> userIds, Pageable pageable);

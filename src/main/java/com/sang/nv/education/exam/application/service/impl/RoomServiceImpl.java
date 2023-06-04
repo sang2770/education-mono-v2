@@ -297,7 +297,8 @@ public class RoomServiceImpl implements RoomService {
                 count.getAndIncrement();
                 UserExamCreateCmd cmd = UserExamCreateCmd.builder()
                         .maxPoint(exam.getTotalPoint())
-                        .code(exam.getCode())
+                        .examCode(exam.getCode())
+                        .code(this.seqRepository.generateUserExamCode())
                         .examId(exam.getId())
                         .userId(userRoom.getUserId())
                         .roomId(id)

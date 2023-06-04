@@ -35,6 +35,7 @@ import java.util.Optional;
 public class UserExam extends AuditableDomain {
     String id;
     String code;
+    String examCode;
     Float totalPoint;
     Float maxPoint;
     Instant timeEnd;
@@ -64,6 +65,7 @@ public class UserExam extends AuditableDomain {
         this.maxPoint = cmd.getMaxPoint();
         this.examId = cmd.getExamId();
         this.code = cmd.getCode();
+        this.examCode = cmd.getExamCode();
         this.roomId = cmd.getRoomId();
         this.periodId = cmd.getPeriodId();
         this.userExamInfos = new ArrayList<>();

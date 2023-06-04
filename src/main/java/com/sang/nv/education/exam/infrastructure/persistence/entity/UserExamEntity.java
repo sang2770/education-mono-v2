@@ -39,6 +39,9 @@ public class UserExamEntity extends AuditableEntity {
     @Column(name = "code")
     String code;
 
+    @Column(name = "examCode")
+    String examCode;
+
     @Column(name = "totalPoint")
     Float totalPoint;
 

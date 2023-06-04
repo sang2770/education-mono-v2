@@ -2,8 +2,10 @@ package com.sang.nv.education.exam.application.service;
 
 import com.sang.commonmodel.dto.PageDTO;
 import com.sang.nv.education.exam.application.dto.request.UserExamCreateRequest;
+import com.sang.nv.education.exam.application.dto.request.UserExamReviewDoneRequest;
 import com.sang.nv.education.exam.application.dto.request.UserRoomSearchRequest;
 import com.sang.nv.education.exam.application.dto.response.UserExamResult;
+import com.sang.nv.education.exam.domain.ExamReview;
 import com.sang.nv.education.exam.domain.UserExam;
 import com.sang.nv.education.report.application.dto.request.UserExamReportRequest;
 
@@ -27,8 +29,7 @@ public interface UserExamService {
      */
     UserExam getById(String id);
 
-    UserExam
-    testingExam(String id);
+    UserExam testingExam(String id);
 
     UserExam getByExamIdAndPeriodId(String examId, String periodId);
 
@@ -38,4 +39,14 @@ public interface UserExamService {
 
     List<UserExamResult> statisticResult(UserExamReportRequest request);
 
+    ExamReview review(String id);
+
+    List<ExamReview> getAllReview(String id);
+
+    ExamReview receiveReview(String id, String reviewId);
+
+
+    ExamReview doneReview(String id, String reviewId, UserExamReviewDoneRequest request);
+
+    List<ExamReview> getAllReviewByPeriodRoom(String roomId, String periodId);
 }
