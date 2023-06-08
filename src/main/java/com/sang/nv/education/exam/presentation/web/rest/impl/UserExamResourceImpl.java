@@ -1,6 +1,5 @@
 package com.sang.nv.education.exam.presentation.web.rest.impl;
 
-import com.sang.commonmodel.dto.request.BaseSearchRequest;
 import com.sang.commonmodel.dto.response.PagingResponse;
 import com.sang.commonmodel.dto.response.Response;
 import com.sang.nv.education.exam.application.dto.request.UserExamCreateRequest;
@@ -58,8 +57,8 @@ public class UserExamResourceImpl implements UserExamResource {
     }
 
     @Override
-    public Response<List<ExamReview>> getAllReview(String id, BaseSearchRequest request) {
-        return Response.of(this.userExamService.getAllReview(id, request.getKeyword()));
+    public Response<List<ExamReview>> getAllReview(String id) {
+        return Response.of(this.userExamService.getAllReview(id));
     }
 
     @Override
@@ -73,7 +72,7 @@ public class UserExamResourceImpl implements UserExamResource {
     }
 
     @Override
-    public Response<List<ExamReview>> getAllReviewByPeriodRoom(String roomId, String periodId, BaseSearchRequest request) {
-        return Response.of(this.userExamService.getAllReviewByPeriodRoom(roomId, periodId, request.getKeyword()));
+    public Response<List<ExamReview>> getAllReviewByPeriodRoom(String roomId, String periodId) {
+        return Response.of(this.userExamService.getAllReviewByPeriodRoom(roomId, periodId));
     }
 }

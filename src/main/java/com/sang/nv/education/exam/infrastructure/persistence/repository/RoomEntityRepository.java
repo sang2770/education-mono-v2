@@ -18,5 +18,6 @@ public interface RoomEntityRepository extends JpaRepository<RoomEntity, String>,
     Page<RoomEntity> search(@Param("keyword") String keyword, Pageable pageable);
 
     @Query("from RoomEntity u where u.deleted = false and u.id = :id")
-    Optional<RoomEntity> findById(String id);
+    Optional<RoomEntity> findById(@Param("id") String id);
+
 }

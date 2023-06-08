@@ -2,6 +2,7 @@ package com.sang.nv.education.exam.domain;
 
 import com.sang.commonmodel.domain.AuditableDomain;
 import com.sang.commonutil.IdUtils;
+import com.sang.commonutil.StringPool;
 import com.sang.nv.education.exam.domain.command.UserExamInfoCreateCmd;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -10,6 +11,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.springframework.util.CollectionUtils;
+
+import java.util.List;
+import java.util.Objects;
 
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
@@ -27,14 +32,18 @@ public class UserExamInfo extends AuditableDomain {
 
     String userExamId;
 
+    List<String> answerIds;
+
 
     public UserExamInfo(UserExamInfoCreateCmd cmd) {
         this.id = IdUtils.nextId();
         this.questionId = cmd.getQuestionId();
-        this.answerId = cmd.getAnswerId();
+        if (!CollectionUtils.isEmpty(cmd.getAnswerIds())) {
+            this.answerId = String.join(StringPool.COMMA, cmd.getAnswerIds());
+        }
         this.status = cmd.getStatus();
         this.userExamId = cmd.getUserExamId();
-        this.point = this.status ? cmd.getPoint() : 0f;
+        this.point = cmd.getStatus() ? cmd.getPoint() : 0f;
         this.deleted = Boolean.FALSE;
     }
 
@@ -44,5 +53,10 @@ public class UserExamInfo extends AuditableDomain {
 
     public void unDelete() {
         this.deleted = false;
+    }
+    public void enrichAnswerIds() {
+        if (Objects.nonNull(this.answerId)) {
+            this.answerIds = List.of(this.answerId.split(StringPool.COMMA));
+        }
     }
 }

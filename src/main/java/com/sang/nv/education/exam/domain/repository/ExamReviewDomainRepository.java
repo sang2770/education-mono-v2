@@ -7,10 +7,10 @@ import com.sang.nv.education.exam.domain.ExamReview;
 import java.util.List;
 
 public interface ExamReviewDomainRepository extends DomainRepository<ExamReview, String> {
-    List<ExamReview> getByUserExamId(String id, String keyword);
+    List<ExamReview> getByUserExamId(String id);
 
     Boolean checkExist(String id);
 
-    List<ExamReview> getAllByPeriodRoom(String periodId, String roomId, String keyword);
+    List<ExamReview> getAllByPeriodRoom(String periodId, String roomId);
 }
 

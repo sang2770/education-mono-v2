@@ -13,17 +13,30 @@ import com.sang.nv.education.exam.application.dto.request.UserRoomSearchRequest;
 import com.sang.nv.education.exam.application.dto.response.UserExamResult;
 import com.sang.nv.education.exam.application.mapper.ExamAutoMapper;
 import com.sang.nv.education.exam.application.service.UserExamService;
-import com.sang.nv.education.exam.domain.*;
+import com.sang.nv.education.exam.domain.Exam;
+import com.sang.nv.education.exam.domain.ExamReview;
+import com.sang.nv.education.exam.domain.Period;
+import com.sang.nv.education.exam.domain.PeriodRoom;
+import com.sang.nv.education.exam.domain.Room;
+import com.sang.nv.education.exam.domain.UserExam;
 import com.sang.nv.education.exam.domain.command.UserExamCreateCmd;
 import com.sang.nv.education.exam.domain.repository.ExamDomainRepository;
 import com.sang.nv.education.exam.domain.repository.ExamReviewDomainRepository;
 import com.sang.nv.education.exam.domain.repository.UserExamDomainRepository;
-import com.sang.nv.education.exam.infrastructure.persistence.entity.*;
+import com.sang.nv.education.exam.infrastructure.persistence.entity.ExamEntity;
+import com.sang.nv.education.exam.infrastructure.persistence.entity.PeriodEntity;
+import com.sang.nv.education.exam.infrastructure.persistence.entity.PeriodRoomEntity;
+import com.sang.nv.education.exam.infrastructure.persistence.entity.RoomEntity;
+import com.sang.nv.education.exam.infrastructure.persistence.entity.UserExamEntity;
 import com.sang.nv.education.exam.infrastructure.persistence.mapper.PeriodEntityMapper;
 import com.sang.nv.education.exam.infrastructure.persistence.mapper.PeriodRoomEntityMapper;
 import com.sang.nv.education.exam.infrastructure.persistence.mapper.RoomEntityMapper;
 import com.sang.nv.education.exam.infrastructure.persistence.mapper.UserExamEntityMapper;
-import com.sang.nv.education.exam.infrastructure.persistence.repository.*;
+import com.sang.nv.education.exam.infrastructure.persistence.repository.ExamEntityRepository;
+import com.sang.nv.education.exam.infrastructure.persistence.repository.PeriodEntityRepository;
+import com.sang.nv.education.exam.infrastructure.persistence.repository.PeriodRoomEntityRepository;
+import com.sang.nv.education.exam.infrastructure.persistence.repository.RoomEntityRepository;
+import com.sang.nv.education.exam.infrastructure.persistence.repository.UserExamEntityRepository;
 import com.sang.nv.education.exam.infrastructure.support.enums.ExamReviewStatus;
 import com.sang.nv.education.exam.infrastructure.support.enums.UserExamStatus;
 import com.sang.nv.education.exam.infrastructure.support.exception.BadRequestError;
@@ -46,7 +59,6 @@ public class UserExamServiceImpl implements UserExamService {
     private final ExamEntityRepository ExamEntityRepository;
     private final RoomEntityRepository roomEntityRepository;
     private final RoomEntityMapper roomEntityMapper;
-    private final ExamQuestionEntityRepository examQuestionEntityRepository;
     private final ExamAutoMapper examAutoMapper;
     private final ExamDomainRepository examDomainRepository;
     private final UserExamDomainRepository userExamDomainRepository;
@@ -59,14 +71,12 @@ public class UserExamServiceImpl implements UserExamService {
     private final PeriodEntityMapper periodEntityMapper;
     private final PeriodEntityRepository periodEntityRepository;
     public UserExamServiceImpl(ExamEntityRepository ExamEntityRepository,
-                               QuestionEntityRepository questionEntityRepository,
-                               RoomEntityRepository roomEntityRepository, RoomEntityMapper roomEntityMapper, ExamQuestionEntityRepository examQuestionEntityRepository,
+                               RoomEntityRepository roomEntityRepository, RoomEntityMapper roomEntityMapper,
                                ExamAutoMapper examAutoMapper,
                                ExamDomainRepository ExamDomainRepository, UserExamDomainRepository userExamDomainRepository, UserExamEntityRepository examEntityRepository, UserExamEntityMapper userExamEntityMapper, PeriodRoomEntityRepository periodRoomEntityRepository, PeriodRoomEntityMapper periodRoomEntityMapper, ExamReviewDomainRepository examReviewDomainRepository, SeqRepository seqRepository, PeriodEntityMapper periodEntityMapper, PeriodEntityRepository periodEntityRepository) {
         this.ExamEntityRepository = ExamEntityRepository;
         this.roomEntityRepository = roomEntityRepository;
         this.roomEntityMapper = roomEntityMapper;
-        this.examQuestionEntityRepository = examQuestionEntityRepository;
         this.examAutoMapper = examAutoMapper;
         this.examDomainRepository = ExamDomainRepository;
         this.userExamDomainRepository = userExamDomainRepository;
@@ -172,10 +182,9 @@ public class UserExamServiceImpl implements UserExamService {
             Room room = this.roomEntityMapper.toDomain(roomEntity.get());
             userExam.enrichRoom(room);
         }
-        Optional<PeriodEntity> optionalPeriodEntity = this.periodEntityRepository.findById(userExam.getPeriodId());
-        if (optionalPeriodEntity.isPresent())
-        {
-            Period period = this.periodEntityMapper.toDomain(optionalPeriodEntity.get());
+        Optional<PeriodEntity> periodEntity = this.periodEntityRepository.findById(userExam.getPeriodId());
+        if (periodEntity.isPresent()){
+            Period period = this.periodEntityMapper.toDomain(periodEntity.get());
             userExam.enrichPeriod(period);
         }
         return userExam;
@@ -241,8 +250,8 @@ public class UserExamServiceImpl implements UserExamService {
     }
 
     @Override
-    public List<ExamReview> getAllReview(String id, String keyword) {
-        return this.examReviewDomainRepository.getByUserExamId(id, keyword);
+    public List<ExamReview> getAllReview(String id) {
+        return this.examReviewDomainRepository.getByUserExamId(id);
     }
 
     @Override
@@ -270,7 +279,7 @@ public class UserExamServiceImpl implements UserExamService {
     }
 
     @Override
-    public List<ExamReview> getAllReviewByPeriodRoom(String roomId, String periodId, String keyword) {
-        return this.examReviewDomainRepository.getAllByPeriodRoom(periodId, roomId, keyword);
+    public List<ExamReview> getAllReviewByPeriodRoom(String roomId, String periodId) {
+        return this.examReviewDomainRepository.getAllByPeriodRoom(periodId, roomId);
     }
 }
