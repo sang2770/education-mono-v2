@@ -14,6 +14,7 @@ import lombok.experimental.SuperBuilder;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.Objects;
 
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
@@ -37,7 +38,7 @@ public class UserExamInfo extends AuditableDomain {
     public UserExamInfo(UserExamInfoCreateCmd cmd) {
         this.id = IdUtils.nextId();
         this.questionId = cmd.getQuestionId();
-        if (CollectionUtils.isEmpty(cmd.getAnswerIds())) {
+        if (!CollectionUtils.isEmpty(cmd.getAnswerIds())) {
             this.answerId = String.join(StringPool.COMMA, cmd.getAnswerIds());
         }
         this.status = cmd.getStatus();
@@ -54,6 +55,8 @@ public class UserExamInfo extends AuditableDomain {
         this.deleted = false;
     }
     public void enrichAnswerIds() {
-        this.answerIds = List.of(this.answerId.split(StringPool.COMMA));
+        if (Objects.nonNull(this.answerId)) {
+            this.answerIds = List.of(this.answerId.split(StringPool.COMMA));
+        }
     }
 }
