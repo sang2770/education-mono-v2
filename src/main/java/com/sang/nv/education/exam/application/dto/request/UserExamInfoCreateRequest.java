@@ -4,9 +4,11 @@ import com.sang.commonmodel.dto.request.Request;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @NoArgsConstructor
 @Data
 public class UserExamInfoCreateRequest extends Request {
     String questionId;
-    String answerId;
+    List<String> answerIds;
 }
