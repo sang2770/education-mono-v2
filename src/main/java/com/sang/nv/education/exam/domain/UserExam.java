@@ -3,7 +3,6 @@ package com.sang.nv.education.exam.domain;
 import com.sang.commonmodel.domain.AuditableDomain;
 import com.sang.commonmodel.exception.ResponseException;
 import com.sang.commonutil.IdUtils;
-import com.sang.commonutil.StrUtils;
 import com.sang.nv.education.exam.application.dto.request.UserExamInfoCreateRequest;
 import com.sang.nv.education.exam.application.dto.response.UserExamResult;
 import com.sang.nv.education.exam.domain.command.UserExamCreateCmd;
@@ -25,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
@@ -113,21 +113,19 @@ public class UserExam extends AuditableDomain {
             }
             Boolean statusExam = Boolean.FALSE;
             ExamQuestion examQuestion = optionalExamQuestion.get();
-            if (Objects.nonNull(userExamInfoCreateRequest.getAnswerId()) && !StrUtils.isBlank(userExamInfoCreateRequest.getAnswerId())) {
-                Optional<Answer> optionalAnswer = examQuestion.getQuestion().answers.stream().filter(answer ->
-                        Objects.equals(answer.id, userExamInfoCreateRequest.getAnswerId())).findFirst();
-                if (optionalAnswer.isEmpty()) {
-                    throw new ResponseException(NotFoundError.ANSWER_NOT_EXISTED);
+            if (!CollectionUtils.isEmpty(userExamInfoCreateRequest.getAnswerIds())) {
+                List<String> answerIdTrues = examQuestion.getQuestion().answers.stream().filter(answer -> Boolean.TRUE.equals(answer.getStatus())).map(Answer::getId).collect(Collectors.toList());
+                if (answerIdTrues.size() != userExamInfoCreateRequest.getAnswerIds().size()) {
+                    statusExam = Boolean.FALSE;
+                } else {
+                    statusExam = answerIdTrues.containsAll(userExamInfoCreateRequest.getAnswerIds());
                 }
-                Answer answer = optionalAnswer.get();
-                if (Boolean.TRUE.equals(answer.getStatus())) {
-                    this.totalPoint += examQuestion.point;
+                if (Boolean.TRUE.equals(statusExam)) {
+                    this.totalPoint += examQuestion.getPoint();
                 }
-                statusExam = answer.getStatus();
             }
-
             this.userExamInfos.add(new UserExamInfo(UserExamInfoCreateCmd.builder()
-                    .answerId(userExamInfoCreateRequest.getAnswerId())
+                    .answerIds(userExamInfoCreateRequest.getAnswerIds())
                     .questionId(userExamInfoCreateRequest.getQuestionId())
                     .status(statusExam)
                     .point(examQuestion.getPoint())
@@ -150,6 +148,7 @@ public class UserExam extends AuditableDomain {
 
     public void enrichUserExamInfo(List<UserExamInfo> userExamInfos) {
         this.userExamInfos = userExamInfos;
+        this.userExamInfos.forEach(UserExamInfo::enrichAnswerIds);
     }
 
     public void updateStatus(UserExamStatus status) {
