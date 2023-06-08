@@ -34,4 +34,5 @@ public interface PeriodEntityRepository extends JpaRepository<PeriodEntity, Stri
 
     @Query("select u from PeriodEntity u left join PeriodRoomEntity pu on u.id = pu.periodId where u.deleted = false and ((:roomIds) is null or pu.roomId in :roomIds) ")
     List<PeriodEntity> findAllByRoomIds(@Param("roomIds") List<String> roomIds);
+
 }
