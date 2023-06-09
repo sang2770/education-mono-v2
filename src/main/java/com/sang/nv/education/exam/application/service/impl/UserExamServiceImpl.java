@@ -6,6 +6,7 @@ import com.sang.commonmodel.exception.ResponseException;
 import com.sang.commonmodel.mapper.util.PageableMapperUtil;
 import com.sang.commonpersistence.support.SeqRepository;
 import com.sang.commonpersistence.support.SqlUtils;
+import com.sang.commonutil.DataUtil;
 import com.sang.nv.education.common.web.support.SecurityUtils;
 import com.sang.nv.education.exam.application.dto.request.UserExamCreateRequest;
 import com.sang.nv.education.exam.application.dto.request.UserExamReviewDoneRequest;
@@ -70,6 +71,7 @@ public class UserExamServiceImpl implements UserExamService {
     private final SeqRepository seqRepository;
     private final PeriodEntityMapper periodEntityMapper;
     private final PeriodEntityRepository periodEntityRepository;
+
     public UserExamServiceImpl(ExamEntityRepository ExamEntityRepository,
                                RoomEntityRepository roomEntityRepository, RoomEntityMapper roomEntityMapper,
                                ExamAutoMapper examAutoMapper,
@@ -159,8 +161,8 @@ public class UserExamServiceImpl implements UserExamService {
         if (Objects.equals(userExam.getStatus(), UserExamStatus.WAITING)) {
             ExamEntity examEntity = this.ExamEntityRepository.findById(userExam.getExamId()).orElseThrow(() -> new ResponseException(NotFoundError.EXAM_NOT_EXISTED));
             Long delayTime = 0L;
-            if (Objects.nonNull(examEntity.getTimeDelay())) {
-                delayTime = examEntity.getTimeDelay();
+            if (Objects.nonNull(userExam.getTimeDelay())) {
+                delayTime = DataUtil.getValueOrDefault(userExam.getTimeDelay(), examEntity.getTimeDelay());
             }
             Long totalTime = Duration.between(userExam.getCreatedAt(), Instant.now()).toSeconds();
             if (totalTime > Duration.ofMinutes(delayTime).get(SECONDS)) {
@@ -177,13 +179,12 @@ public class UserExamServiceImpl implements UserExamService {
         PeriodRoom periodRoom = this.periodRoomEntityMapper.toDomain(periodRoomEntity);
         userExam.enrichPeriodRoom(periodRoom);
         Optional<RoomEntity> roomEntity = this.roomEntityRepository.findById(userExam.getRoomId());
-        if (roomEntity.isPresent())
-        {
+        if (roomEntity.isPresent()) {
             Room room = this.roomEntityMapper.toDomain(roomEntity.get());
             userExam.enrichRoom(room);
         }
         Optional<PeriodEntity> periodEntity = this.periodEntityRepository.findById(userExam.getPeriodId());
-        if (periodEntity.isPresent()){
+        if (periodEntity.isPresent()) {
             Period period = this.periodEntityMapper.toDomain(periodEntity.get());
             userExam.enrichPeriod(period);
         }
@@ -240,8 +241,7 @@ public class UserExamServiceImpl implements UserExamService {
     @Override
     public ExamReview review(String id) {
         UserExam userExam = this.userExamDomainRepository.getById(id);
-        if (this.examReviewDomainRepository.checkExist(id))
-        {
+        if (this.examReviewDomainRepository.checkExist(id)) {
             throw new ResponseException(BadRequestError.EXAM_REVIEW_EXISTED);
         }
         ExamReview examReview = new ExamReview(userExam, this.seqRepository.generateUserExamCode());
@@ -257,8 +257,7 @@ public class UserExamServiceImpl implements UserExamService {
     @Override
     public ExamReview receiveReview(String id, String reviewId) {
         ExamReview examReview = this.examReviewDomainRepository.getById(reviewId);
-        if (!examReview.getStatus().equals(ExamReviewStatus.NEW))
-        {
+        if (!examReview.getStatus().equals(ExamReviewStatus.NEW)) {
             throw new ResponseException(BadRequestError.EXAM_REVIEW_MUST_BE_NEW);
         }
         examReview.updateStatus(ExamReviewStatus.RECEIVED);
@@ -269,8 +268,7 @@ public class UserExamServiceImpl implements UserExamService {
     @Override
     public ExamReview doneReview(String id, String reviewId, UserExamReviewDoneRequest request) {
         ExamReview examReview = this.examReviewDomainRepository.getById(reviewId);
-        if (!examReview.getStatus().equals(ExamReviewStatus.RECEIVED))
-        {
+        if (!examReview.getStatus().equals(ExamReviewStatus.RECEIVED)) {
             throw new ResponseException(BadRequestError.EXAM_REVIEW_MUST_BE_RECEIVED);
         }
         examReview.complete(request.getFeedBack(), request.getReviewFileIds());
