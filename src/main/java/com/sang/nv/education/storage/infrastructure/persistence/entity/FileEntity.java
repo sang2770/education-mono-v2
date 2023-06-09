@@ -27,12 +27,14 @@ public class FileEntity extends AuditableEntity {
     @Column(name = "id", nullable = false)
     private String id;
 
-    @Column(name = "file_name", nullable = false)
+    @Column(name = "file_name")
     private String fileName;
+    @Column(name = "originFileName")
+    private String originFileName;
 
-    @Column(name = "file_path", nullable = false)
+    @Column(name = "file_path")
     private String filePath;
 
-    @Column(name = "deleted", nullable = false)
+    @Column(name = "deleted")
     private Boolean deleted;
 }

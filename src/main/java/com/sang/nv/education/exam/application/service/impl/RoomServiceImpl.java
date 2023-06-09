@@ -343,6 +343,7 @@ public class RoomServiceImpl implements RoomService {
                         .examId(exam.getId())
                         .userId(userRoom.getUserId())
                         .roomId(id)
+                        .examCode(exam.getCode())
                         .time(Objects.nonNull(request.getTime()) ? request.getTime() : exam.getTime())
                         .timeDelay(Objects.nonNull(request.getTimeDelay()) ? request.getTimeDelay() : exam.getTimeDelay())
                         .periodId(request.getPeriodId())

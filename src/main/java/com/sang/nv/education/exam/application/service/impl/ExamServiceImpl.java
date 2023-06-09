@@ -16,6 +16,7 @@ import com.sang.nv.education.exam.domain.PeriodRoom;
 import com.sang.nv.education.exam.domain.Question;
 import com.sang.nv.education.exam.domain.Room;
 import com.sang.nv.education.exam.domain.command.ExamCreateCmd;
+import com.sang.nv.education.exam.domain.command.ExamUpdateCmd;
 import com.sang.nv.education.exam.domain.repository.ExamDomainRepository;
 import com.sang.nv.education.exam.domain.repository.RoomDomainRepository;
 import com.sang.nv.education.exam.infrastructure.persistence.entity.ExamEntity;
@@ -118,8 +119,20 @@ public class ExamServiceImpl implements ExamService {
     @Override
     public Exam update(String id, ExamUpdateRequest request) {
         Exam exam = this.getById(id);
+        Optional<SubjectEntity> subjectEntityOptional = this.subjectEntityRepository.findById(request.getSubjectId());
+        if (subjectEntityOptional.isEmpty()) {
+            throw new ResponseException(BadRequestError.SUBJECT_NOT_EXISTED);
+        }
+        Optional<PeriodEntity> periodEntityOptional = this.periodEntityRepository.findById(request.getPeriodId());
+        if (periodEntityOptional.isEmpty()) {
+            throw new ResponseException(BadRequestError.PERIOD_NOT_EXISTED);
+        }
+        ExamUpdateCmd cmd = this.examAutoMapper.from(request);
+        cmd.setPeriodName(periodEntityOptional.get().getName());
+        cmd.setSubjectName(subjectEntityOptional.get().getName());
         List<QuestionEntity> questionEntities = this.questionEntityRepository.findAllById(request.getQuestionIds());
-        exam.update(this.examAutoMapper.from(request), this.questionEntityMapper.toDomain(questionEntities));
+        exam.update(cmd, this.questionEntityMapper.toDomain(questionEntities));
+        this.examDomainRepository.save(exam);
         return exam;
     }
 
