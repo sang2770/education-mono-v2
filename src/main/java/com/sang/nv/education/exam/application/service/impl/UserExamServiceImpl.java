@@ -9,6 +9,7 @@ import com.sang.commonpersistence.support.SqlUtils;
 import com.sang.commonutil.DataUtil;
 import com.sang.nv.education.common.web.support.SecurityUtils;
 import com.sang.nv.education.exam.application.dto.request.UserExamCreateRequest;
+import com.sang.nv.education.exam.application.dto.request.UserExamReviewCreateRequest;
 import com.sang.nv.education.exam.application.dto.request.UserExamReviewDoneRequest;
 import com.sang.nv.education.exam.application.dto.request.UserRoomSearchRequest;
 import com.sang.nv.education.exam.application.dto.response.UserExamResult;
@@ -38,6 +39,7 @@ import com.sang.nv.education.exam.infrastructure.persistence.repository.PeriodEn
 import com.sang.nv.education.exam.infrastructure.persistence.repository.PeriodRoomEntityRepository;
 import com.sang.nv.education.exam.infrastructure.persistence.repository.RoomEntityRepository;
 import com.sang.nv.education.exam.infrastructure.persistence.repository.UserExamEntityRepository;
+import com.sang.nv.education.exam.infrastructure.support.enums.ExamReviewFileType;
 import com.sang.nv.education.exam.infrastructure.support.enums.ExamReviewStatus;
 import com.sang.nv.education.exam.infrastructure.support.enums.UserExamStatus;
 import com.sang.nv.education.exam.infrastructure.support.exception.BadRequestError;
@@ -239,12 +241,12 @@ public class UserExamServiceImpl implements UserExamService {
     }
 
     @Override
-    public ExamReview review(String id) {
+    public ExamReview review(String id, UserExamReviewCreateRequest request) {
         UserExam userExam = this.userExamDomainRepository.getById(id);
         if (this.examReviewDomainRepository.checkExist(id)) {
             throw new ResponseException(BadRequestError.EXAM_REVIEW_EXISTED);
         }
-        ExamReview examReview = new ExamReview(userExam, this.seqRepository.generateUserExamCode());
+        ExamReview examReview = new ExamReview(userExam, this.seqRepository.generateUserExamCode(), request.getFileIds());
         examReviewDomainRepository.save(examReview);
         return examReview;
     }

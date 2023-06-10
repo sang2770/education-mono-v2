@@ -4,6 +4,7 @@ package com.sang.nv.education.exam.presentation.web.rest;
 import com.sang.commonmodel.dto.response.PagingResponse;
 import com.sang.commonmodel.dto.response.Response;
 import com.sang.nv.education.exam.application.dto.request.UserExamCreateRequest;
+import com.sang.nv.education.exam.application.dto.request.UserExamReviewCreateRequest;
 import com.sang.nv.education.exam.application.dto.request.UserExamReviewDoneRequest;
 import com.sang.nv.education.exam.application.dto.request.UserRoomSearchRequest;
 import com.sang.nv.education.exam.application.dto.response.UserExamResult;
@@ -51,7 +52,7 @@ public interface UserExamResource {
 
     @ApiOperation(value = "Request review exam by Id")
     @PostMapping("/user-exams/{id}/review")
-    Response<ExamReview> review(@PathVariable String id);
+    Response<ExamReview> review(@PathVariable String id, UserExamReviewCreateRequest request);
 
     @ApiOperation(value = "Get All review exam by Id")
     @GetMapping("/user-exams/{id}/get-all-review")

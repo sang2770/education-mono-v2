@@ -3,6 +3,7 @@ package com.sang.nv.education.exam.presentation.web.rest.impl;
 import com.sang.commonmodel.dto.response.PagingResponse;
 import com.sang.commonmodel.dto.response.Response;
 import com.sang.nv.education.exam.application.dto.request.UserExamCreateRequest;
+import com.sang.nv.education.exam.application.dto.request.UserExamReviewCreateRequest;
 import com.sang.nv.education.exam.application.dto.request.UserExamReviewDoneRequest;
 import com.sang.nv.education.exam.application.dto.request.UserRoomSearchRequest;
 import com.sang.nv.education.exam.application.dto.response.UserExamResult;
@@ -52,8 +53,8 @@ public class UserExamResourceImpl implements UserExamResource {
     }
 
     @Override
-    public Response<ExamReview> review(String id) {
-        return Response.of(this.userExamService.review(id));
+    public Response<ExamReview> review(String id, UserExamReviewCreateRequest request) {
+        return Response.of(this.userExamService.review(id, request));
     }
 
     @Override
